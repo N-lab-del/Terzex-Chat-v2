@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terzex Chat</title>
+  <style>
+    body {
+      background: #050505;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .box {
+      width: 85%;
+      max-width: 380px;
+      padding: 25px;
+      text-align: center;
+      background: #151515;
+      border: 1px solid #d4af37;
+      border-radius: 18px;
+    }
+    h1 { color: #d4af37; }
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input { background: #222; color: white; border: 1px solid #555; }
+    button {
+      background: #d4af37;
+      color: black;
+      border: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>⚡ TERZEX CHAT</h1>
+    <p>Connect. Chat. Share.</p>
+
+    <input id="email" type="email" placeholder="Email address">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="alert('Login will be connected next!')">LOG IN</button>
+    <button onclick="alert('Registration will be connected next!')">CREATE ACCOUNT</button>
+  </div>
+</body>
+</html>
