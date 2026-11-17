@@ -1,57 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terzex Chat</title>
-  <style>
-    body {
-      background: #050505;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .box {
-      width: 85%;
-      max-width: 380px;
-      padding: 25px;
-      text-align: center;
-      background: #151515;
-      border: 1px solid #d4af37;
-      border-radius: 18px;
-    }
-    h1 { color: #d4af37; }
-    input, button {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    input { background: #222; color: white; border: 1px solid #555; }
-    button {
-      background: #d4af37;
-      color: black;
-      border: none;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="box">
-    <h1>⚡ TERZEX CHAT</h1>
-    <p>Connect. Chat. Share.</p>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terzex Chat</title>
 
-    <input id="email" type="email" placeholder="Email address">
-    <input id="password" type="password" placeholder="Password">
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    <button onclick="alert('Login will be connected next!')">LOG IN</button>
-    <button onclick="alert('Registration will be connected next!')">CREATE ACCOUNT</button>
-  </div>
-</body>
-</html>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #050505;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 90%;
+  max-width: 400px;
+  padding: 30px;
+  background: #151515;
+  border: 1px solid #d4af37;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 32px;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.subtitle {
+  color: #aaa;
+  margin-bottom: 25px;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  background: #222;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 12px;
+  background: #d4af37;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f1cf55;
+}
+
+#message {
+  color: #d4af37;
+  margin-top: 15px;
+  font-size: 14px;
+}
+</
