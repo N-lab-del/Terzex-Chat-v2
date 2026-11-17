@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
-import { AccessToken } from "livekit-server-sdk";
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import fs from "fs";
 
 dotenv.config();
 
@@ -13,76 +14,59 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
+const serviceAccountPath =
+process.env.FIREBASE_SERVICE_ACCOUNT_PATH ||
+"/etc/secrets/firebase-service-account.json";
+
+if (!fs.existsSync(serviceAccountPath)) {
+console.error("Firebase service account file not found.");
+process.exit(1);
+}
+
+const serviceAccount = JSON.parse(
+fs.readFileSync(serviceAccountPath, "utf8")
+);
+
+initializeApp({
+credential: cert(serviceAccount)
+});
+
+const db = getFirestore();
+
 app.get("/", (req, res) => {
-  res.json({
-    app: "Terzex Chat",
-    status: "online",
-    version: "2.0.0"
-  });
+res.json({
+app: "Terzex Chat",
+status: "online",
+database: "Firebase",
+version: "3.0.0"
+});
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "healthy" });
+res.json({ status: "healthy" });
 });
 
-app.post("/api/livekit/token", async (req, res) => {
-  try {
-    const { identity, room } = req.body;
-
-    if (!identity || !room) {
-      return res.status(400).json({
-        error: "Identity and room are required"
-      });
-    }
-
-    if (!process.env.LIVEKIT_API_KEY ||
-        !process.env.LIVEKIT_API_SECRET ||
-        !process.env.LIVEKIT_URL) {
-      return res.status(500).json({
-        error: "LiveKit configuration is missing"
-      });
-    }
-
-    const token = new AccessToken(
-      process.env.LIVEKIT_API_KEY,
-      process.env.LIVEKIT_API_SECRET,
-      { identity, ttl: "10m" }
-    );
-
-    token.addGrant({
-      roomJoin: true,
-      room,
-      canPublish: true,
-      canSubscribe: true
-    });
-
-    const jwt = await token.toJwt();
-
-    res.json({
-      token: jwt,
-      serverUrl: process.env.LIVEKIT_URL
-    });
-
-  } catch (error) {
-    console.error("Token error:", error);
-    res.status(500).json({
-      error: "Could not generate token"
-    });
-  }
+app.get("/api/firebase-test", async (req, res) => {
+try {
+await db.collection("system").doc("connection-test").set({
+status: "connected",
+updatedAt: new Date()
 });
 
-async function startServer() {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("MongoDB connected successfully");
+res.json({
+  success: true,
+  message: "Firebase connected successfully!"
+});
 
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Terzex Chat running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
-  }
+} catch (error) {
+console.error("Firebase error:", error);
+res.status(500).json({
+success: false,
+message: "Firebase connection failed."
+});
 }
+});
 
-startServer();
+app.listen(PORT, "0.0.0.0", () => {
+console.log("Terzex Chat running on port ${PORT}");
+});
