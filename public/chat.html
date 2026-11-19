@@ -1,332 +1,749 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terzex Chat</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terzex Chat</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #080808;
-      color: white;
-    }
+body {
+  margin: 0;
+  background: #080808;
+  color: white;
+  font-family: Arial, sans-serif;
+}
 
-    header {
-      background: #111;
-      border-bottom: 1px solid #d4af37;
-      padding: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+header {
+  background: #111;
+  border-bottom: 1px solid #d4af37;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    header h2 {
-      color: #d4af37;
-      margin: 0;
-    }
+header h2 {
+  color: #d4af37;
+  margin: 0;
+}
 
-    button {
-      background: #d4af37;
-      color: black;
-      border: none;
-      padding: 11px 16px;
-      border-radius: 7px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+button {
+  background: #d4af37;
+  color: black;
+  border: none;
+  padding: 11px 15px;
+  border-radius: 7px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    #messages {
-      height: calc(100vh - 145px);
-      overflow-y: auto;
-      padding: 15px;
-    }
+button:disabled {
+  opacity: .5;
+}
 
-    .message {
-      background: #191919;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
-      max-width: 85%;
-      overflow-wrap: anywhere;
-    }
+#status {
+  color: #d4af37;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+}
 
-    .sender {
-      color: #d4af37;
-      font-size: 13px;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
+nav {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: #111;
+}
 
-    .message-text {
-      font-size: 15px;
-    }
+nav button {
+  flex: 1;
+}
 
-    .time {
-      color: #888;
-      font-size: 11px;
-      margin-top: 7px;
-    }
+nav button.active {
+  background: white;
+}
 
-    #input-area {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      gap: 8px;
-      padding: 12px;
-      background: #111;
-      border-top: 1px solid #333;
-    }
+.section {
+  display: none;
+}
 
-    #messageInput {
-      flex: 1;
-      min-width: 0;
-      padding: 13px;
-      border-radius: 8px;
-      border: 1px solid #444;
-      background: #222;
-      color: white;
-      outline: none;
-    }
+.section.active {
+  display: block;
+}
 
-    #status {
-      color: #d4af37;
-      text-align: center;
-      padding: 8px;
-      font-size: 13px;
-    }
-  </style>
+#messages, #privateMessages {
+  height: 48vh;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.message {
+  background: #191919;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  overflow-wrap: anywhere;
+}
+
+.sender {
+  color: #d4af37;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.time {
+  color: #888;
+  font-size: 11px;
+  margin-top: 7px;
+}
+
+form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: #111;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px;
+  background: #222;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+h3 {
+  color: #d4af37;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+#users {
+  padding: 10px;
+}
+
+.user {
+  padding: 14px;
+  margin-bottom: 8px;
+  background: #191919;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.user:hover {
+  border-color: #d4af37;
+}
+
+#privateForm {
+  display: none;
+}
+
+#privateForm.visible {
+  display: flex;
+}
+
+#privateTitle {
+  font-size: 15px;
+}
+
+.empty {
+  color: #999;
+  padding: 15px;
+  text-align: center;
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <h2>⚡ TERZEX CHAT</h2>
-    <button id="logoutBtn">Logout</button>
-  </header>
+<header>
+  <h2>⚡ TERZEX CHAT</h2>
+  <button id="logoutBtn">Logout</button>
+</header>
 
-  <div id="status">Connecting...</div>
+<div id="status">Connecting...</div>
+
+<nav>
+  <button id="publicTab" class="active">Public Chat</button>
+  <button id="privateTab">Private Messages</button>
+</nav>
+
+<section id="publicSection" class="section active">
 
   <div id="messages"></div>
 
-  <form id="input-area">
+  <form id="publicForm">
     <input
-      type="text"
       id="messageInput"
-      placeholder="Write a message..."
+      placeholder="Write a public message..."
       maxlength="2000"
-      autocomplete="off"
       required
     >
-
-    <button type="submit" id="sendBtn">Send</button>
+    <button id="publicSendBtn">Send</button>
   </form>
 
-  <script type="module">
+</section>
 
-    import { initializeApp } from
-      "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+<section id="privateSection" class="section">
 
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signOut
-    } from
-      "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+  <h3>Find people</h3>
 
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      query,
-      orderBy,
-      limit,
-      onSnapshot,
-      serverTimestamp
-    } from
-      "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+  <div id="users">
+    Loading users...
+  </div>
+
+  <h3 id="privateTitle">Select someone to chat with</h3>
+
+  <div id="privateMessages">
+    <div class="empty">Your private messages will appear here.</div>
+  </div>
+
+  <form id="privateForm">
+    <input
+      id="privateInput"
+      placeholder="Write a private message..."
+      maxlength="2000"
+      required
+    >
+    <button id="privateSendBtn">Send</button>
+  </form>
+
+</section>
+
+<script type="module">
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from
+"https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  onSnapshot,
+  serverTimestamp,
+  doc,
+  setDoc
+} from
+"https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
 
-    // REPLACE THESE VALUES WITH YOUR REAL FIREBASE CONFIG
+// YOUR EXISTING FIREBASE CONFIGURATION
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
+const firebaseConfig = {
+  apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
   authDomain: "terzex-chat.firebaseapp.com",
   projectId: "terzex-chat",
   storageBucket: "terzex-chat.firebasestorage.app",
   messagingSenderId: "439554401022",
   appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
   measurementId: "G-9BQYK88HN9"
-    };
+};
 
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-    const messagesDiv = document.getElementById("messages");
-    const messageInput = document.getElementById("messageInput");
-    const inputForm = document.getElementById("input-area");
-    const sendBtn = document.getElementById("sendBtn");
-    const statusDiv = document.getElementById("status");
-    const logoutBtn = document.getElementById("logoutBtn");
+let currentUser = null;
+let activeChatId = null;
 
-    let currentUser = null;
-    let unsubscribeMessages = null;
+let unsubscribePublic = null;
+let unsubscribePrivate = null;
+
+const status = document.getElementById("status");
+const messages = document.getElementById("messages");
+const privateMessages = document.getElementById("privateMessages");
+const usersDiv = document.getElementById("users");
+
+const publicSection = document.getElementById("publicSection");
+const privateSection = document.getElementById("privateSection");
+
+const publicTab = document.getElementById("publicTab");
+const privateTab = document.getElementById("privateTab");
+
+const privateTitle = document.getElementById("privateTitle");
+const privateForm = document.getElementById("privateForm");
 
 
-    onAuthStateChanged(auth, (user) => {
+// SWITCH TABS
 
-      if (!user) {
-        window.location.href = "/";
-        return;
+publicTab.addEventListener("click", () => {
+
+  publicSection.classList.add("active");
+  privateSection.classList.remove("active");
+
+  publicTab.classList.add("active");
+  privateTab.classList.remove("active");
+
+});
+
+privateTab.addEventListener("click", () => {
+
+  privateSection.classList.add("active");
+  publicSection.classList.remove("active");
+
+  privateTab.classList.add("active");
+  publicTab.classList.remove("active");
+
+  loadUsers();
+
+});
+
+
+// AUTHENTICATION
+
+onAuthStateChanged(auth, async user => {
+
+  if (!user) {
+
+    window.location.href = "/";
+    return;
+
+  }
+
+  currentUser = user;
+
+  status.textContent =
+    "Welcome to Terzex Chat, " +
+    (user.displayName || user.email);
+
+  try {
+
+    const name =
+      user.displayName ||
+      user.email.split("@")[0];
+
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        uid: user.uid,
+        name: name,
+        updatedAt: serverTimestamp()
+      },
+      { merge: true }
+    );
+
+    loadPublicMessages();
+
+  } catch (error) {
+
+    console.error("Profile error:", error);
+
+    status.textContent =
+      "Profile error. Please check your Firebase rules.";
+
+  }
+
+});
+
+
+// PUBLIC CHAT
+
+function loadPublicMessages() {
+
+  if (unsubscribePublic) {
+    unsubscribePublic();
+  }
+
+  const q = query(
+    collection(db, "messages"),
+    orderBy("createdAt", "asc"),
+    limit(100)
+  );
+
+  unsubscribePublic = onSnapshot(q, snapshot => {
+
+    messages.innerHTML = "";
+
+    snapshot.forEach(item => {
+
+      const data = item.data();
+
+      const box = document.createElement("div");
+      box.className = "message";
+
+      const sender = document.createElement("div");
+      sender.className = "sender";
+      sender.textContent = data.senderName || "User";
+
+      const text = document.createElement("div");
+      text.textContent = data.text || "";
+
+      const time = document.createElement("div");
+      time.className = "time";
+
+      if (data.createdAt) {
+        time.textContent =
+          data.createdAt.toDate().toLocaleString();
       }
 
-      currentUser = user;
-
-      statusDiv.textContent =
-        "Welcome to Terzex Chat, " +
-        (user.displayName || user.email);
-
-      loadMessages();
+      box.append(sender, text, time);
+      messages.appendChild(box);
 
     });
 
+    messages.scrollTop = messages.scrollHeight;
 
-    function loadMessages() {
+  }, error => {
 
-      const messagesQuery = query(
-        collection(db, "messages"),
-        orderBy("createdAt", "asc"),
-        limit(100)
-      );
+    console.error(error);
+    status.textContent = "Could not load public messages.";
 
-      unsubscribeMessages = onSnapshot(
-        messagesQuery,
+  });
 
-        (snapshot) => {
+}
 
-          messagesDiv.innerHTML = "";
 
-          snapshot.forEach((documentSnapshot) => {
+// SEND PUBLIC MESSAGE
 
-            const message = documentSnapshot.data();
+document.getElementById("publicForm")
+.addEventListener("submit", async event => {
 
-            const messageBox = document.createElement("div");
-            messageBox.className = "message";
+  event.preventDefault();
 
-            const sender = document.createElement("div");
-            sender.className = "sender";
-            sender.textContent = message.senderName || "User";
+  const input = document.getElementById("messageInput");
+  const button = document.getElementById("publicSendBtn");
+  const text = input.value.trim();
 
-            const text = document.createElement("div");
-            text.className = "message-text";
-            text.textContent = message.text || "";
+  if (!text || !currentUser) return;
 
-            const time = document.createElement("div");
-            time.className = "time";
+  button.disabled = true;
 
-            if (message.createdAt) {
-              time.textContent =
-                message.createdAt.toDate().toLocaleString();
-            }
+  try {
 
-            messageBox.appendChild(sender);
-            messageBox.appendChild(text);
-            messageBox.appendChild(time);
+    await addDoc(collection(db, "messages"), {
 
-            messagesDiv.appendChild(messageBox);
+      text: text,
 
-          });
+      senderId: currentUser.uid,
 
-          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      senderName:
+        currentUser.displayName ||
+        currentUser.email,
 
-        },
+      createdAt: serverTimestamp()
 
-        (error) => {
-          console.error(error);
-          statusDiv.textContent =
-            "Could not load messages. Please check your connection.";
-        }
+    });
 
-      );
+    input.value = "";
+
+  } catch (error) {
+
+    console.error(error);
+    alert("Could not send public message.");
+
+  } finally {
+
+    button.disabled = false;
+
+  }
+
+});
+
+
+// FIND REGISTERED USERS
+
+async function loadUsers() {
+
+  if (!currentUser) return;
+
+  usersDiv.textContent = "Loading users...";
+
+  try {
+
+    const snapshot =
+      await getDocs(collection(db, "users"));
+
+    usersDiv.innerHTML = "";
+
+    snapshot.forEach(item => {
+
+      const user = item.data();
+
+      if (user.uid === currentUser.uid) return;
+
+      const button = document.createElement("div");
+
+      button.className = "user";
+
+      button.textContent =
+        "👤 " + (user.name || "Terzex User");
+
+      button.addEventListener("click", () => {
+        openPrivateChat(user);
+      });
+
+      usersDiv.appendChild(button);
+
+    });
+
+    if (!usersDiv.children.length) {
+
+      usersDiv.innerHTML =
+        '<div class="empty">No other users found yet.</div>';
 
     }
 
+  } catch (error) {
 
-    inputForm.addEventListener("submit", async (event) => {
+    console.error(error);
 
-      event.preventDefault();
+    usersDiv.textContent =
+      "Could not load users. Check Firestore rules.";
 
-      const text = messageInput.value.trim();
+  }
 
-      if (!text || !currentUser) {
-        return;
+}
+
+
+// OPEN OR CREATE PRIVATE CHAT
+
+async function openPrivateChat(otherUser) {
+
+  if (!currentUser || !otherUser.uid) return;
+
+  if (unsubscribePrivate) {
+    unsubscribePrivate();
+    unsubscribePrivate = null;
+  }
+
+  activeChatId = null;
+
+  privateTitle.textContent =
+    "Chat with " + (otherUser.name || "Terzex User");
+
+  privateMessages.textContent = "Opening conversation...";
+
+  privateForm.classList.add("visible");
+
+  try {
+
+    const q = query(
+      collection(db, "private_chats"),
+      where("participants", "array-contains", currentUser.uid)
+    );
+
+    const snapshot = await getDocs(q);
+
+    let existingChat = null;
+
+    snapshot.forEach(item => {
+
+      const data = item.data();
+
+      if (
+        Array.isArray(data.participants) &&
+        data.participants.length === 2 &&
+        data.participants.includes(otherUser.uid)
+      ) {
+
+        existingChat = item.id;
+
       }
 
-      sendBtn.disabled = true;
+    });
 
-      try {
+    if (existingChat) {
 
-        await addDoc(collection(db, "messages"), {
+      activeChatId = existingChat;
 
-          text: text,
+    } else {
 
-          senderId: currentUser.uid,
-
-          senderName:
-            currentUser.displayName ||
-            currentUser.email,
-
+      const newChat = await addDoc(
+        collection(db, "private_chats"),
+        {
+          participants: [
+            currentUser.uid,
+            otherUser.uid
+          ],
           createdAt: serverTimestamp()
-
-        });
-
-        messageInput.value = "";
-
-      } catch (error) {
-
-        console.error(error);
-
-        alert("Message could not be sent. Please try again.");
-
-      } finally {
-
-        sendBtn.disabled = false;
-
-      }
-
-    });
-
-
-    logoutBtn.addEventListener("click", async () => {
-
-      try {
-
-        if (unsubscribeMessages) {
-          unsubscribeMessages();
         }
+      );
 
-        await signOut(auth);
+      activeChatId = newChat.id;
 
-        window.location.href = "/";
+    }
 
-      } catch (error) {
+    loadPrivateMessages();
 
-        alert("Could not log out. Please try again.");
+  } catch (error) {
 
+    console.error(error);
+
+    privateMessages.textContent =
+      "Could not open conversation. Check your Firestore rules.";
+
+  }
+
+}
+
+
+// LOAD PRIVATE MESSAGES
+
+function loadPrivateMessages() {
+
+  if (unsubscribePrivate) {
+    unsubscribePrivate();
+  }
+
+  if (!activeChatId) return;
+
+  const q = query(
+    collection(
+      db,
+      "private_chats",
+      activeChatId,
+      "messages"
+    ),
+    orderBy("createdAt", "asc")
+  );
+
+  unsubscribePrivate = onSnapshot(q, snapshot => {
+
+    privateMessages.innerHTML = "";
+
+    snapshot.forEach(item => {
+
+      const data = item.data();
+
+      const box = document.createElement("div");
+      box.className = "message";
+
+      const sender = document.createElement("div");
+      sender.className = "sender";
+      sender.textContent = data.senderName || "User";
+
+      const text = document.createElement("div");
+      text.textContent = data.text || "";
+
+      const time = document.createElement("div");
+      time.className = "time";
+
+      if (data.createdAt) {
+        time.textContent =
+          data.createdAt.toDate().toLocaleString();
       }
+
+      box.append(sender, text, time);
+      privateMessages.appendChild(box);
 
     });
 
-  </script>
+    if (!snapshot.size) {
+
+      privateMessages.innerHTML =
+        '<div class="empty">Start your private conversation!</div>';
+
+    }
+
+    privateMessages.scrollTop =
+      privateMessages.scrollHeight;
+
+  }, error => {
+
+    console.error(error);
+
+    privateMessages.textContent =
+      "Could not load private messages.";
+
+  });
+
+}
+
+
+// SEND PRIVATE MESSAGE
+
+privateForm.addEventListener("submit", async event => {
+
+  event.preventDefault();
+
+  const input = document.getElementById("privateInput");
+  const button = document.getElementById("privateSendBtn");
+
+  const text = input.value.trim();
+
+  if (!text || !currentUser || !activeChatId) return;
+
+  button.disabled = true;
+
+  try {
+
+    await addDoc(
+      collection(
+        db,
+        "private_chats",
+        activeChatId,
+        "messages"
+      ),
+      {
+        text: text,
+        senderId: currentUser.uid,
+        senderName:
+          currentUser.displayName ||
+          currentUser.email,
+        createdAt: serverTimestamp()
+      }
+    );
+
+    input.value = "";
+
+  } catch (error) {
+
+    console.error(error);
+    alert("Could not send private message.");
+
+  } finally {
+
+    button.disabled = false;
+
+  }
+
+});
+
+
+// LOGOUT
+
+document.getElementById("logoutBtn")
+.addEventListener("click", async () => {
+
+  if (unsubscribePublic) unsubscribePublic();
+
+  if (unsubscribePrivate) unsubscribePrivate();
+
+  try {
+
+    await signOut(auth);
+
+    window.location.href = "/";
+
+  } catch (error) {
+
+    console.error(error);
+    alert("Logout failed.");
+
+  }
+
+});
+
+</script>
 
 </body>
 </html>
