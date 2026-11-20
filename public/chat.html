@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
 <title>Terzex Chat</title>
 
 <style>
@@ -13,7 +14,7 @@
 body {
   margin: 0;
   background: #080808;
-  color: #fff;
+  color: white;
   font-family: Arial, sans-serif;
 }
 
@@ -34,8 +35,8 @@ button {
 
 header {
   height: 65px;
-  background: #111;
-  border-bottom: 1px solid #d4af37;
+  background: #101010;
+  border-bottom: 1px solid #302817;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -49,20 +50,27 @@ header {
   font-weight: bold;
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 #logoutBtn {
   background: #d4af37;
   color: #000;
   border: 0;
-  padding: 10px 15px;
-  border-radius: 7px;
+  padding: 9px 14px;
+  border-radius: 20px;
   font-weight: bold;
 }
 
 #status {
   background: #111;
   color: #d4af37;
-  padding: 8px 15px;
-  font-size: 12px;
+  padding: 6px 15px;
+  font-size: 11px;
+  flex-shrink: 0;
 }
 
 .layout {
@@ -72,87 +80,99 @@ header {
 }
 
 .sidebar {
-  width: 350px;
+  width: 390px;
+  max-width: 100%;
   background: #101010;
   border-right: 1px solid #292929;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative;
+}
+
+.sidebarTop {
+  padding: 17px 15px 10px;
 }
 
 .sidebarTitle {
-  padding: 18px;
   color: #d4af37;
-  font-size: 20px;
+  font-size: 23px;
   font-weight: bold;
+  margin-bottom: 15px;
 }
 
 .search {
-  padding: 0 13px 15px;
+  position: relative;
 }
 
 .search input {
   width: 100%;
-  padding: 12px;
-  border-radius: 22px;
+  padding: 14px 18px 14px 43px;
+  border-radius: 25px;
   border: 1px solid #333;
-  background: #202020;
+  background: #222;
   color: white;
   outline: none;
 }
 
-.tabs {
-  display: flex;
-  padding: 0 10px 12px;
-  gap: 7px;
-}
-
-.tabs button {
-  flex: 1;
-  padding: 10px 4px;
-  background: #202020;
-  color: white;
-  border: 0;
-  border-radius: 7px;
-  font-size: 12px;
-}
-
-.tabs button.active {
-  background: #d4af37;
-  color: #000;
-  font-weight: bold;
+.searchIcon {
+  position: absolute;
+  left: 15px;
+  top: 12px;
+  color: #aaa;
+  font-size: 19px;
 }
 
 #contactList {
-  overflow-y: auto;
   flex: 1;
+  overflow-y: auto;
+  padding-bottom: 10px;
 }
 
 .contact {
-  padding: 14px;
+  padding: 13px 15px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid #222;
+  gap: 13px;
+  border-bottom: 1px solid #1d1d1d;
   cursor: pointer;
 }
 
 .contact:hover,
 .contact.selected {
-  background: #242016;
+  background: #211d12;
 }
 
 .avatar {
-  width: 43px;
-  height: 43px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
-  background: #d4af37;
-  color: #000;
+  background: linear-gradient(135deg,#d4af37,#755b1d);
+  color: #080808;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  font-size: 21px;
   flex-shrink: 0;
+  position: relative;
+}
+
+.avatar.small {
+  width: 43px;
+  height: 43px;
+  font-size: 16px;
+}
+
+.onlineDot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #35d875;
+  border: 2px solid #101010;
+  right: 0;
+  bottom: 1px;
 }
 
 .contactInfo {
@@ -160,14 +180,39 @@ header {
   min-width: 0;
 }
 
+.contactTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
 .contactName {
   font-weight: bold;
-  margin-bottom: 5px;
+  font-size: 15px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.contactTime {
+  color: #888;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.contactPreview {
+  color: #999;
+  font-size: 13px;
+  margin-top: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .contactStatus {
-  font-size: 12px;
-  color: #999;
+  font-size: 11px;
+  margin-top: 5px;
 }
 
 .online {
@@ -180,9 +225,63 @@ header {
 
 .empty {
   text-align: center;
-  padding: 25px 15px;
+  padding: 35px 15px;
   color: #888;
   font-size: 13px;
+  line-height: 1.6;
+}
+
+.bottomNav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 76px;
+  background: #111;
+  border-top: 1px solid #302817;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.navBtn {
+  flex: 1;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: #999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+}
+
+.navIcon {
+  font-size: 23px;
+}
+
+.navBtn.active {
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.navBtn.active .navIcon {
+  transform: scale(1.08);
+}
+
+.floatingBtn {
+  position: absolute;
+  right: 20px;
+  bottom: 93px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 0;
+  background: #d4af37;
+  color: #080808;
+  font-size: 29px;
+  box-shadow: 0 4px 15px #000;
+  z-index: 3;
 }
 
 .chatArea {
@@ -194,7 +293,7 @@ header {
 }
 
 .chatHeader {
-  min-height: 67px;
+  min-height: 70px;
   padding: 12px 18px;
   border-bottom: 1px solid #252525;
   display: flex;
@@ -205,6 +304,7 @@ header {
 
 .chatHeaderName {
   font-weight: bold;
+  font-size: 16px;
 }
 
 .chatHeaderStatus {
@@ -251,7 +351,7 @@ header {
 }
 
 #messageForm {
-  display: flex;
+  display: none;
   gap: 9px;
   padding: 13px;
   background: #111;
@@ -287,13 +387,47 @@ header {
   background: transparent;
   color: #d4af37;
   border: 0;
-  font-size: 22px;
+  font-size: 25px;
+}
+
+.pageContent {
+  padding: 22px;
+  overflow-y: auto;
+}
+
+.settingCard {
+  background: #191919;
+  border: 1px solid #333;
+  border-radius: 13px;
+  padding: 17px;
+  margin-bottom: 12px;
+}
+
+.settingCard h3 {
+  color: #d4af37;
+  margin: 0 0 8px;
+}
+
+.settingCard p {
+  color: #aaa;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
 }
 
 @media(max-width:700px) {
 
+  header {
+    padding: 0 13px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
   .sidebar {
     width: 100%;
+    border-right: 0;
   }
 
   .chatArea {
@@ -309,6 +443,10 @@ header {
     display: flex;
   }
 
+  .layout.showChat ~ .bottomNav {
+    display: none;
+  }
+
   #backBtn {
     display: block;
   }
@@ -317,14 +455,9 @@ header {
     max-width: 88%;
   }
 
-  header {
-    padding: 0 12px;
+  .floatingBtn {
+    bottom: 91px;
   }
-
-  .logo {
-    font-size: 18px;
-  }
-
 }
 </style>
 </head>
@@ -335,7 +468,9 @@ header {
 
 <header>
   <div class="logo">⚡ TERZEX CHAT</div>
-  <button id="logoutBtn">Logout</button>
+  <div class="headerRight">
+    <button id="logoutBtn">Logout</button>
+  </div>
 </header>
 
 <div id="status">Connecting to Terzex...</div>
@@ -344,24 +479,24 @@ header {
 
   <aside class="sidebar">
 
-    <div class="sidebarTitle">Messages</div>
+    <div class="sidebarTop">
+      <div class="sidebarTitle" id="sidebarTitle">Chats</div>
 
-    <div class="search">
-      <input
-        id="searchInput"
-        placeholder="Search people..."
-      >
-    </div>
-
-    <div class="tabs">
-      <button id="allTab" class="active">Chats</button>
-      <button id="usersTab">Contacts</button>
-      <button id="publicTab">Public</button>
+      <div class="search">
+        <span class="searchIcon">⌕</span>
+        <input
+          id="searchInput"
+          placeholder="Search Chats"
+          autocomplete="off"
+        >
+      </div>
     </div>
 
     <div id="contactList">
-      <div class="empty">Loading contacts...</div>
+      <div class="empty">Loading Terzex...</div>
     </div>
+
+    <button class="floatingBtn" id="newChatBtn">＋</button>
 
   </aside>
 
@@ -387,7 +522,8 @@ header {
 
     <div id="messages">
       <div class="empty">
-        Select a person to start chatting.
+        ⚡ Welcome to Terzex Chat.<br>
+        Select a conversation to start messaging.
       </div>
     </div>
 
@@ -408,6 +544,31 @@ header {
   </main>
 
 </div>
+
+<nav class="bottomNav" id="bottomNav">
+
+  <button class="navBtn active" data-page="chats">
+    <span class="navIcon">▣</span>
+    <span>Chats</span>
+  </button>
+
+  <button class="navBtn" data-page="contacts">
+    <span class="navIcon">♙</span>
+    <span>Contacts</span>
+  </button>
+
+  <button class="navBtn" data-page="settings">
+    <span class="navIcon">⚙</span>
+    <span>Settings</span>
+  </button>
+
+  <button class="navBtn" data-page="profile">
+    <span class="navIcon">◉</span>
+    <span>Profile</span>
+  </button>
+
+</nav>
+
 </div>
 
 <script type="module">
@@ -456,16 +617,18 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-// APP VARIABLES
+// VARIABLES
 
 let currentUser = null;
 let activeChatId = null;
 let activeOtherUser = null;
-let currentMode = "users";
+let currentMode = null;
+let currentPage = "chats";
 
 let unsubscribeMessages = null;
 let unsubscribeContacts = null;
 let heartbeatTimer = null;
+let allPeople = [];
 
 const layout = document.getElementById("layout");
 const contactList = document.getElementById("contactList");
@@ -480,6 +643,8 @@ const messageForm = document.getElementById("messageForm");
 const sendBtn = document.getElementById("sendBtn");
 
 const status = document.getElementById("status");
+const searchInput = document.getElementById("searchInput");
+const sidebarTitle = document.getElementById("sidebarTitle");
 
 
 // HELPERS
@@ -492,6 +657,21 @@ function displayName(user) {
 
 function initials(name) {
   return (name || "T").charAt(0).toUpperCase();
+}
+
+function stopMessageListener() {
+  if (unsubscribeMessages) {
+    unsubscribeMessages();
+    unsubscribeMessages = null;
+  }
+}
+
+function clearChatScreen() {
+  stopMessageListener();
+  activeChatId = null;
+  activeOtherUser = null;
+  currentMode = null;
+  messageForm.style.display = "none";
 }
 
 function showMessage(data) {
@@ -514,20 +694,57 @@ function showMessage(data) {
 
   if (data.createdAt?.toDate) {
     time.textContent =
-      data.createdAt.toDate().toLocaleString();
+      data.createdAt.toDate().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
   }
 
   box.append(sender, text, time);
   messages.appendChild(box);
 }
 
-function stopMessageListener() {
+function createContactRow(person, preview, clickAction) {
 
-  if (unsubscribeMessages) {
-    unsubscribeMessages();
-    unsubscribeMessages = null;
+  const row = document.createElement("div");
+  row.className = "contact";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = initials(displayName(person));
+
+  if (person.online === true) {
+    const dot = document.createElement("span");
+    dot.className = "onlineDot";
+    avatar.appendChild(dot);
   }
 
+  const info = document.createElement("div");
+  info.className = "contactInfo";
+
+  const top = document.createElement("div");
+  top.className = "contactTop";
+
+  const name = document.createElement("div");
+  name.className = "contactName";
+  name.textContent = displayName(person);
+
+  const time = document.createElement("div");
+  time.className = "contactTime";
+  time.textContent = person.online ? "Online" : "";
+
+  const previewText = document.createElement("div");
+  previewText.className = "contactPreview";
+  previewText.textContent = preview ||
+    (person.online ? "Online" : "Tap to start chatting");
+
+  top.append(name, time);
+  info.append(top, previewText);
+  row.append(avatar, info);
+
+  row.addEventListener("click", clickAction);
+
+  return row;
 }
 
 
@@ -552,9 +769,7 @@ async function updatePresence(isOnline) {
     );
 
   } catch (error) {
-
     console.error("Presence error:", error);
-
   }
 
 }
@@ -564,11 +779,9 @@ function startPresence() {
   updatePresence(true);
 
   heartbeatTimer = setInterval(() => {
-
     if (document.visibilityState === "visible") {
       updatePresence(true);
     }
-
   }, 60000);
 
 }
@@ -577,20 +790,14 @@ document.addEventListener("visibilitychange", () => {
 
   if (!currentUser) return;
 
-  if (document.visibilityState === "visible") {
-    updatePresence(true);
-  } else {
-    updatePresence(false);
-  }
+  updatePresence(
+    document.visibilityState === "visible"
+  );
 
 });
 
 window.addEventListener("pagehide", () => {
-
-  if (currentUser) {
-    updatePresence(false);
-  }
-
+  if (currentUser) updatePresence(false);
 });
 
 
@@ -637,7 +844,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 
-// LOAD CONTACTS
+// CONTACTS LISTENER
 
 function loadContacts() {
 
@@ -649,7 +856,7 @@ function loadContacts() {
     collection(db, "users"),
     snapshot => {
 
-      const people = [];
+      allPeople = [];
 
       snapshot.forEach(item => {
 
@@ -659,12 +866,14 @@ function loadContacts() {
           person.uid &&
           person.uid !== currentUser.uid
         ) {
-          people.push(person);
+          allPeople.push(person);
         }
 
       });
 
-      renderContacts(people);
+      if (currentPage === "contacts") {
+        renderContacts();
+      }
 
     },
     error => {
@@ -679,142 +888,281 @@ function loadContacts() {
 
 }
 
-function renderContacts(people) {
 
-  const search =
-    document.getElementById("searchInput")
-    .value.toLowerCase();
+// CONTACTS PAGE
 
-  const filtered = people.filter(person => {
+function renderContacts() {
 
-    return displayName(person)
-      .toLowerCase()
-      .includes(search);
+  const search = searchInput.value.toLowerCase();
 
-  });
+  let people = allPeople.filter(person =>
+    displayName(person).toLowerCase().includes(search)
+  );
+
+  people.sort((a, b) =>
+    Number(b.online === true) -
+    Number(a.online === true)
+  );
 
   contactList.innerHTML = "";
 
-  if (!filtered.length) {
+  if (!people.length) {
 
     contactList.innerHTML =
-      '<div class="empty">No other Terzex users found.</div>';
+      '<div class="empty">No other Terzex users found.<br>Invite someone to join Terzex Chat!</div>';
 
     return;
 
   }
 
-  filtered.sort((a, b) => {
+  people.forEach(person => {
 
-    return Number(b.online === true) -
-      Number(a.online === true);
+    contactList.appendChild(
+      createContactRow(
+        person,
+        person.online ? "● Online" : "○ Offline",
+        () => openPrivateChat(person)
+      )
+    );
 
   });
 
-  filtered.forEach(person => {
+}
 
-    const row = document.createElement("div");
 
-    row.className = "contact";
+// CHATS PAGE
 
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = initials(displayName(person));
+async function loadChats() {
 
-    const info = document.createElement("div");
-    info.className = "contactInfo";
+  contactList.innerHTML =
+    '<div class="empty">Loading your conversations...</div>';
 
-    const name = document.createElement("div");
-    name.className = "contactName";
-    name.textContent = displayName(person);
+  const publicPerson = {
+    name: "Terzex Public Chat",
+    online: true
+  };
 
-    const presence = document.createElement("div");
-    presence.className = "contactStatus";
+  const publicRow = createContactRow(
+    publicPerson,
+    "⚡ Join the public conversation",
+    openPublicChat
+  );
 
-    if (person.online === true) {
+  contactList.innerHTML = "";
+  contactList.appendChild(publicRow);
 
-      presence.classList.add("online");
-      presence.textContent = "● Online";
+  try {
 
-    } else {
+    const q = query(
+      collection(db, "private_chats"),
+      where("participants", "array-contains", currentUser.uid)
+    );
 
-      presence.classList.add("offline");
-      presence.textContent = "○ Offline";
+    const snapshot = await getDocs(q);
+
+    const conversations = [];
+
+    for (const item of snapshot.docs) {
+
+      const data = item.data();
+
+      const otherUid = data.participants?.find(
+        uid => uid !== currentUser.uid
+      );
+
+      if (!otherUid) continue;
+
+      const person = allPeople.find(
+        p => p.uid === otherUid
+      );
+
+      if (!person) continue;
+
+      let preview = "Tap to open conversation";
+      let latestTime = 0;
+
+      try {
+
+        const messageQuery = query(
+          collection(db, "private_chats", item.id, "messages"),
+          orderBy("createdAt", "desc"),
+          limit(1)
+        );
+
+        const messageSnapshot = await getDocs(messageQuery);
+
+        if (!messageSnapshot.empty) {
+
+          const latest = messageSnapshot.docs[0].data();
+
+          preview =
+            (latest.senderId === currentUser.uid ? "You: " : "") +
+            (latest.text || "");
+
+          latestTime =
+            latest.createdAt?.toDate?.().getTime() || 0;
+
+        }
+
+      } catch (messageError) {
+        console.error(messageError);
+      }
+
+      conversations.push({
+        person,
+        chatId: item.id,
+        preview,
+        latestTime
+      });
 
     }
 
-    info.append(name, presence);
-    row.append(avatar, info);
+    conversations.sort((a, b) =>
+      b.latestTime - a.latestTime
+    );
 
-    row.addEventListener("click", () => {
-      openPrivateChat(person);
-    });
+    const search = searchInput.value.toLowerCase();
 
-    contactList.appendChild(row);
+    conversations
+      .filter(item =>
+        displayName(item.person).toLowerCase().includes(search)
+      )
+      .forEach(item => {
 
-  });
+        const row = createContactRow(
+          item.person,
+          item.preview,
+          () => openPrivateChat(item.person)
+        );
 
-}
-
-
-// SEARCH
-
-document.getElementById("searchInput")
-.addEventListener("input", loadSearchResults);
-
-function loadSearchResults() {
-
-  if (unsubscribeContacts) {
-    // The live listener will redraw the filtered list.
-  }
-
-  getDocs(collection(db, "users"))
-    .then(snapshot => {
-
-      const people = [];
-
-      snapshot.forEach(item => {
-
-        const person = item.data();
-
-        if (
-          person.uid &&
-          person.uid !== currentUser?.uid
-        ) {
-          people.push(person);
-        }
+        contactList.appendChild(row);
 
       });
 
-      renderContacts(people);
+    if (conversations.length === 0) {
 
-    })
-    .catch(console.error);
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent =
+        "No private conversations yet. Tap the + button to find people.";
+
+      contactList.appendChild(empty);
+
+    }
+
+  } catch (error) {
+
+    console.error("Chat list error:", error);
+
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent =
+      "Could not load conversations. You can still use Contacts.";
+
+    contactList.appendChild(empty);
+
+  }
 
 }
 
 
-// OPEN PRIVATE CHAT
+// SETTINGS PAGE
+
+function showSettings() {
+
+  contactList.innerHTML = `
+    <div class="pageContent">
+
+      <div class="settingCard">
+        <h3>⚡ Terzex Settings</h3>
+        <p>Manage your Terzex Chat experience.</p>
+      </div>
+
+      <div class="settingCard">
+        <h3>Appearance</h3>
+        <p>Terzex black and gold theme is active.</p>
+      </div>
+
+      <div class="settingCard">
+        <h3>Account Security</h3>
+        <p>Your account uses Firebase Authentication.</p>
+      </div>
+
+      <div class="settingCard">
+        <h3>Privacy</h3>
+        <p>Your private conversations are available to their participants.</p>
+      </div>
+
+      <div class="settingCard">
+        <h3>About Terzex</h3>
+        <p>Terzex Chat — Connect with everyone.</p>
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+// PROFILE PAGE
+
+function showProfile() {
+
+  contactList.innerHTML = "";
+
+  const content = document.createElement("div");
+  content.className = "pageContent";
+
+  const card = document.createElement("div");
+  card.className = "settingCard";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.style.width = "85px";
+  avatar.style.height = "85px";
+  avatar.style.margin = "0 auto 18px";
+  avatar.style.fontSize = "32px";
+  avatar.textContent = initials(displayName(currentUser));
+
+  const name = document.createElement("h3");
+  name.style.textAlign = "center";
+  name.textContent = displayName(currentUser);
+
+  const email = document.createElement("p");
+  email.style.textAlign = "center";
+  email.textContent = currentUser.email || "No email available";
+
+  const account = document.createElement("p");
+  account.style.textAlign = "center";
+  account.style.marginTop = "12px";
+  account.textContent = "Terzex Chat Account";
+
+  card.append(avatar, name, email, account);
+  content.appendChild(card);
+  contactList.appendChild(content);
+
+}
+
+
+// PRIVATE CHAT
 
 async function openPrivateChat(person) {
 
   if (!currentUser || !person.uid) return;
 
-  stopMessageListener();
+  clearChatScreen();
 
   activeOtherUser = person;
-  activeChatId = null;
   currentMode = "private";
 
   chatName.textContent = displayName(person);
-
-  chatAvatar.textContent =
-    initials(displayName(person));
+  chatAvatar.textContent = initials(displayName(person));
 
   chatStatus.textContent =
     person.online ? "● Online" : "○ Offline";
 
   layout.classList.add("showChat");
+  messageForm.style.display = "flex";
 
   messages.innerHTML =
     '<div class="empty">Opening conversation...</div>';
@@ -879,7 +1227,7 @@ async function openPrivateChat(person) {
 }
 
 
-// LOAD PRIVATE MESSAGES
+// PRIVATE MESSAGES
 
 function loadPrivateMessages() {
 
@@ -934,10 +1282,8 @@ function loadPrivateMessages() {
 
 function openPublicChat() {
 
-  stopMessageListener();
+  clearChatScreen();
 
-  activeChatId = null;
-  activeOtherUser = null;
   currentMode = "public";
 
   chatName.textContent = "Terzex Public Chat";
@@ -945,6 +1291,7 @@ function openPublicChat() {
   chatStatus.textContent = "Public conversation";
 
   layout.classList.add("showChat");
+  messageForm.style.display = "flex";
 
   messages.innerHTML =
     '<div class="empty">Loading public messages...</div>';
@@ -1036,7 +1383,6 @@ messageForm.addEventListener("submit", async event => {
   } catch (error) {
 
     console.error(error);
-
     alert("Message could not be sent.");
 
   } finally {
@@ -1048,34 +1394,99 @@ messageForm.addEventListener("submit", async event => {
 });
 
 
-// NAVIGATION
+// BOTTOM NAVIGATION
 
-document.getElementById("publicTab")
-.addEventListener("click", () => {
+function changePage(page) {
 
-  openPublicChat();
+  if (layout.classList.contains("showChat")) {
+    layout.classList.remove("showChat");
+    clearChatScreen();
+  }
+
+  currentPage = page;
+
+  document.querySelectorAll(".navBtn").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.page === page
+    );
+  });
+
+  searchInput.value = "";
+
+  if (page === "chats") {
+
+    sidebarTitle.textContent = "Chats";
+    searchInput.placeholder = "Search Chats";
+    loadChats();
+
+  }
+
+  if (page === "contacts") {
+
+    sidebarTitle.textContent = "Contacts";
+    searchInput.placeholder = "Search Contacts";
+    renderContacts();
+
+  }
+
+  if (page === "settings") {
+
+    sidebarTitle.textContent = "Settings";
+    searchInput.placeholder = "Settings";
+    showSettings();
+
+  }
+
+  if (page === "profile") {
+
+    sidebarTitle.textContent = "Profile";
+    searchInput.placeholder = "Profile";
+    showProfile();
+
+  }
+
+}
+
+document.querySelectorAll(".navBtn").forEach(button => {
+
+  button.addEventListener("click", () => {
+    changePage(button.dataset.page);
+  });
 
 });
 
-document.getElementById("usersTab")
-.addEventListener("click", () => {
 
-  loadSearchResults();
+// SEARCH
+
+searchInput.addEventListener("input", () => {
+
+  if (currentPage === "contacts") {
+    renderContacts();
+  }
+
+  if (currentPage === "chats") {
+    loadChats();
+  }
 
 });
 
-document.getElementById("allTab")
+
+// NEW CHAT BUTTON
+
+document.getElementById("newChatBtn")
 .addEventListener("click", () => {
-
-  loadSearchResults();
-
+  changePage("contacts");
 });
+
+
+// BACK BUTTON
 
 document.getElementById("backBtn")
 .addEventListener("click", () => {
 
-  stopMessageListener();
   layout.classList.remove("showChat");
+  clearChatScreen();
 
 });
 
