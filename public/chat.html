@@ -9,53 +9,131 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#080808;color:white;font-family:Arial,sans-serif}
-button,input{font:inherit}
+button,input,textarea{font:inherit}
 button{cursor:pointer}
 .app{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-header{height:62px;background:#111;border-bottom:1px solid #d4af37;display:flex;align-items:center;justify-content:space-between;padding:0 15px;flex-shrink:0}
+
+header{
+height:62px;background:#111;border-bottom:1px solid #d4af37;
+display:flex;align-items:center;justify-content:space-between;
+padding:0 15px;flex-shrink:0
+}
 .logo{color:#d4af37;font-size:20px;font-weight:bold}
-#logoutBtn{background:#d4af37;color:#000;border:0;padding:9px 14px;border-radius:20px;font-weight:bold}
-#status{background:#111;color:#d4af37;padding:6px 14px;font-size:11px}
+#logoutBtn{
+background:#d4af37;color:#000;border:0;
+padding:9px 14px;border-radius:20px;font-weight:bold
+}
+#status{background:#111;color:#d4af37;padding:7px 14px;font-size:11px}
+
 .layout{display:flex;flex:1;min-height:0}
-.sidebar{width:390px;max-width:100%;background:#101010;display:flex;flex-direction:column;min-height:0;position:relative}
+.sidebar{
+width:390px;max-width:100%;background:#101010;
+display:flex;flex-direction:column;min-height:0;position:relative
+}
 .sidebarTop{padding:17px 15px 12px}
 .sidebarTitle{color:#d4af37;font-size:23px;font-weight:bold;margin-bottom:15px}
 .search{position:relative}
-.search input{width:100%;padding:13px 15px 13px 40px;border-radius:25px;border:1px solid #333;background:#222;color:white;outline:none}
+.search input{
+width:100%;padding:13px 15px 13px 40px;border-radius:25px;
+border:1px solid #333;background:#222;color:white;outline:none
+}
 .searchIcon{position:absolute;left:14px;top:10px;color:#aaa;font-size:20px}
+
 #contactList{flex:1;overflow-y:auto;padding-bottom:10px}
-.contact{padding:13px 15px;display:flex;align-items:center;gap:13px;border-bottom:1px solid #222;cursor:pointer}
+.contact{
+padding:13px 15px;display:flex;align-items:center;gap:13px;
+border-bottom:1px solid #222;cursor:pointer
+}
 .contact:hover,.contact.selected{background:#282114}
-.avatar{width:53px;height:53px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#755b1d);color:#080808;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:bold;flex-shrink:0;position:relative}
-.onlineDot{position:absolute;width:12px;height:12px;border-radius:50%;background:#35d875;border:2px solid #101010;right:0;bottom:1px}
+
+.avatar{
+width:53px;height:53px;border-radius:50%;
+background:linear-gradient(135deg,#d4af37,#755b1d);
+color:#080808;display:flex;align-items:center;justify-content:center;
+font-size:21px;font-weight:bold;flex-shrink:0;position:relative;
+overflow:hidden
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.onlineDot{
+position:absolute;width:12px;height:12px;border-radius:50%;
+background:#35d875;border:2px solid #101010;right:0;bottom:1px
+}
 .contactInfo{flex:1;min-width:0}
 .contactTop{display:flex;justify-content:space-between;gap:8px}
 .contactName{font-weight:bold;font-size:15px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .contactTime{font-size:11px;color:#888}
 .contactPreview{font-size:13px;color:#999;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .empty{text-align:center;padding:30px 15px;color:#888;font-size:13px;line-height:1.6}
-.bottomNav{height:72px;background:#111;border-top:1px solid #302817;display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
-.navBtn{flex:1;background:transparent;border:0;color:#999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:11px}
+
+.bottomNav{
+height:72px;background:#111;border-top:1px solid #302817;
+display:flex;flex-shrink:0;overflow-x:auto
+}
+.navBtn{
+flex:1;min-width:58px;background:transparent;border:0;color:#999;
+display:flex;flex-direction:column;align-items:center;
+justify-content:center;gap:5px;font-size:10px
+}
 .navBtn.active{color:#d4af37;font-weight:bold}
-.navIcon{font-size:22px}
-.floatingBtn{position:absolute;right:18px;bottom:85px;width:57px;height:57px;border-radius:50%;border:0;background:#d4af37;color:#080808;font-size:30px;box-shadow:0 4px 15px #000}
+.navIcon{font-size:21px}
+
+.floatingBtn{
+position:absolute;right:18px;bottom:20px;width:57px;height:57px;
+border-radius:50%;border:0;background:#d4af37;color:#080808;
+font-size:30px;box-shadow:0 4px 15px #000
+}
+
 .chatArea{flex:1;display:flex;flex-direction:column;min-width:0;background:#080808}
-.chatHeader{min-height:68px;padding:12px 18px;border-bottom:1px solid #252525;display:flex;align-items:center;gap:12px;background:#111}
+.chatHeader{
+min-height:68px;padding:12px 18px;border-bottom:1px solid #252525;
+display:flex;align-items:center;gap:12px;background:#111
+}
 .chatHeaderName{font-weight:bold}
 .chatHeaderStatus{font-size:12px;color:#999;margin-top:4px}
+
 #messages{flex:1;overflow-y:auto;padding:18px}
-.message{max-width:75%;width:fit-content;background:#202020;border:1px solid #333;padding:11px 13px;border-radius:12px;margin-bottom:12px;overflow-wrap:anywhere}
+.message{
+max-width:75%;width:fit-content;background:#202020;border:1px solid #333;
+padding:11px 13px;border-radius:12px;margin-bottom:12px;overflow-wrap:anywhere
+}
 .message.mine{background:#42371b;border-color:#a98b32;margin-left:auto}
 .sender{color:#d4af37;font-weight:bold;font-size:12px;margin-bottom:6px}
 .time{color:#aaa;font-size:10px;margin-top:7px;text-align:right}
-#messageForm{display:none;gap:9px;padding:13px;background:#111;border-top:1px solid #292929}
-#messageInput{flex:1;min-width:0;padding:13px;border-radius:22px;border:1px solid #444;background:#222;color:white;outline:none}
-#sendBtn{background:#d4af37;color:#000;border:0;border-radius:22px;padding:0 20px;font-weight:bold}
+
+#messageForm{
+display:none;gap:9px;padding:13px;background:#111;border-top:1px solid #292929
+}
+#messageInput{
+flex:1;min-width:0;padding:13px;border-radius:22px;
+border:1px solid #444;background:#222;color:white;outline:none
+}
+#sendBtn{
+background:#d4af37;color:#000;border:0;border-radius:22px;
+padding:0 20px;font-weight:bold
+}
 #backBtn{display:none;background:transparent;color:#d4af37;border:0;font-size:25px}
-.pageContent{padding:20px;overflow-y:auto}
-.settingCard{background:#191919;border:1px solid #333;border-radius:13px;padding:17px;margin-bottom:12px}
+
+.pageContent{padding:18px;overflow-y:auto}
+.settingCard{
+background:#191919;border:1px solid #333;border-radius:13px;
+padding:17px;margin-bottom:12px
+}
 .settingCard h3{color:#d4af37;margin:0 0 8px}
 .settingCard p{color:#aaa;font-size:13px;line-height:1.5;margin:0}
+
+.formInput{
+width:100%;padding:13px;margin:7px 0 12px;
+background:#222;color:white;border:1px solid #444;border-radius:9px;
+outline:none
+}
+.formButton{
+width:100%;padding:13px;background:#d4af37;color:#000;
+border:0;border-radius:9px;font-weight:bold;margin-top:5px
+}
+.formLabel{font-size:13px;color:#bbb}
+.goldText{color:#d4af37}
+
 @media(max-width:700px){
 .sidebar{width:100%}
 .chatArea{display:none;width:100%}
@@ -74,8 +152,8 @@ header{padding:0 12px}
 <div class="app">
 
 <header>
-  <div class="logo">⚡ TERZEX CHAT</div>
-  <button id="logoutBtn">Logout</button>
+<div class="logo">⚡ TERZEX CHAT</div>
+<button id="logoutBtn">Logout</button>
 </header>
 
 <div id="status">Connecting to Terzex...</div>
@@ -83,82 +161,95 @@ header{padding:0 12px}
 <div class="layout" id="layout">
 
 <aside class="sidebar">
-  <div class="sidebarTop">
-    <div class="sidebarTitle" id="sidebarTitle">Chats</div>
-    <div class="search">
-      <span class="searchIcon">⌕</span>
-      <input id="searchInput" placeholder="Search Chats" autocomplete="off">
-    </div>
-  </div>
 
-  <div id="contactList">
-    <div class="empty">Loading Terzex...</div>
-  </div>
+<div class="sidebarTop">
+<div class="sidebarTitle" id="sidebarTitle">Chats</div>
+<div class="search">
+<span class="searchIcon">⌕</span>
+<input id="searchInput" placeholder="Search Chats" autocomplete="off">
+</div>
+</div>
 
-  <button class="floatingBtn" id="newChatBtn">＋</button>
+<div id="contactList">
+<div class="empty">Loading Terzex...</div>
+</div>
+
+<button class="floatingBtn" id="newChatBtn">＋</button>
 </aside>
 
 <main class="chatArea">
-  <div class="chatHeader">
-    <button id="backBtn">‹</button>
-    <div class="avatar" id="chatAvatar">T</div>
-    <div>
-      <div class="chatHeaderName" id="chatName">Welcome to Terzex Chat</div>
-      <div class="chatHeaderStatus" id="chatStatus">Select a conversation</div>
-    </div>
-  </div>
 
-  <div id="messages">
-    <div class="empty">⚡ Welcome to Terzex Chat.<br>Select a conversation to start messaging.</div>
-  </div>
+<div class="chatHeader">
+<button id="backBtn">‹</button>
+<div class="avatar" id="chatAvatar">T</div>
+<div>
+<div class="chatHeaderName" id="chatName">Welcome to Terzex Chat</div>
+<div class="chatHeaderStatus" id="chatStatus">Select a conversation</div>
+</div>
+</div>
 
-  <form id="messageForm">
-    <input id="messageInput" placeholder="Write a message..." maxlength="2000" autocomplete="off" required>
-    <button id="sendBtn">Send</button>
-  </form>
+<div id="messages">
+<div class="empty">⚡ Welcome to Terzex Chat.<br>Select a conversation to start messaging.</div>
+</div>
+
+<form id="messageForm">
+<input id="messageInput" placeholder="Write a message..." maxlength="2000" autocomplete="off" required>
+<button id="sendBtn">Send</button>
+</form>
+
 </main>
-
 </div>
 
 <nav class="bottomNav">
-  <button class="navBtn active" data-page="chats"><span class="navIcon">▣</span>Chats</button>
-  <button class="navBtn" data-page="contacts"><span class="navIcon">♙</span>Contacts</button>
-  <button class="navBtn" data-page="settings"><span class="navIcon">⚙</span>Settings</button>
-  <button class="navBtn" data-page="profile"><span class="navIcon">◉</span>Profile</button>
+<button class="navBtn active" data-page="chats"><span class="navIcon">▣</span>Chats</button>
+<button class="navBtn" data-page="contacts"><span class="navIcon">♙</span>Contacts</button>
+<button class="navBtn" data-page="groups"><span class="navIcon">♧</span>Groups</button>
+<button class="navBtn" data-page="channels"><span class="navIcon">◈</span>Channels</button>
+<button class="navBtn" data-page="profile"><span class="navIcon">◉</span>Profile</button>
+<button class="navBtn" data-page="settings"><span class="navIcon">⚙</span>Settings</button>
 </nav>
 
 </div>
 
 <script type="module">
 
-import {initializeApp} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import {initializeApp}
+from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
 
 import {
- getAuth,onAuthStateChanged,signOut
+getAuth,onAuthStateChanged,signOut
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
 import {
- getFirestore,collection,addDoc,getDocs,query,where,
- orderBy,limit,onSnapshot,serverTimestamp,doc,setDoc
+getFirestore,collection,addDoc,getDocs,query,where,
+orderBy,limit,onSnapshot,serverTimestamp,doc,setDoc
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
+
+/* FIREBASE CONFIGURATION */
+
 const firebaseConfig={
- apiKey:"AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
- authDomain:"terzex-chat.firebaseapp.com",
- projectId:"terzex-chat",
- storageBucket:"terzex-chat.firebasestorage.app",
- messagingSenderId:"439554401022",
- appId:"1:439554401022:web:2eddf4bebb81fab30ffbaf",
- measurementId:"G-9BQYK88HN9"
+apiKey:"AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
+authDomain:"terzex-chat.firebaseapp.com",
+projectId:"terzex-chat",
+storageBucket:"terzex-chat.firebasestorage.app",
+messagingSenderId:"439554401022",
+appId:"1:439554401022:web:2eddf4bebb81fab30ffbaf",
+measurementId:"G-9BQYK88HN9"
 };
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
+
+/* APP VARIABLES */
+
 let currentUser=null;
+let currentProfile={};
 let activeChatId=null;
-let activeOtherUser=null;
+let activeGroupId=null;
+let activeChannelId=null;
 let currentMode=null;
 let currentPage="chats";
 let allPeople=[];
@@ -172,504 +263,1106 @@ const contactList=$("contactList");
 const messages=$("messages");
 const messageForm=$("messageForm");
 
+
+/* USER FUNCTIONS */
+
 function displayName(user){
- return user.displayName||user.name||
- (user.email?user.email.split("@")[0]:"Terzex User");
+if(!user)return "Terzex User";
+
+return currentProfile.name ||
+user.displayName ||
+user.name ||
+(user.email?user.email.split("@")[0]:"Terzex User");
 }
 
 function initials(name){
- return (name||"T").charAt(0).toUpperCase();
+return (name||"T").charAt(0).toUpperCase();
 }
 
-function stopMessageListener(){
- if(unsubscribeMessages){
-  unsubscribeMessages();
-  unsubscribeMessages=null;
- }
+function profileData(){
+return {
+uid:currentUser.uid,
+name:displayName(currentUser),
+email:currentUser.email||"",
+online:true,
+lastSeen:serverTimestamp(),
+updatedAt:serverTimestamp()
+};
 }
 
-function clearChat(){
- stopMessageListener();
- activeChatId=null;
- activeOtherUser=null;
- currentMode=null;
- messageForm.style.display="none";
-}
 
-function updatePresence(online){
- if(!currentUser)return Promise.resolve();
- return setDoc(doc(db,"users",currentUser.uid),{
-  uid:currentUser.uid,
-  name:displayName(currentUser),
-  online,
-  lastSeen:serverTimestamp(),
-  updatedAt:serverTimestamp()
- },{merge:true}).catch(console.error);
+/* PRESENCE */
+
+async function updatePresence(online){
+if(!currentUser)return;
+
+try{
+await setDoc(doc(db,"users",currentUser.uid),{
+...profileData(),
+online,
+lastSeen:serverTimestamp()
+},{merge:true});
+}catch(error){
+console.error("Presence error:",error);
+}
 }
 
 function startPresence(){
- updatePresence(true);
- if(heartbeatTimer)clearInterval(heartbeatTimer);
- heartbeatTimer=setInterval(()=>{
-  if(document.visibilityState==="visible")updatePresence(true);
- },60000);
+updatePresence(true);
+
+if(heartbeatTimer)clearInterval(heartbeatTimer);
+
+heartbeatTimer=setInterval(()=>{
+if(document.visibilityState==="visible")updatePresence(true);
+},60000);
 }
 
 document.addEventListener("visibilitychange",()=>{
- if(currentUser)updatePresence(document.visibilityState==="visible");
+if(currentUser){
+updatePresence(document.visibilityState==="visible");
+}
 });
 
 window.addEventListener("pagehide",()=>{
- if(currentUser)updatePresence(false);
+if(currentUser)updatePresence(false);
 });
 
-function createRow(person,preview,action){
- const row=document.createElement("div");
- row.className="contact";
 
- const avatar=document.createElement("div");
- avatar.className="avatar";
- avatar.textContent=initials(displayName(person));
+/* CHAT LISTENER MANAGEMENT */
 
- if(person.online){
-  const dot=document.createElement("span");
-  dot.className="onlineDot";
-  avatar.appendChild(dot);
- }
-
- const info=document.createElement("div");
- info.className="contactInfo";
-
- const top=document.createElement("div");
- top.className="contactTop";
-
- const name=document.createElement("div");
- name.className="contactName";
- name.textContent=displayName(person);
-
- const time=document.createElement("div");
- time.className="contactTime";
- time.textContent=person.online?"Online":"";
-
- const text=document.createElement("div");
- text.className="contactPreview";
- text.textContent=preview||"Tap to start chatting";
-
- top.append(name,time);
- info.append(top,text);
- row.append(avatar,info);
- row.addEventListener("click",action);
- return row;
+function stopMessageListener(){
+if(unsubscribeMessages){
+unsubscribeMessages();
+unsubscribeMessages=null;
 }
+}
+
+function clearChat(){
+stopMessageListener();
+activeChatId=null;
+activeGroupId=null;
+activeChannelId=null;
+currentMode=null;
+messageForm.style.display="none";
+}
+
+function openChatScreen(){
+layout.classList.add("showChat");
+messageForm.style.display="flex";
+}
+
+function setChatHeader(name,icon,status){
+$("chatName").textContent=name;
+$("chatAvatar").textContent=icon;
+$("chatStatus").textContent=status;
+}
+
+
+/* AVATARS AND ROWS */
+
+function createRow(person,preview,action){
+const row=document.createElement("div");
+row.className="contact";
+
+const avatar=document.createElement("div");
+avatar.className="avatar";
+
+if(person.photoURL){
+const img=document.createElement("img");
+img.src=person.photoURL;
+img.alt="";
+avatar.appendChild(img);
+}else{
+avatar.textContent=initials(person.name||person.channelName||person.groupName||"T");
+}
+
+if(person.online){
+const dot=document.createElement("span");
+dot.className="onlineDot";
+avatar.appendChild(dot);
+}
+
+const info=document.createElement("div");
+info.className="contactInfo";
+
+const top=document.createElement("div");
+top.className="contactTop";
+
+const name=document.createElement("div");
+name.className="contactName";
+name.textContent=person.name||person.groupName||person.channelName||"Terzex";
+
+const time=document.createElement("div");
+time.className="contactTime";
+time.textContent=person.online?"Online":"";
+
+const text=document.createElement("div");
+text.className="contactPreview";
+text.textContent=preview||"Tap to open";
+
+top.append(name,time);
+info.append(top,text);
+row.append(avatar,info);
+
+row.addEventListener("click",action);
+
+return row;
+}
+
+
+/* MESSAGE DISPLAY */
 
 function showMessage(data){
- const box=document.createElement("div");
- box.className="message"+(data.senderId===currentUser.uid?" mine":"");
+const box=document.createElement("div");
 
- const sender=document.createElement("div");
- sender.className="sender";
- sender.textContent=data.senderName||"Terzex User";
+box.className="message"+
+(data.senderId===currentUser.uid?" mine":"");
 
- const text=document.createElement("div");
- text.textContent=data.text||"";
+const sender=document.createElement("div");
+sender.className="sender";
+sender.textContent=data.senderName||"Terzex User";
 
- const time=document.createElement("div");
- time.className="time";
- if(data.createdAt?.toDate){
-  time.textContent=data.createdAt.toDate().toLocaleTimeString([],{
-   hour:"2-digit",minute:"2-digit"
-  });
- }
+const text=document.createElement("div");
+text.textContent=data.text||"";
 
- box.append(sender,text,time);
- messages.appendChild(box);
+const time=document.createElement("div");
+time.className="time";
+
+if(data.createdAt?.toDate){
+time.textContent=data.createdAt.toDate().toLocaleTimeString([],{
+hour:"2-digit",minute:"2-digit"
+});
 }
 
+box.append(sender,text,time);
+messages.appendChild(box);
+messages.scrollTop=messages.scrollHeight;
+}
+
+
+/* CONTACTS */
+
 function loadContacts(){
- if(unsubscribeContacts)unsubscribeContacts();
+if(unsubscribeContacts)unsubscribeContacts();
 
- unsubscribeContacts=onSnapshot(collection(db,"users"),snapshot=>{
-  allPeople=[];
-  snapshot.forEach(item=>{
-   const person=item.data();
-   if(person.uid&&person.uid!==currentUser.uid)allPeople.push(person);
-  });
+unsubscribeContacts=onSnapshot(collection(db,"users"),snapshot=>{
 
-  if(currentPage==="contacts")renderContacts();
-  if(currentPage==="chats")loadChats();
- },error=>{
-  console.error(error);
-  contactList.innerHTML='<div class="empty">Could not load contacts.</div>';
- });
+allPeople=[];
+
+snapshot.forEach(item=>{
+const person=item.data();
+
+if(person.uid&&person.uid!==currentUser.uid){
+allPeople.push(person);
+}
+});
+
+if(currentPage==="contacts")renderContacts();
+if(currentPage==="chats")loadChats();
+
+},error=>{
+console.error(error);
+contactList.innerHTML='<div class="empty">Could not load contacts.</div>';
+});
 }
 
 function renderContacts(){
- const search=$("searchInput").value.toLowerCase();
+const search=$("searchInput").value.toLowerCase();
 
- const people=allPeople.filter(p=>
-  displayName(p).toLowerCase().includes(search)
- );
+const people=allPeople.filter(person=>
+(person.name||"").toLowerCase().includes(search)||
+(person.username||"").toLowerCase().includes(search)
+);
 
- people.sort((a,b)=>Number(b.online===true)-Number(a.online===true));
+people.sort((a,b)=>
+Number(b.online===true)-Number(a.online===true)
+);
 
- contactList.innerHTML="";
+contactList.innerHTML="";
 
- if(!people.length){
-  contactList.innerHTML='<div class="empty">No other Terzex users found.<br>Invite someone to join!</div>';
-  return;
- }
-
- people.forEach(person=>{
-  contactList.appendChild(createRow(
-   person,
-   person.online?"● Online":"○ Offline",
-   ()=>openPrivateChat(person)
-  ));
- });
+if(!people.length){
+contactList.innerHTML=
+'<div class="empty">No other Terzex users found.</div>';
+return;
 }
+
+people.forEach(person=>{
+contactList.appendChild(createRow(
+person,
+person.username?"@"+person.username:
+(person.online?"● Online":"○ Offline"),
+()=>openPrivateChat(person)
+));
+});
+}
+
+
+/* PRIVATE CHAT LIST */
 
 async function loadChats(){
- if(!currentUser)return;
+if(!currentUser)return;
 
- contactList.innerHTML="";
- const publicRow=createRow(
-  {name:"Terzex Public Chat",online:true},
-  "⚡ Join the public conversation",
-  openPublicChat
- );
- contactList.appendChild(publicRow);
+contactList.innerHTML="";
 
- try{
-  const q=query(collection(db,"private_chats"),
-   where("participants","array-contains",currentUser.uid));
+contactList.appendChild(createRow(
+{name:"Terzex Public Chat"},
+"⚡ Join the public conversation",
+openPublicChat
+));
 
-  const snapshot=await getDocs(q);
-  const conversations=[];
+try{
 
-  for(const item of snapshot.docs){
-   const data=item.data();
-   const otherUid=data.participants?.find(uid=>uid!==currentUser.uid);
-   if(!otherUid)continue;
+const q=query(collection(db,"private_chats"),
+where("participants","array-contains",currentUser.uid));
 
-   const person=allPeople.find(p=>p.uid===otherUid);
-   if(!person)continue;
+const snapshot=await getDocs(q);
 
-   let preview="Tap to open conversation";
-   let latestTime=0;
+const conversations=[];
 
-   try{
-    const mq=query(
-     collection(db,"private_chats",item.id,"messages"),
-     orderBy("createdAt","desc"),limit(1)
-    );
-    const ms=await getDocs(mq);
-    if(!ms.empty){
-     const latest=ms.docs[0].data();
-     preview=(latest.senderId===currentUser.uid?"You: ":"")+(latest.text||"");
-     latestTime=latest.createdAt?.toDate?.().getTime()||0;
-    }
-   }catch(e){console.error(e);}
+for(const item of snapshot.docs){
 
-   conversations.push({person,preview,latestTime});
-  }
+const data=item.data();
 
-  conversations.sort((a,b)=>b.latestTime-a.latestTime);
+const otherUid=data.participants?.find(
+uid=>uid!==currentUser.uid
+);
 
-  const search=$("searchInput").value.toLowerCase();
-  const filtered=conversations.filter(c=>
-   displayName(c.person).toLowerCase().includes(search)
-  );
+if(!otherUid)continue;
 
-  filtered.forEach(c=>{
-   contactList.appendChild(createRow(
-    c.person,c.preview,()=>openPrivateChat(c.person)
-   ));
-  });
+const person=allPeople.find(p=>p.uid===otherUid);
+if(!person)continue;
 
-  if(!filtered.length){
-   const empty=document.createElement("div");
-   empty.className="empty";
-   empty.textContent="No private conversations yet. Tap + to find people.";
-   contactList.appendChild(empty);
-  }
+let preview="Tap to open conversation";
+let latestTime=0;
 
- }catch(error){
-  console.error(error);
-  const empty=document.createElement("div");
-  empty.className="empty";
-  empty.textContent="Could not load conversations. Try Contacts.";
-  contactList.appendChild(empty);
- }
+try{
+
+const mq=query(
+collection(db,"private_chats",item.id,"messages"),
+orderBy("createdAt","desc"),
+limit(1)
+);
+
+const ms=await getDocs(mq);
+
+if(!ms.empty){
+
+const latest=ms.docs[0].data();
+
+preview=(latest.senderId===currentUser.uid?"You: ":"")+
+(latest.text||"");
+
+latestTime=latest.createdAt?.toDate?.().getTime()||0;
 }
 
+}catch(error){
+console.error(error);
+}
+
+conversations.push({person,preview,latestTime});
+
+}
+
+conversations.sort((a,b)=>b.latestTime-a.latestTime);
+
+const search=$("searchInput").value.toLowerCase();
+
+const filtered=conversations.filter(c=>
+(c.person.name||"").toLowerCase().includes(search)
+);
+
+filtered.forEach(c=>{
+contactList.appendChild(createRow(
+c.person,c.preview,()=>openPrivateChat(c.person)
+));
+});
+
+if(!filtered.length){
+const empty=document.createElement("div");
+empty.className="empty";
+empty.textContent="No private conversations yet. Tap + to find people.";
+contactList.appendChild(empty);
+}
+
+}catch(error){
+console.error(error);
+}
+}
+
+
+/* PRIVATE CHAT */
+
 async function openPrivateChat(person){
- if(!currentUser||!person.uid)return;
 
- clearChat();
- activeOtherUser=person;
- currentMode="private";
+if(!currentUser||!person.uid)return;
 
- $("chatName").textContent=displayName(person);
- $("chatAvatar").textContent=initials(displayName(person));
- $("chatStatus").textContent=person.online?"● Online":"○ Offline";
+clearChat();
 
- layout.classList.add("showChat");
- messageForm.style.display="flex";
- messages.innerHTML='<div class="empty">Opening conversation...</div>';
+currentMode="private";
 
- try{
-  const q=query(collection(db,"private_chats"),
-   where("participants","array-contains",currentUser.uid));
+setChatHeader(
+person.name||"Terzex User",
+initials(person.name),
+person.online?"● Online":"○ Offline"
+);
 
-  const snapshot=await getDocs(q);
-  let found=null;
+openChatScreen();
 
-  snapshot.forEach(item=>{
-   const data=item.data();
-   if(Array.isArray(data.participants)&&
-      data.participants.includes(person.uid)&&
-      data.participants.length===2){
-    found=item.id;
-   }
-  });
+messages.innerHTML='<div class="empty">Opening conversation...</div>';
 
-  if(found){
-   activeChatId=found;
-  }else{
-   const created=await addDoc(collection(db,"private_chats"),{
-    participants:[currentUser.uid,person.uid],
-    createdAt:serverTimestamp()
-   });
-   activeChatId=created.id;
-  }
+try{
 
-  loadPrivateMessages();
+const q=query(collection(db,"private_chats"),
+where("participants","array-contains",currentUser.uid));
 
- }catch(error){
-  console.error(error);
-  messages.innerHTML='<div class="empty">Could not open conversation. Check Firebase rules.</div>';
- }
+const snapshot=await getDocs(q);
+
+let found=null;
+
+snapshot.forEach(item=>{
+const data=item.data();
+
+if(Array.isArray(data.participants)&&
+data.participants.includes(person.uid)&&
+data.participants.length===2){
+found=item.id;
+}
+});
+
+if(found){
+
+activeChatId=found;
+
+}else{
+
+const created=await addDoc(collection(db,"private_chats"),{
+participants:[currentUser.uid,person.uid],
+createdAt:serverTimestamp()
+});
+
+activeChatId=created.id;
+
+}
+
+loadPrivateMessages();
+
+}catch(error){
+console.error(error);
+messages.innerHTML=
+'<div class="empty">Could not open conversation. Check Firebase rules.</div>';
+}
 }
 
 function loadPrivateMessages(){
- stopMessageListener();
 
- const q=query(
-  collection(db,"private_chats",activeChatId,"messages"),
-  orderBy("createdAt","asc")
- );
+stopMessageListener();
 
- unsubscribeMessages=onSnapshot(q,snapshot=>{
-  messages.innerHTML="";
-  if(snapshot.empty){
-   messages.innerHTML='<div class="empty">Start your conversation!</div>';
-   return;
-  }
-  snapshot.forEach(item=>showMessage(item.data()));
-  messages.scrollTop=messages.scrollHeight;
- },error=>{
-  console.error(error);
-  messages.innerHTML='<div class="empty">Could not load messages.</div>';
- });
+const q=query(
+collection(db,"private_chats",activeChatId,"messages"),
+orderBy("createdAt","asc")
+);
+
+unsubscribeMessages=onSnapshot(q,snapshot=>{
+
+messages.innerHTML="";
+
+if(snapshot.empty){
+messages.innerHTML='<div class="empty">Start your conversation!</div>';
+return;
 }
+
+snapshot.forEach(item=>showMessage(item.data()));
+
+},error=>{
+console.error(error);
+messages.innerHTML=
+'<div class="empty">Could not load messages.</div>';
+});
+}
+
+
+/* PUBLIC CHAT */
 
 function openPublicChat(){
- clearChat();
- currentMode="public";
 
- $("chatName").textContent="Terzex Public Chat";
- $("chatAvatar").textContent="⚡";
- $("chatStatus").textContent="Public conversation";
+clearChat();
 
- layout.classList.add("showChat");
- messageForm.style.display="flex";
- messages.innerHTML='<div class="empty">Loading public messages...</div>';
+currentMode="public";
 
- const q=query(collection(db,"messages"),
-  orderBy("createdAt","asc"),limit(100));
+setChatHeader(
+"Terzex Public Chat",
+"⚡",
+"Public conversation"
+);
 
- unsubscribeMessages=onSnapshot(q,snapshot=>{
-  messages.innerHTML="";
-  snapshot.forEach(item=>showMessage(item.data()));
-  messages.scrollTop=messages.scrollHeight;
- },error=>{
-  console.error(error);
-  messages.innerHTML='<div class="empty">Could not load public messages.</div>';
- });
+openChatScreen();
+
+messages.innerHTML='<div class="empty">Loading public messages...</div>';
+
+const q=query(
+collection(db,"messages"),
+orderBy("createdAt","asc"),
+limit(100)
+);
+
+unsubscribeMessages=onSnapshot(q,snapshot=>{
+
+messages.innerHTML="";
+
+snapshot.forEach(item=>showMessage(item.data()));
+
+},error=>{
+console.error(error);
+messages.innerHTML=
+'<div class="empty">Could not load public messages.</div>';
+});
 }
 
-messageForm.addEventListener("submit",async event=>{
- event.preventDefault();
 
- const text=$("messageInput").value.trim();
- if(!text||!currentUser)return;
+/* GROUPS */
 
- $("sendBtn").disabled=true;
+async function loadGroups(){
 
- try{
-  if(currentMode==="private"&&activeChatId){
-   await addDoc(collection(db,"private_chats",activeChatId,"messages"),{
-    text,
-    senderId:currentUser.uid,
-    senderName:displayName(currentUser),
-    createdAt:serverTimestamp()
-   });
-  }else if(currentMode==="public"){
-   await addDoc(collection(db,"messages"),{
-    text,
-    senderId:currentUser.uid,
-    senderName:displayName(currentUser),
-    createdAt:serverTimestamp()
-   });
-  }else{
-   alert("Please select a conversation first.");
-   return;
-  }
+contactList.innerHTML="";
 
-  $("messageInput").value="";
- }catch(error){
-  console.error(error);
-  alert("Message could not be sent.");
- }finally{
-  $("sendBtn").disabled=false;
- }
+const heading=document.createElement("div");
+heading.className="pageContent";
+heading.innerHTML=`
+<div class="settingCard">
+<h3>Terzex Groups</h3>
+<p>Create groups and communicate with multiple people.</p>
+</div>
+<button class="formButton" id="createGroupBtn">＋ Create Group</button>
+`;
+contactList.appendChild(heading);
+
+$("createGroupBtn").addEventListener("click",createGroup);
+
+try{
+
+const q=query(collection(db,"groups"),
+where("members","array-contains",currentUser.uid));
+
+const snapshot=await getDocs(q);
+
+if(snapshot.empty){
+const empty=document.createElement("div");
+empty.className="empty";
+empty.textContent="You haven't joined any groups yet.";
+contactList.appendChild(empty);
+return;
+}
+
+snapshot.forEach(item=>{
+
+const group=item.data();
+
+contactList.appendChild(createRow(
+{name:group.name||"Terzex Group"},
+group.description||"Group conversation",
+()=>openGroup(item.id,group)
+));
+
 });
 
-function showSettings(){
- contactList.innerHTML=`
- <div class="pageContent">
-  <div class="settingCard"><h3>⚡ Terzex Settings</h3><p>Manage your Terzex Chat experience.</p></div>
-  <div class="settingCard"><h3>Appearance</h3><p>Black and gold theme is active.</p></div>
-  <div class="settingCard"><h3>Account Security</h3><p>Your account uses Firebase Authentication.</p></div>
-  <div class="settingCard"><h3>Privacy</h3><p>Your private conversations are available to their participants.</p></div>
-  <div class="settingCard"><h3>About Terzex</h3><p>Terzex Chat — Connect with everyone.</p></div>
- </div>`;
+}catch(error){
+console.error(error);
+contactList.innerHTML+=
+'<div class="empty">Could not load groups. Check Firebase rules.</div>';
 }
+}
+
+async function createGroup(){
+
+const name=prompt("Enter your group name:");
+if(!name||!name.trim())return;
+
+const description=prompt("Enter a group description:")||"";
+
+const membersInput=prompt(
+"Enter at least one other member's Firebase User UID. Separate multiple UIDs with commas."
+);
+
+if(!membersInput){
+alert("You need at least one other member UID to create a group.");
+return;
+}
+
+const members=[...new Set([
+currentUser.uid,
+...membersInput.split(",").map(x=>x.trim()).filter(Boolean)
+])];
+
+if(members.length<2){
+alert("A group needs at least two members.");
+return;
+}
+
+try{
+
+await addDoc(collection(db,"groups"),{
+name:name.trim(),
+description:description.trim(),
+createdBy:currentUser.uid,
+members,
+createdAt:serverTimestamp()
+});
+
+alert("Your group was created successfully!");
+loadGroups();
+
+}catch(error){
+console.error(error);
+alert("Could not create group. Check your Firestore rules and member UIDs.");
+}
+}
+
+function openGroup(groupId,group){
+
+clearChat();
+
+currentMode="group";
+activeGroupId=groupId;
+
+setChatHeader(
+group.name||"Terzex Group",
+"♧",
+"Group conversation"
+);
+
+openChatScreen();
+
+messages.innerHTML='<div class="empty">Loading group messages...</div>';
+
+const q=query(
+collection(db,"groups",groupId,"messages"),
+orderBy("createdAt","asc"),
+limit(100)
+);
+
+unsubscribeMessages=onSnapshot(q,snapshot=>{
+
+messages.innerHTML="";
+
+if(snapshot.empty){
+messages.innerHTML='<div class="empty">Start the group conversation!</div>';
+return;
+}
+
+snapshot.forEach(item=>showMessage(item.data()));
+
+},error=>{
+console.error(error);
+messages.innerHTML=
+'<div class="empty">Could not load group messages.</div>';
+});
+}
+
+
+/* CHANNELS */
+
+async function loadChannels(){
+
+contactList.innerHTML="";
+
+const heading=document.createElement("div");
+heading.className="pageContent";
+heading.innerHTML=`
+<div class="settingCard">
+<h3>Terzex Channels</h3>
+<p>Discover channels and share updates with your audience.</p>
+</div>
+<button class="formButton" id="createChannelBtn">＋ Create Channel</button>
+`;
+
+contactList.appendChild(heading);
+
+$("createChannelBtn").addEventListener("click",createChannel);
+
+try{
+
+const snapshot=await getDocs(collection(db,"channels"));
+
+if(snapshot.empty){
+const empty=document.createElement("div");
+empty.className="empty";
+empty.textContent="No channels available yet.";
+contactList.appendChild(empty);
+return;
+}
+
+snapshot.forEach(item=>{
+
+const channel=item.data();
+
+contactList.appendChild(createRow(
+{name:channel.name||"Terzex Channel"},
+channel.description||"Channel",
+()=>openChannel(item.id,channel)
+));
+
+});
+
+}catch(error){
+console.error(error);
+contactList.innerHTML+=
+'<div class="empty">Could not load channels.</div>';
+}
+}
+
+async function createChannel(){
+
+const name=prompt("Enter your channel name:");
+if(!name||!name.trim())return;
+
+const description=prompt("Enter your channel description:")||"";
+
+try{
+
+await addDoc(collection(db,"channels"),{
+name:name.trim(),
+description:description.trim(),
+ownerId:currentUser.uid,
+createdAt:serverTimestamp()
+});
+
+alert("Your channel was created successfully!");
+
+loadChannels();
+
+}catch(error){
+console.error(error);
+alert("Could not create channel.");
+}
+}
+
+function openChannel(channelId,channel){
+
+clearChat();
+
+currentMode="channel";
+activeChannelId=channelId;
+
+setChatHeader(
+channel.name||"Terzex Channel",
+"◈",
+"Channel posts"
+);
+
+openChatScreen();
+
+if(channel.ownerId===currentUser.uid){
+messageForm.style.display="flex";
+$("messageInput").placeholder="Write a channel post...";
+}else{
+messageForm.style.display="none";
+}
+
+messages.innerHTML='<div class="empty">Loading channel posts...</div>';
+
+const q=query(
+collection(db,"channels",channelId,"posts"),
+orderBy("createdAt","asc"),
+limit(100)
+);
+
+unsubscribeMessages=onSnapshot(q,snapshot=>{
+
+messages.innerHTML="";
+
+if(snapshot.empty){
+messages.innerHTML='<div class="empty">No channel posts yet.</div>';
+return;
+}
+
+snapshot.forEach(item=>showMessage(item.data()));
+
+},error=>{
+console.error(error);
+messages.innerHTML=
+'<div class="empty">Could not load channel posts.</div>';
+});
+}
+
+
+/* SEND MESSAGES */
+
+messageForm.addEventListener("submit",async event=>{
+
+event.preventDefault();
+
+const text=$("messageInput").value.trim();
+
+if(!text||!currentUser)return;
+
+$("sendBtn").disabled=true;
+
+const message={
+text,
+senderId:currentUser.uid,
+senderName:displayName(currentUser),
+createdAt:serverTimestamp()
+};
+
+try{
+
+if(currentMode==="private"&&activeChatId){
+
+await addDoc(
+collection(db,"private_chats",activeChatId,"messages"),
+message
+);
+
+}else if(currentMode==="public"){
+
+await addDoc(collection(db,"messages"),message);
+
+}else if(currentMode==="group"&&activeGroupId){
+
+await addDoc(
+collection(db,"groups",activeGroupId,"messages"),
+message
+);
+
+}else if(currentMode==="channel"&&activeChannelId){
+
+await addDoc(
+collection(db,"channels",activeChannelId,"posts"),
+message
+);
+
+}else{
+
+alert("Select a conversation first.");
+return;
+
+}
+
+$("messageInput").value="";
+
+}catch(error){
+
+console.error(error);
+alert("Message could not be sent. Check your Firebase rules.");
+
+}finally{
+
+$("sendBtn").disabled=false;
+
+}
+
+});
+
+
+/* PROFILE */
 
 function showProfile(){
- contactList.innerHTML="";
 
- const content=document.createElement("div");
- content.className="pageContent";
+contactList.innerHTML="";
 
- const card=document.createElement("div");
- card.className="settingCard";
+const content=document.createElement("div");
+content.className="pageContent";
 
- const avatar=document.createElement("div");
- avatar.className="avatar";
- avatar.style.cssText="width:85px;height:85px;margin:0 auto 18px;font-size:32px";
- avatar.textContent=initials(displayName(currentUser));
+const card=document.createElement("div");
+card.className="settingCard";
 
- const name=document.createElement("h3");
- name.style.textAlign="center";
- name.textContent=displayName(currentUser);
+card.innerHTML=`
+<h3>My Terzex Profile</h3>
+<div style="text-align:center;padding:15px">
+<div class="avatar" style="width:85px;height:85px;margin:auto;font-size:32px">
+${initials(displayName(currentUser))}
+</div>
+</div>
 
- const email=document.createElement("p");
- email.style.textAlign="center";
- email.textContent=currentUser.email||"No email available";
+<label class="formLabel">Full name</label>
+<input class="formInput" id="profileName" maxlength="60"
+placeholder="Your name">
 
- card.append(avatar,name,email);
- content.appendChild(card);
- contactList.appendChild(content);
+<label class="formLabel">Username</label>
+<input class="formInput" id="profileUsername" maxlength="30"
+placeholder="Your username">
+
+<label class="formLabel">Bio</label>
+<textarea class="formInput" id="profileBio" maxlength="160"
+placeholder="Tell people about yourself"></textarea>
+
+<label class="formLabel">Profile photo URL</label>
+<input class="formInput" id="profilePhoto" placeholder="https://...">
+
+<button class="formButton" id="saveProfileBtn">Save Profile</button>
+`;
+
+content.appendChild(card);
+contactList.appendChild(content);
+
+$("profileName").value=currentProfile.name||displayName(currentUser);
+$("profileUsername").value=currentProfile.username||"";
+$("profileBio").value=currentProfile.bio||"";
+$("profilePhoto").value=currentProfile.photoURL||"";
+
+$("saveProfileBtn").addEventListener("click",saveProfile);
 }
 
+async function saveProfile(){
+
+const name=$("profileName").value.trim();
+const username=$("profileUsername").value.trim().replace(/^@/,"").toLowerCase();
+const bio=$("profileBio").value.trim();
+const photoURL=$("profilePhoto").value.trim();
+
+if(!name){
+alert("Please enter your name.");
+return;
+}
+
+if(username&&!/^[a-z0-9_]{3,30}$/.test(username)){
+alert("Username must contain 3–30 letters, numbers or underscores.");
+return;
+}
+
+try{
+
+await setDoc(doc(db,"users",currentUser.uid),{
+uid:currentUser.uid,
+name,
+username,
+bio,
+photoURL,
+email:currentUser.email||"",
+online:true,
+updatedAt:serverTimestamp()
+},{merge:true});
+
+currentProfile={...currentProfile,name,username,bio,photoURL};
+
+alert("Your profile has been updated!");
+
+$("status").textContent="Welcome to Terzex Chat, "+name;
+
+showProfile();
+
+}catch(error){
+console.error(error);
+alert("Could not save profile. Check Firebase rules.");
+}
+}
+
+
+/* SETTINGS */
+
+function showSettings(){
+
+contactList.innerHTML=`
+<div class="pageContent">
+
+<div class="settingCard">
+<h3>⚡ Terzex Settings</h3>
+<p>Manage your Terzex Chat experience.</p>
+</div>
+
+<div class="settingCard">
+<h3>Appearance</h3>
+<p>Black and gold theme is active.</p>
+</div>
+
+<div class="settingCard">
+<h3>Account Security</h3>
+<p>Your account uses Firebase Authentication.</p>
+</div>
+
+<div class="settingCard">
+<h3>Privacy</h3>
+<p>Your private conversations are available to their participants.</p>
+</div>
+
+<div class="settingCard">
+<h3>Notifications</h3>
+<p>Notification settings will be added in a future update.</p>
+</div>
+
+<div class="settingCard">
+<h3>About Terzex</h3>
+<p>Terzex Chat — Connect with everyone.</p>
+</div>
+
+</div>`;
+}
+
+
+/* PAGE NAVIGATION */
+
 function changePage(page){
- if(layout.classList.contains("showChat")){
-  layout.classList.remove("showChat");
-  clearChat();
- }
 
- currentPage=page;
+if(layout.classList.contains("showChat")){
+layout.classList.remove("showChat");
+clearChat();
+}
 
- document.querySelectorAll(".navBtn").forEach(button=>{
-  button.classList.toggle("active",button.dataset.page===page);
- });
+currentPage=page;
 
- $("searchInput").value="";
+document.querySelectorAll(".navBtn").forEach(button=>{
+button.classList.toggle("active",button.dataset.page===page);
+});
 
- if(page==="chats"){
-  $("sidebarTitle").textContent="Chats";
-  $("searchInput").placeholder="Search Chats";
-  loadChats();
- }
+$("searchInput").value="";
 
- if(page==="contacts"){
-  $("sidebarTitle").textContent="Contacts";
-  $("searchInput").placeholder="Search Contacts";
-  renderContacts();
- }
+if(page==="chats"){
+$("sidebarTitle").textContent="Chats";
+$("searchInput").placeholder="Search Chats";
+loadChats();
+}
 
- if(page==="settings"){
-  $("sidebarTitle").textContent="Settings";
-  $("searchInput").placeholder="Search Settings";
-  showSettings();
- }
+if(page==="contacts"){
+$("sidebarTitle").textContent="Contacts";
+$("searchInput").placeholder="Search Contacts";
+renderContacts();
+}
 
- if(page==="profile"){
-  $("sidebarTitle").textContent="Profile";
-  $("searchInput").placeholder="Search Profile";
-  showProfile();
- }
+if(page==="groups"){
+$("sidebarTitle").textContent="Groups";
+$("searchInput").placeholder="Groups";
+loadGroups();
+}
+
+if(page==="channels"){
+$("sidebarTitle").textContent="Channels";
+$("searchInput").placeholder="Channels";
+loadChannels();
+}
+
+if(page==="profile"){
+$("sidebarTitle").textContent="Profile";
+$("searchInput").placeholder="Profile";
+showProfile();
+}
+
+if(page==="settings"){
+$("sidebarTitle").textContent="Settings";
+$("searchInput").placeholder="Settings";
+showSettings();
+}
+
 }
 
 document.querySelectorAll(".navBtn").forEach(button=>{
- button.addEventListener("click",()=>changePage(button.dataset.page));
+button.addEventListener("click",()=>{
+changePage(button.dataset.page);
 });
+});
+
+
+/* SEARCH */
 
 $("searchInput").addEventListener("input",()=>{
- if(currentPage==="contacts")renderContacts();
- if(currentPage==="chats")loadChats();
+
+if(currentPage==="contacts"){
+renderContacts();
+}
+
+if(currentPage==="chats"){
+loadChats();
+}
+
+if(currentPage==="groups"||currentPage==="channels"){
+const search=$("searchInput").value.toLowerCase();
+
+Array.from(contactList.querySelectorAll(".contact")).forEach(row=>{
+row.style.display=row.textContent.toLowerCase().includes(search)?"flex":"none";
+});
+}
+
 });
 
-$("newChatBtn").addEventListener("click",()=>changePage("contacts"));
+
+/* NEW CHAT BUTTON */
+
+$("newChatBtn").addEventListener("click",()=>{
+changePage("contacts");
+});
+
+
+/* BACK BUTTON */
 
 $("backBtn").addEventListener("click",()=>{
- layout.classList.remove("showChat");
- clearChat();
+layout.classList.remove("showChat");
+clearChat();
 });
+
+
+/* LOGOUT */
 
 $("logoutBtn").addEventListener("click",async()=>{
- await updatePresence(false);
 
- if(heartbeatTimer)clearInterval(heartbeatTimer);
- if(unsubscribeContacts)unsubscribeContacts();
- stopMessageListener();
+await updatePresence(false);
 
- try{
-  await signOut(auth);
-  window.location.href="/";
- }catch(error){
-  console.error(error);
-  alert("Logout failed.");
- }
+if(heartbeatTimer)clearInterval(heartbeatTimer);
+
+if(unsubscribeContacts)unsubscribeContacts();
+
+stopMessageListener();
+
+try{
+
+await signOut(auth);
+window.location.href="/";
+
+}catch(error){
+
+console.error(error);
+alert("Logout failed.");
+
+}
+
 });
 
+
+/* FIREBASE LOGIN CHECK */
+
 onAuthStateChanged(auth,async user=>{
- if(!user){
-  window.location.href="/";
-  return;
- }
 
- currentUser=user;
- $("status").textContent="Welcome to Terzex Chat, "+displayName(user);
+if(!user){
+window.location.href="/";
+return;
+}
 
- try{
-  await setDoc(doc(db,"users",user.uid),{
-   uid:user.uid,
-   name:displayName(user),
-   online:true,
-   lastSeen:serverTimestamp(),
-   updatedAt:serverTimestamp()
-  },{merge:true});
+currentUser=user;
 
-  startPresence();
-  loadContacts();
-  changePage("chats");
+try{
 
- }catch(error){
-  console.error(error);
-  $("status").textContent="Could not update profile. Check Firebase rules.";
- }
+const profileSnapshot=await getDocs(
+query(collection(db,"users"),where("uid","==",user.uid),limit(1))
+);
+
+if(!profileSnapshot.empty){
+currentProfile=profileSnapshot.docs[0].data();
+}
+
+await setDoc(doc(db,"users",user.uid),{
+uid:user.uid,
+name:displayName(user),
+email:user.email||"",
+online:true,
+lastSeen:serverTimestamp(),
+updatedAt:serverTimestamp()
+},{merge:true});
+
+$("status").textContent=
+"Welcome to Terzex Chat, "+displayName(user);
+
+startPresence();
+
+loadContacts();
+
+loadChats();
+
+}catch(error){
+
+console.error(error);
+
+$("status").textContent="Terzex Chat connected";
+
+}
+
 });
 
 </script>
