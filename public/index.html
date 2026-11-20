@@ -19,49 +19,123 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 20px;
     }
 
     .container {
-      width: 90%;
-      max-width: 400px;
-      padding: 30px;
-      background: #151515;
-      border: 1px solid #d4af37;
-      border-radius: 20px;
-      text-align: center;
+      width: 100%;
+      max-width: 420px;
+      background: #111;
+      border: 1px solid #b88a20;
+      border-radius: 18px;
+      padding: 28px 22px;
+      box-shadow: 0 0 25px #b88a2030;
     }
 
-    .logo {
-      font-size: 32px;
-      color: #d4af37;
+    h1 {
+      text-align: center;
+      color: #e0b33c;
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tabs button {
+      flex: 1;
+      background: #222;
+      color: white;
+      border: 1px solid #444;
+      padding: 12px 5px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .tabs button.active {
+      background: #d6a52e;
+      color: black;
+      border-color: #d6a52e;
       font-weight: bold;
     }
 
     input {
       width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      background: #222;
+      padding: 14px;
+      margin: 8px 0;
+      background: #202020;
       color: white;
       border: 1px solid #444;
-      border-radius: 8px;
+      border-radius: 9px;
+      outline: none;
+      font-size: 15px;
     }
 
-    button {
+    input:focus {
+      border-color: #d6a52e;
+    }
+
+    .main-btn {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
       margin-top: 12px;
-      background: #d4af37;
+      background: #d6a52e;
       color: black;
       border: none;
-      border-radius: 8px;
+      border-radius: 9px;
       font-weight: bold;
+      font-size: 15px;
       cursor: pointer;
     }
 
+    .main-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: #222;
+      color: #e0b33c;
+      border: 1px solid #555;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
     #message {
-      color: #d4af37;
+      text-align: center;
+      color: #e0b33c;
+      margin-top: 16px;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+    }
+
+    #recaptcha-container {
       margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .note {
+      color: #999;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 12px;
     }
   </style>
 </head>
@@ -69,61 +143,216 @@
 <body>
 
   <div class="container">
-    <div class="logo">⚡ TERZEX CHAT</div>
-    <p>Connect. Chat. Share.</p>
 
-    <input id="name" type="text" placeholder="Your name">
-    <input id="email" type="email" placeholder="Email address">
-    <input id="password" type="password" placeholder="Password">
+    <h1>TERZEX CHAT</h1>
+    <div class="subtitle">Connect. Chat. Share.</div>
 
-    <button id="register">CREATE ACCOUNT</button>
-    <button id="login">LOG IN</button>
+    <div class="tabs">
+      <button id="emailTab" class="active" type="button">
+        Email
+      </button>
 
-    <p id="message"></p>
+      <button id="phoneTab" type="button">
+        Phone Number
+      </button>
+    </div>
+
+    <!-- EMAIL SECTION -->
+
+    <div id="emailSection">
+
+      <input
+        type="text"
+        id="name"
+        placeholder="Your full name"
+      >
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Email address"
+        autocomplete="email"
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      >
+
+      <button class="main-btn" id="createBtn" type="button">
+        CREATE ACCOUNT
+      </button>
+
+      <button class="secondary-btn" id="loginBtn" type="button">
+        LOG IN
+      </button>
+
+    </div>
+
+    <!-- PHONE SECTION -->
+
+    <div id="phoneSection" class="hidden">
+
+      <input
+        type="text"
+        id="phoneName"
+        placeholder="Your name (for new accounts)"
+      >
+
+      <input
+        type="tel"
+        id="phoneNumber"
+        placeholder="+2348012345678"
+        autocomplete="tel"
+      >
+
+      <button class="main-btn" id="sendCodeBtn" type="button">
+        SEND VERIFICATION CODE
+      </button>
+
+      <div id="recaptcha-container"></div>
+
+      <div id="verificationSection" class="hidden">
+
+        <input
+          type="text"
+          id="verificationCode"
+          placeholder="Enter SMS verification code"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+        >
+
+        <button class="main-btn" id="verifyBtn" type="button">
+          VERIFY AND CONTINUE
+        </button>
+
+        <button class="secondary-btn" id="resendBtn" type="button">
+          RESEND CODE
+        </button>
+
+      </div>
+
+      <div class="note">
+        Enter your phone number with its country code.
+        For Nigeria, use +234 followed by your number.
+      </div>
+
+    </div>
+
+    <div id="message"></div>
+
   </div>
 
   <script type="module">
 
-    import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
 
     import {
       getAuth,
       createUserWithEmailAndPassword,
       signInWithEmailAndPassword,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+      updateProfile,
+      signInWithPhoneNumber,
+      RecaptchaVerifier
+    } from
+      "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
-    // FIREBASE CONFIGURATION
+
+    // FIREBASE CONFIG
+
     const firebaseConfig = {
-      apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
-  authDomain: "terzex-chat.firebaseapp.com",
-  projectId: "terzex-chat",
-  storageBucket: "terzex-chat.firebasestorage.app",
-  messagingSenderId: "439554401022",
-  appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
-  measurementId: "G-9BQYK88HN9"
+      apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELJ6o",
+      authDomain: "terzex-chat.firebaseapp.com",
+      projectId: "terzex-chat",
+      storageBucket: "terzex-chat.firebasestorage.app",
+      messagingSenderId: "439554401022",
+      appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
+      measurementId: "G-9BQYK88HN9"
     };
 
+
     // INITIALIZE FIREBASE
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+
+    // ELEMENTS
+
+    const emailTab = document.getElementById("emailTab");
+    const phoneTab = document.getElementById("phoneTab");
+
+    const emailSection = document.getElementById("emailSection");
+    const phoneSection = document.getElementById("phoneSection");
+
     const message = document.getElementById("message");
 
-    // CREATE ACCOUNT
-    document.getElementById("register").onclick = async () => {
+    let recaptchaVerifier = null;
+    let confirmationResult = null;
+
+
+    function showMessage(text) {
+      message.textContent = text;
+    }
+
+
+    function setLoading(button, loading, originalText) {
+      button.disabled = loading;
+      button.textContent = loading ? "PLEASE WAIT..." : originalText;
+    }
+
+
+    function showChat() {
+      window.location.href = "/chat.html";
+    }
+
+
+    // SWITCH TABS
+
+    emailTab.addEventListener("click", () => {
+      emailSection.classList.remove("hidden");
+      phoneSection.classList.add("hidden");
+
+      emailTab.classList.add("active");
+      phoneTab.classList.remove("active");
+
+      showMessage("");
+    });
+
+
+    phoneTab.addEventListener("click", () => {
+      phoneSection.classList.remove("hidden");
+      emailSection.classList.add("hidden");
+
+      phoneTab.classList.add("active");
+      emailTab.classList.remove("active");
+
+      showMessage("");
+    });
+
+
+    // CREATE EMAIL ACCOUNT
+
+    document.getElementById("createBtn").addEventListener("click", async () => {
+
+      const button = document.getElementById("createBtn");
 
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
       if (!name || !email || !password) {
-        message.textContent = "Please fill in all fields.";
+        showMessage("Please fill in your name, email and password.");
         return;
       }
 
       try {
+        setLoading(button, true, "CREATE ACCOUNT");
+        showMessage("Creating your account...");
+
         const result = await createUserWithEmailAndPassword(
           auth,
           email,
@@ -134,41 +363,193 @@
           displayName: name
         });
 
-        message.textContent = "Account created successfully!";
+        showMessage("Account created successfully!");
 
-        window.location.href = "/chat.html";
+        showChat();
 
       } catch (error) {
-        message.textContent = error.message;
+        showMessage(error.message);
+      } finally {
+        setLoading(button, false, "CREATE ACCOUNT");
       }
-    };
 
-    // LOGIN
-    document.getElementById("login").onclick = async () => {
+    });
+
+
+    // EMAIL LOGIN
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+
+      const button = document.getElementById("loginBtn");
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
       if (!email || !password) {
-        message.textContent = "Enter your email and password.";
+        showMessage("Enter your email and password.");
         return;
       }
 
       try {
+        setLoading(button, true, "LOG IN");
+        showMessage("Logging in...");
+
         await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
 
-        message.textContent = "Welcome to Terzex Chat!";
+        showMessage("Welcome to Terzex Chat!");
 
-        window.location.href = "/chat.html";
+        showChat();
 
       } catch (error) {
-        message.textContent = error.message;
+        showMessage(error.message);
+      } finally {
+        setLoading(button, false, "LOG IN");
       }
-    };
+
+    });
+
+
+    // CREATE RECAPTCHA
+
+    function createRecaptcha() {
+
+      if (recaptchaVerifier) {
+        recaptchaVerifier.clear();
+        recaptchaVerifier = null;
+      }
+
+      document.getElementById("recaptcha-container").innerHTML = "";
+
+      recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "normal",
+          callback: () => {
+            showMessage("Verification completed. You can request your code.");
+          },
+          "expired-callback": () => {
+            showMessage("Verification expired. Please try again.");
+          }
+        }
+      );
+
+      return recaptchaVerifier.render();
+    }
+
+
+    // SEND PHONE VERIFICATION CODE
+
+    async function sendPhoneCode() {
+
+      const button = document.getElementById("sendCodeBtn");
+
+      const phone = document.getElementById("phoneNumber").value.trim();
+
+      if (!phone.startsWith("+") || phone.length < 8) {
+        showMessage("Enter your full phone number with country code, e.g. +2348012345678.");
+        return;
+      }
+
+      try {
+        setLoading(button, true, "SEND VERIFICATION CODE");
+
+        showMessage("Preparing phone verification...");
+
+        const verifier = recaptchaVerifier || (
+          await createRecaptcha(),
+          recaptchaVerifier
+        );
+
+        confirmationResult = await signInWithPhoneNumber(
+          auth,
+          phone,
+          verifier
+        );
+
+        document.getElementById("verificationSection")
+          .classList.remove("hidden");
+
+        showMessage("Verification code sent. Check your SMS.");
+
+      } catch (error) {
+
+        showMessage(error.message);
+
+        if (recaptchaVerifier) {
+          recaptchaVerifier.clear();
+          recaptchaVerifier = null;
+        }
+
+      } finally {
+        setLoading(button, false, "SEND VERIFICATION CODE");
+      }
+
+    }
+
+
+    document.getElementById("sendCodeBtn")
+      .addEventListener("click", sendPhoneCode);
+
+
+    // VERIFY PHONE CODE
+
+    document.getElementById("verifyBtn").addEventListener("click", async () => {
+
+      const button = document.getElementById("verifyBtn");
+
+      const code = document.getElementById("verificationCode").value.trim();
+      const name = document.getElementById("phoneName").value.trim();
+
+      if (!confirmationResult) {
+        showMessage("Please request a verification code first.");
+        return;
+      }
+
+      if (!code) {
+        showMessage("Enter the verification code sent to your phone.");
+        return;
+      }
+
+      try {
+        setLoading(button, true, "VERIFY AND CONTINUE");
+
+        showMessage("Checking your verification code...");
+
+        const result = await confirmationResult.confirm(code);
+
+        if (name) {
+          await updateProfile(result.user, {
+            displayName: name
+          });
+        }
+
+        showMessage("Phone verified. Welcome to Terzex Chat!");
+
+        showChat();
+
+      } catch (error) {
+        showMessage(error.message);
+      } finally {
+        setLoading(button, false, "VERIFY AND CONTINUE");
+      }
+
+    });
+
+
+    // RESEND CODE
+
+    document.getElementById("resendBtn").addEventListener("click", async () => {
+
+      confirmationResult = null;
+
+      await sendPhoneCode();
+
+    });
 
   </script>
 
