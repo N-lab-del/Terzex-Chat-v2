@@ -137,7 +137,6 @@ textarea.form-input{min-height:90px;resize:vertical}
   <button type="submit" class="send-button">Send</button>
  </form>
 </section>
-
 <section class="page" id="contactsPage">
  <h2>Contacts</h2>
  <input class="form-input" id="contactPageSearch" placeholder="Find a person...">
@@ -317,8 +316,7 @@ function fillProfile(){
  $("profileEmail").textContent=currentUser.email||"";
  updateProfileDisplay();
 }
-
-function updateProfileDisplay(){
+ function updateProfileDisplay(){
  $("profileDisplayName").textContent=nameOf(currentProfile);
  const avatar=$("profileAvatar");
  avatar.innerHTML="";
@@ -446,9 +444,7 @@ function loadContacts(){
 
 $("contactSearch").addEventListener("input",e=>renderContacts(e.target.value));
 $("contactPageSearch").addEventListener("input",e=>renderContacts(e.target.value));
-
-
-/* CHAT DISPLAY */
+ /* CHAT DISPLAY */
 
 function showChatScreen(title,profile={}){
  $("welcomeScreen").style.display="none";
@@ -598,7 +594,7 @@ async function openPrivateChat(person){
    const participants=item.data().participants||[];
    if(participants.includes(person.id)&&participants.includes(currentUser.uid)){
     chatId=item.id;
-   }
+       }
   });
 
   if(!chatId){
@@ -748,8 +744,7 @@ function renderGroups(){
    $("sidebarList").appendChild(side);
   }
  });
-
- if(!allGroups.length){
+  if(!allGroups.length){
   $("groupsList").innerHTML='<div class="empty-state">No groups yet.</div>';
  }
 }
@@ -898,7 +893,7 @@ $("saveSettingsButton").onclick=async()=>{
   await setDoc(doc(db,"users",currentUser.uid),{
    showOnlineStatus:$("showOnlineStatus").checked,
    showLastSeen:$("showLastSeen").checked
-  },{merge:true});
+     },{merge:true});
   notice("Settings saved.");
  }catch(error){notice(error.message)}
 };
