@@ -233,33 +233,60 @@ function setMode(value){
  document.getElementById("identifier").placeholder=value==="login"?"Email address or username":"Enter your email";
 }
 
+// SAVE PRIVATE USER PROFILE AND PUBLIC TERZEX PROFILE
 async function saveProfile(user,extra={}){
+
  const ref=db.collection("users").doc(user.uid);
  const existing=await ref.get();
+ const oldData=existing.exists?existing.data():{};
 
+ const username=extra.username||oldData.username||"";
+ const displayName=extra.name||user.displayName||oldData.displayName||"Terzex User";
+ const photoURL=user.photoURL||oldData.photoURL||"";
+ const bio=oldData.bio||"";
+
+ // PRIVATE USER DOCUMENT
  const data={
   uid:user.uid,
-  email:user.email||null,
-  phoneNumber:user.phoneNumber||extra.phoneNumber||null,
+  email:user.email||oldData.email||null,
+  phoneNumber:user.phoneNumber||extra.phoneNumber||oldData.phoneNumber||null,
   lastSeen:firebase.firestore.FieldValue.serverTimestamp()
  };
 
  if(!existing.exists){
   data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
-  data.displayName=extra.name||user.displayName||"Terzex User";
-  data.username=extra.username||"";
-  data.usernameLower=(extra.username||"").toLowerCase();
-  data.photoURL=user.photoURL||"";
-  data.bio="";
+  data.displayName=displayName;
+  data.username=username;
+  data.usernameLower=username.toLowerCase();
+  data.photoURL=photoURL;
+  data.bio=bio;
  }else{
   if(extra.name)data.displayName=extra.name;
   if(extra.username){
    data.username=extra.username;
    data.usernameLower=extra.username.toLowerCase();
   }
+  if(user.photoURL)data.photoURL=user.photoURL;
  }
 
  await ref.set(data,{merge:true});
+
+ // PUBLIC TERZEX PROFILE
+ // This collection contains no email address or phone number.
+ // Public profile writes will start working after its Firestore rules are added.
+ try{
+  await db.collection("public_profiles").doc(user.uid).set({
+   uid:user.uid,
+   username:username,
+   usernameLower:username.toLowerCase(),
+   displayName:displayName,
+   photoURL:photoURL,
+   bio:bio,
+   updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+  },{merge:true});
+ }catch(publicProfileError){
+  console.warn("Public profile sync will be enabled after Firestore rules are updated:",publicProfileError);
+ }
 }
 
 function goToChat(){
