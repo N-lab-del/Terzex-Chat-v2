@@ -3,605 +3,250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#050505">
-<title>Terzex Chat - Dashboard</title>
+<meta name="theme-color" content="#090909">
+<title>Terzex Chat</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
-
-body{
- margin:0;
- background:#030303;
- color:white;
- font-family:Arial,sans-serif;
- min-height:100vh;
+:root{
+--bg:#090909;
+--panel:#141414;
+--panel2:#1d1d1d;
+--gold:#d8ad55;
+--gold2:#f3d28a;
+--text:#f7f7f7;
+--muted:#929292;
+--line:#292929;
 }
-
-.app{
- max-width:480px;
- margin:auto;
- min-height:100vh;
- background:#050505;
- padding-bottom:85px;
-}
-
-header{
- padding:20px 17px 12px;
- display:flex;
- align-items:center;
- justify-content:space-between;
-}
-
-.brand{
- color:#ffd34e;
- font-size:25px;
- font-weight:bold;
- text-shadow:0 0 12px #d99c24;
-}
-
-.header-actions{
- display:flex;
- gap:14px;
-}
-
-.icon{
- background:#151515;
- border:1px solid #76591f;
- border-radius:50%;
- width:39px;
- height:39px;
- color:#ffd34e;
- font-size:19px;
-}
-
-.search{
- margin:8px 15px 18px;
-}
-
-.search input{
- width:100%;
- padding:14px 18px;
- border-radius:30px;
- border:1px solid #55421e;
- background:#171717;
- color:white;
- outline:none;
- font-size:14px;
-}
-
-.search input:focus{
- border-color:#ffd34e;
-}
-
-.section-title{
- color:#ffd34e;
- font-size:16px;
- font-weight:bold;
- margin:20px 17px 12px;
-}
-
-.stories{
- display:flex;
- overflow-x:auto;
- gap:17px;
- padding:5px 15px 15px;
- scrollbar-width:none;
-}
-
-.story{
- flex:0 0 65px;
- text-align:center;
- font-size:12px;
- color:#ddd;
-}
-
-.story-ring{
- width:59px;
- height:59px;
- border-radius:50%;
- border:2px solid #eab52c;
- padding:3px;
- margin:auto auto 7px;
- display:flex;
- align-items:center;
- justify-content:center;
- background:#171717;
- color:#ffd34e;
- font-size:22px;
-}
-
-.story-ring img{
- width:100%;
- height:100%;
- object-fit:cover;
- border-radius:50%;
-}
-
-.online{
- border-color:#20d66b;
-}
-
-.chat-list{
- padding:0 13px;
-}
-
-.chat-item{
- display:flex;
- align-items:center;
- gap:12px;
- padding:13px 3px;
- border-bottom:1px solid #242018;
- cursor:pointer;
-}
-
-.avatar{
- width:53px;
- height:53px;
- flex-shrink:0;
- border-radius:50%;
- background:linear-gradient(135deg,#3a2800,#b58113);
- border:1px solid #d9aa35;
- display:flex;
- align-items:center;
- justify-content:center;
- font-size:23px;
- color:#ffd34e;
- font-weight:bold;
- overflow:hidden;
-}
-
-.avatar img{
- width:100%;
- height:100%;
- object-fit:cover;
-}
-
-.chat-info{
- flex:1;
- min-width:0;
-}
-
-.chat-name{
- font-size:15px;
- font-weight:bold;
- margin-bottom:7px;
-}
-
-.last-message{
- color:#999;
- font-size:12px;
- white-space:nowrap;
- overflow:hidden;
- text-overflow:ellipsis;
-}
-
-.chat-meta{
- text-align:right;
- font-size:11px;
- color:#aaa;
-}
-
-.badge{
- display:inline-flex;
- align-items:center;
- justify-content:center;
- min-width:19px;
- height:19px;
- border-radius:50%;
- background:#20d66b;
- color:black;
- font-weight:bold;
- margin-top:8px;
- padding:0 5px;
-}
-
-.empty{
- text-align:center;
- padding:35px 15px;
- color:#aaa;
- font-size:14px;
- line-height:1.7;
-}
-
-.empty strong{
- color:#ffd34e;
-}
-
-.bottom-nav{
- position:fixed;
- bottom:0;
- left:50%;
- transform:translateX(-50%);
- width:100%;
- max-width:480px;
- height:75px;
- background:#090909;
- border-top:1px solid #8a6827;
- display:flex;
- justify-content:space-around;
- align-items:center;
- z-index:10;
-}
-
-.nav-item{
- background:none;
- border:0;
- color:#999;
- font-size:11px;
- display:flex;
- flex-direction:column;
- align-items:center;
- gap:5px;
- cursor:pointer;
-}
-
-.nav-item span{
- font-size:21px;
-}
-
-.nav-item.active{
- color:#ffd34e;
-}
-
-.modal{
- display:none;
- position:fixed;
- inset:0;
- background:#000d;
- z-index:20;
- align-items:center;
- justify-content:center;
- padding:20px;
-}
-
-.modal-box{
- width:100%;
- max-width:380px;
- background:#101010;
- border:1px solid #d6a52c;
- border-radius:22px;
- padding:25px;
- box-shadow:0 0 25px #d99c2440;
-}
-
-.modal-box h2{
- color:#ffd34e;
-}
-
-.modal-box button{
- width:100%;
- padding:14px;
- margin-top:12px;
- border-radius:25px;
- border:1px solid #98752c;
- background:#191919;
- color:white;
-}
-
-.close{
- float:right;
- color:#ffd34e;
- background:none!important;
- border:none!important;
- width:auto!important;
- padding:0!important;
- margin:0!important;
-}
-
-.gold-button{
- background:linear-gradient(90deg,#d99b1b,#ffe16a)!important;
- color:#111!important;
- font-weight:bold;
-}
-
-.notice{
- color:#ffd34e;
- font-size:13px;
- text-align:center;
- margin-top:15px;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer}
+.app{max-width:760px;min-height:100vh;margin:auto;padding-bottom:90px;position:relative}
+header{padding:22px 19px 15px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:44px;height:44px;border-radius:14px;background:#000;border:1px solid #8e6a2c;display:grid;place-items:center;color:var(--gold2);font-size:28px;font-weight:800;box-shadow:0 0 18px #d8ad5520}
+.brand h1{font-size:21px}
+.brand p{font-size:10px;color:var(--gold);margin-top:4px;letter-spacing:1.5px}
+.header-actions{display:flex;gap:10px}
+.icon-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:13px;background:var(--panel);color:var(--gold2);font-size:19px}
+.search{margin:5px 17px 16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 15px;display:flex;gap:10px;align-items:center;color:var(--muted)}
+.search input{flex:1;background:none;border:0;outline:0;color:white;font-size:14px}
+.filters{display:flex;gap:9px;padding:0 17px 18px;overflow-x:auto}
+.filter{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:#aaa;padding:9px 15px;border-radius:30px;font-size:12px}
+.filter.active{background:#302515;color:var(--gold2);border-color:#8e6a2c}
+.section-title{padding:8px 19px 13px;display:flex;justify-content:space-between;align-items:center}
+.section-title h2{font-size:14px}
+.section-title span{font-size:11px;color:var(--gold)}
+.content{padding:0 17px}
+.empty{margin:12px 0 25px;padding:40px 20px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#151515,#0e0e0e);text-align:center}
+.empty-icon{width:65px;height:65px;border:1px solid #705526;background:#211a0e;border-radius:22px;display:grid;place-items:center;font-size:27px;color:var(--gold2);margin:0 auto 17px}
+.empty h3{font-size:16px;margin-bottom:8px}
+.empty p{color:var(--muted);font-size:12px;line-height:1.7;max-width:280px;margin:auto}
+.primary{margin-top:19px;border:0;border-radius:12px;padding:12px 19px;color:#171109;background:linear-gradient(110deg,var(--gold),var(--gold2));font-weight:700;font-size:12px}
+.tab-page{display:none}
+.tab-page.active{display:block}
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:5px 17px 20px}
+.feature{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px}
+.feature-icon{font-size:23px;color:var(--gold2);margin-bottom:13px}
+.feature h3{font-size:13px;margin-bottom:6px}
+.feature p{font-size:11px;color:var(--muted);line-height:1.5}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:760px;background:#111;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:10px 5px max(10px,env(safe-area-inset-bottom));z-index:10}
+.nav-item{background:none;border:0;color:#777;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;padding:4px}
+.nav-icon{font-size:20px}
+.nav-item.active{color:var(--gold2)}
+.floating{position:fixed;right:max(20px,calc((100vw - 720px)/2));z-index:8;width:53px;height:53px;border-radius:18px;border:1px solid #a47b36;background:linear-gradient(145deg,#292012,#100e0a);color:var(--gold2);font-size:25px;box-shadow:0 5px 25px #0009,0 0 17px #d8ad5520}
+.ai-button{bottom:164px;font-size:21px}
+.plus-button{bottom:98px;font-size:28px}
+.overlay{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.modal{width:100%;max-width:390px;background:#171717;border:1px solid #554222;border-radius:21px;padding:23px;box-shadow:0 15px 60px #000b}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:19px}
+.modal h2{font-size:17px}
+.close{background:#292929;border:0;color:white;width:32px;height:32px;border-radius:10px}
+.action{width:100%;display:flex;align-items:center;gap:13px;padding:14px 11px;border:0;border-bottom:1px solid #292929;background:transparent;color:white;text-align:left}
+.action:last-child{border-bottom:0}
+.action-icon{width:38px;height:38px;border-radius:12px;background:#292012;color:var(--gold2);display:grid;place-items:center;font-size:18px}
+.action strong{font-size:13px;display:block}
+.action small{color:var(--muted);font-size:10px;display:block;margin-top:4px}
+.notice{font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px}
+@media(min-width:600px){.app{border-left:1px solid #1c1c1c;border-right:1px solid #1c1c1c}}
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
 <header>
- <div class="brand">Terzex Chat</div>
-
- <div class="header-actions">
-  <button class="icon" onclick="openFeature('Camera')">◎</button>
-  <button class="icon" onclick="openFeature('More options')">⋮</button>
- </div>
+<div class="brand">
+<div class="logo">T</div>
+<div>
+<h1>Terzex Chat</h1>
+<p>CONNECT WITHOUT BORDERS</p>
+</div>
+</div>
+<div class="header-actions">
+<button class="icon-btn" onclick="showNotice('Camera')">▣</button>
+<button class="icon-btn" onclick="showMenu()">⋮</button>
+</div>
 </header>
 
 <div class="search">
- <input
-  id="searchInput"
-  type="search"
-  placeholder="⌕  Search chats..."
-  oninput="filterChats()">
+<span>⌕</span>
+<input id="searchInput" placeholder="Search messages and people...">
 </div>
 
-<div class="section-title">Stories & Status</div>
-
-<div class="stories">
-
- <div class="story" onclick="openFeature('My Story')">
-  <div class="story-ring">＋</div>
-  My Story
- </div>
-
- <div class="story">
-  <div class="story-ring online">T</div>
-  Sarah
- </div>
-
- <div class="story">
-  <div class="story-ring online">M</div>
-  Mike
- </div>
-
- <div class="story">
-  <div class="story-ring">B</div>
-  Bella
- </div>
-
- <div class="story">
-  <div class="story-ring">D</div>
-  David
- </div>
-
+<div class="filters" id="chatFilters">
+<button class="filter active" onclick="setFilter(this)">All</button>
+<button class="filter" onclick="setFilter(this)">Unread</button>
+<button class="filter" onclick="setFilter(this)">Favorites</button>
+<button class="filter" onclick="setFilter(this)">Groups</button>
 </div>
 
-<div class="section-title">Recent Chats</div>
-
-<div class="chat-list" id="chatList">
-
- <div class="empty" id="loading">
-  <strong>ϟ Terzex Chat</strong><br>
-  Loading your conversations...
- </div>
-
+<section class="tab-page active" id="chatsPage">
+<div class="section-title"><h2>Messages</h2><span>YOUR CONVERSATIONS</span></div>
+<div class="content">
+<div class="empty">
+<div class="empty-icon">✉</div>
+<h3>Your chats will appear here</h3>
+<p>Start connecting with friends and people around the world on Terzex Chat.</p>
+<button class="primary" onclick="openNewChat()">＋ Start New Chat</button>
 </div>
-
 </div>
+</section>
+
+<section class="tab-page" id="updatesPage">
+<div class="section-title"><h2>Updates</h2><span>STATUS & CHANNELS</span></div>
+<div class="feature-grid">
+<div class="feature" onclick="showNotice('Add Status')"><div class="feature-icon">＋</div><h3>My Status</h3><p>Share a moment with your contacts.</p></div>
+<div class="feature" onclick="showNotice('Channels')"><div class="feature-icon">◉</div><h3>Discover Channels</h3><p>Follow updates from channels.</p></div>
+</div>
+<div class="content"><div class="empty"><div class="empty-icon">◉</div><h3>Stay updated</h3><p>Status updates and channels will appear here.</p></div></div>
+</section>
+
+<section class="tab-page" id="communitiesPage">
+<div class="section-title"><h2>Communities</h2><span>BRING PEOPLE TOGETHER</span></div>
+<div class="content">
+<div class="empty">
+<div class="empty-icon">♧</div>
+<h3>Find your community</h3>
+<p>Create communities and bring groups of people together around shared interests.</p>
+<button class="primary" onclick="showNotice('Create Community')">＋ New Community</button>
+</div>
+</div>
+</section>
+
+<section class="tab-page" id="callsPage">
+<div class="section-title"><h2>Calls</h2><span>VOICE & VIDEO</span></div>
+<div class="feature-grid">
+<div class="feature" onclick="showNotice('Voice Call')"><div class="feature-icon">☎</div><h3>Voice Call</h3><p>Talk with people anywhere.</p></div>
+<div class="feature" onclick="showNotice('Video Call')"><div class="feature-icon">▣</div><h3>Video Call</h3><p>Connect face to face.</p></div>
+</div>
+<div class="content"><div class="empty"><div class="empty-icon">☎</div><h3>No recent calls</h3><p>Your call history will appear here.</p></div></div>
+</section>
+
+<button class="floating ai-button" onclick="openAI()" aria-label="Terzex AI">✧</button>
+<button class="floating plus-button" onclick="showMenu()" aria-label="Quick actions">＋</button>
 
 <nav class="bottom-nav">
-
- <button class="nav-item active" onclick="navigate('Chats')">
-  <span>💬</span>Chats
- </button>
-
- <button class="nav-item" onclick="navigate('Calls')">
-  <span>📞</span>Calls
- </button>
-
- <button class="nav-item" onclick="navigate('Communities')">
-  <span>👥</span>Communities
- </button>
-
- <button class="nav-item" onclick="navigate('Status')">
-  <span>◉</span>Status
- </button>
-
- <button class="nav-item" onclick="navigate('Settings')">
-  <span>⚙</span>Settings
- </button>
-
+<button class="nav-item active" onclick="switchTab('chats',this)"><span class="nav-icon">▤</span>Chats</button>
+<button class="nav-item" onclick="switchTab('updates',this)"><span class="nav-icon">◉</span>Updates</button>
+<button class="nav-item" onclick="switchTab('communities',this)"><span class="nav-icon">♧</span>Communities</button>
+<button class="nav-item" onclick="switchTab('calls',this)"><span class="nav-icon">☎</span>Calls</button>
 </nav>
+</div>
 
-<div class="modal" id="featureModal">
- <div class="modal-box">
-  <button class="close" onclick="closeModal()">✕</button>
-  <h2 id="modalTitle">Terzex Chat</h2>
-  <p id="modalText">
-   Welcome to Terzex Chat.
-  </p>
-  <button class="gold-button" onclick="closeModal()">Continue</button>
- </div>
+<div class="overlay" id="menuOverlay" onclick="outsideClose(event,'menuOverlay')">
+<div class="modal">
+<div class="modal-head"><h2>Quick Actions</h2><button class="close" onclick="closeModal('menuOverlay')">✕</button></div>
+<button class="action" onclick="openNewChat()"><span class="action-icon">✉</span><span><strong>New Chat</strong><small>Start a conversation</small></span></button>
+<button class="action" onclick="showNotice('Create Group')"><span class="action-icon">♧</span><span><strong>New Group</strong><small>Chat with multiple people</small></span></button>
+<button class="action" onclick="showNotice('Create Channel')"><span class="action-icon">◉</span><span><strong>New Channel</strong><small>Share updates with followers</small></span></button>
+<button class="action" onclick="showNotice('Add Status')"><span class="action-icon">＋</span><span><strong>Add Status</strong><small>Share a moment</small></span></button>
+<button class="action" onclick="showNotice('Create Community')"><span class="action-icon">♧</span><span><strong>New Community</strong><small>Bring people together</small></span></button>
+<button class="action" onclick="showNotice('Video Call')"><span class="action-icon">▣</span><span><strong>Video Call</strong><small>Start a video call</small></span></button>
+</div>
+</div>
+
+<div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')">
+<div class="modal">
+<div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div>
+<div class="empty-icon">✧</div>
+<p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p>
+<button class="primary" onclick="closeModal('noticeOverlay')">Okay</button>
+</div>
+</div>
+
+<div class="overlay" id="newChatOverlay" onclick="outsideClose(event,'newChatOverlay')">
+<div class="modal">
+<div class="modal-head"><h2>Start a New Chat</h2><button class="close" onclick="closeModal('newChatOverlay')">✕</button></div>
+<p class="notice">Search for someone by username or email. Contact search will be connected when the user directory is implemented.</p>
+<input id="newChatInput" placeholder="Enter username or email" style="width:100%;padding:14px;background:#090909;border:1px solid #393939;border-radius:11px;color:white;margin-top:16px">
+<button class="primary" onclick="showNotice('Contact Search')">Continue</button>
+</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-
-// USE THE SAME FIREBASE CONFIGURATION
-// FROM YOUR EXISTING index.html FILE.
-
 const firebaseConfig = {
- apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
- authDomain: "terzex-chat.firebaseapp.com",
- projectId: "terzex-chat",
- storageBucket: "terzex-chat.firebasestorage.app",
- messagingSenderId: "439554401022",
- appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
- measurementId: "G-9BQYK88HN9"
+apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
+authDomain: "terzex-chat.firebaseapp.com",
+projectId: "terzex-chat",
+storageBucket: "terzex-chat.firebasestorage.app",
+messagingSenderId: "439554401022",
+appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
+measurementId: "G-9BQYK88HN9"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
-const db = firebase.firestore();
 
-let currentUser = null;
-let allChats = [];
-
-function showModal(title,text){
- document.getElementById("modalTitle").textContent=title;
- document.getElementById("modalText").textContent=text;
- document.getElementById("featureModal").style.display="flex";
-}
-
-function closeModal(){
- document.getElementById("featureModal").style.display="none";
-}
-
-function openFeature(name){
- showModal(name,name+" is part of the Terzex Chat platform. We're building this feature in stages.");
-}
-
-function navigate(name){
-
- document.querySelectorAll(".nav-item").forEach(item=>{
-  item.classList.remove("active");
- });
-
- event.currentTarget.classList.add("active");
-
- if(name==="Chats"){
-  return;
- }
-
- const descriptions={
-  Calls:"Voice and video calling.",
-  Communities:"Groups, channels and communities.",
-  Status:"Stories and status updates.",
-  Settings:"Your profile, privacy and account settings."
- };
-
- showModal(name,descriptions[name]);
-}
-
-function filterChats(){
-
- const value=document.getElementById("searchInput").value.toLowerCase();
-
- document.querySelectorAll(".chat-item").forEach(item=>{
-  item.style.display=item.dataset.search.includes(value)?"flex":"none";
- });
-
-}
-
-function renderChats(chats){
-
- const container=document.getElementById("chatList");
-
- if(chats.length===0){
-  container.innerHTML=`
-   <div class="empty">
-    <strong>Welcome to Terzex Chat!</strong><br><br>
-    Your conversations will appear here.<br>
-    Start connecting with people around the world.
-   </div>`;
-  return;
- }
-
- container.innerHTML="";
-
- chats.forEach(chat=>{
-
-  const data=chat.data;
-  const name=data.name||data.title||"Terzex Conversation";
-  const last=data.lastMessage||"Start a conversation";
-  const time=data.lastMessageTime?.toDate?
-   data.lastMessageTime.toDate().toLocaleTimeString([],{
-    hour:"2-digit",minute:"2-digit"
-   }):"";
-
-  const item=document.createElement("div");
-  item.className="chat-item";
-  item.dataset.search=name.toLowerCase()+" "+last.toLowerCase();
-
-  const avatar=document.createElement("div");
-  avatar.className="avatar";
-  avatar.textContent=name.charAt(0).toUpperCase();
-
-  const info=document.createElement("div");
-  info.className="chat-info";
-
-  const chatName=document.createElement("div");
-  chatName.className="chat-name";
-  chatName.textContent=name;
-
-  const message=document.createElement("div");
-  message.className="last-message";
-  message.textContent=last;
-
-  info.append(chatName,message);
-
-  const meta=document.createElement("div");
-  meta.className="chat-meta";
-  meta.textContent=time;
-
-  item.append(avatar,info,meta);
-
-  item.onclick=()=>{
-   showModal(name,"Conversation selected. We'll connect this to the full messaging screen next.");
-  };
-
-  container.appendChild(item);
-
- });
-
-}
-
-auth.onAuthStateChanged(async user=>{
-
- if(!user){
-  window.location.href="index.html";
-  return;
- }
-
- currentUser=user;
-
- try{
-
-  const profile=await db.collection("users").doc(user.uid).get();
-
-  if(profile.exists){
-   const data=profile.data();
-   const display=data.displayName||user.displayName||"";
-   document.querySelector(".brand").textContent=
-    display? "Terzex Chat":"Terzex Chat";
-  }
-
-  // Expected chat structure:
-  // chats/{chatId}
-  // participants: [userUid1, userUid2]
-  // name: "Chat name"
-  // lastMessage: "Latest message"
-  // lastMessageTime: Firestore Timestamp
-
-  db.collection("chats")
-   .where("participants","array-contains",user.uid)
-   .onSnapshot(snapshot=>{
-
-    allChats=snapshot.docs.map(doc=>({
-     id:doc.id,
-     data:doc.data()
-    }));
-
-    renderChats(allChats);
-
-   },error=>{
-
-    document.getElementById("chatList").innerHTML=`
-     <div class="empty">
-      Your dashboard is ready.<br><br>
-      <strong>Chat database connection needs checking.</strong><br>
-      ${error.code||"Connection error"}
-     </div>`;
-
-   });
-
- }catch(error){
-
-  document.getElementById("chatList").innerHTML=`
-   <div class="empty">
-    Dashboard loaded.<br>
-    Profile information could not be loaded.
-   </div>`;
-
- }
-
+auth.onAuthStateChanged(function(user){
+if(!user) window.location.href="index.html";
 });
 
-</script>
+function switchTab(tab,button){
+document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+document.getElementById(tab+'Page').classList.add('active');
+button.classList.add('active');
+document.getElementById('chatFilters').style.display=tab==='chats'?'flex':'none';
+}
 
+function showMenu(){document.getElementById('menuOverlay').classList.add('show')}
+
+function openNewChat(){
+closeModal('menuOverlay');
+document.getElementById('newChatOverlay').classList.add('show');
+}
+
+function openAI(){
+document.getElementById('noticeTitle').textContent='Terzex AI — Coming Soon';
+document.getElementById('noticeText').textContent='Your official Terzex AI assistant is coming soon. It will help with questions, writing, translation, summaries and more.';
+document.getElementById('noticeOverlay').classList.add('show');
+}
+
+function showNotice(name){
+closeModal('menuOverlay');
+closeModal('newChatOverlay');
+document.getElementById('noticeTitle').textContent=name+' — Coming Soon';
+document.getElementById('noticeText').textContent='We are preparing this feature for Terzex Chat. It is not active yet.';
+document.getElementById('noticeOverlay').classList.add('show');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+
+function outsideClose(event,id){
+if(event.target.id===id)closeModal(id);
+}
+
+function setFilter(button){
+document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+button.classList.add('active');
+}
+</script>
 </body>
 </html>
