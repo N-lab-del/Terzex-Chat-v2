@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<title>Terzex Chat — Connect Without Borders</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ min-height:100vh;
+ background:
+ radial-gradient(ellipse at 50% 38%,#302000 0%,#100c04 30%,#050505 72%);
+ color:#fff;
+ font-family:Arial,sans-serif;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow-x:hidden;
+}
+
+.screen{
+ width:100%;
+ max-width:460px;
+ min-height:100vh;
+ padding:35px 25px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ position:relative;
+}
+
+.globe{
+ position:absolute;
+ top:12%;
+ width:270px;
+ height:270px;
+ border-radius:50%;
+ border:1px solid rgba(255,194,45,.12);
+ box-shadow:0 0 75px rgba(255,184,0,.13),
+ inset 0 0 65px rgba(255,184,0,.09);
+ background:
+ radial-gradient(circle,rgba(255,190,0,.12),transparent 68%);
+}
+
+.logo{
+ position:relative;
+ z-index:2;
+ width:150px;
+ height:150px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ margin-bottom:25px;
+ border-radius:38px;
+ border:1px solid rgba(255,205,75,.5);
+ background:linear-gradient(145deg,#17130a,#050505);
+ box-shadow:0 0 35px rgba(255,190,0,.25),
+ inset 0 0 25px rgba(255,190,0,.12);
+}
+
+.logo span{
+ font-size:115px;
+ line-height:1;
+ font-weight:900;
+ color:#ffd15b;
+ text-shadow:0 0 12px #ffbd27,0 0 38px #d99000;
+ transform:skew(-8deg);
+}
+
+h1{
+ margin:0;
+ font-size:39px;
+ letter-spacing:2px;
+ font-weight:800;
+}
+
+h1 span{color:#f5bd43}
+
+.tagline{
+ color:#e4bd69;
+ font-size:18px;
+ letter-spacing:2px;
+ margin-top:13px;
+}
+
+.description{
+ color:#aaa;
+ font-size:14px;
+ line-height:1.8;
+ max-width:310px;
+ margin:22px auto 30px;
+}
+
+.features{
+ display:flex;
+ justify-content:center;
+ gap:13px;
+ flex-wrap:wrap;
+ color:#e9c36c;
+ font-size:12px;
+ margin-bottom:42px;
+}
+
+.features span{
+ border:1px solid #55421c;
+ border-radius:30px;
+ padding:9px 13px;
+ background:#100d07;
+}
+
+.start{
+ width:100%;
+ max-width:330px;
+ padding:18px;
+ border:0;
+ border-radius:40px;
+ background:linear-gradient(100deg,#b77a12,#ffdc78,#d69a27);
+ color:#130d02;
+ font-size:17px;
+ font-weight:800;
+ letter-spacing:1px;
+ cursor:pointer;
+ box-shadow:0 0 28px rgba(255,190,50,.3);
+ transition:.2s;
+}
+
+.start:active{transform:scale(.97)}
+
+.footer{
+ color:#666;
+ font-size:11px;
+ margin-top:35px;
+ letter-spacing:1px;
+}
+
+@media(min-width:700px){
+ .screen{min-height:100vh}
+ .logo{width:165px;height:165px}
+ h1{font-size:46px}
+}
+</style>
+</head>
+
+<body>
+<main class="screen">
+
+ <div class="globe"></div>
+
+ <div class="logo">
+  <span>ϟ</span>
+ </div>
+
+ <h1>TERZEX <span>CHAT</span></h1>
+
+ <div class="tagline">Connect Without Borders</div>
+
+ <p class="description">
+  One world. One connection.
+  Chat, call, share and explore with people
+  everywhere.
+ </p>
+
+ <div class="features">
+  <span>CHAT</span>
+  <span>CALL</span>
+  <span>SHARE</span>
+  <span>EXPLORE</span>
+ </div>
+
+ <button class="start" onclick="location.href='index.html'">
+  GET STARTED&nbsp; → 
+ </button>
+
+ <div class="footer">© 2026 TERZEX CHAT</div>
+
+</main>
+</body>
+</html>
