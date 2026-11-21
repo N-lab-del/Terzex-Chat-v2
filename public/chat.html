@@ -2,187 +2,791 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090909">
 <title>Terzex Chat</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
---bg:#090909;
---panel:#141414;
---panel2:#1d1d1d;
---gold:#d8ad55;
---gold2:#f3d28a;
---text:#f7f7f7;
---muted:#929292;
---line:#292929;
+:root {
+  --bg:#090909;
+  --card:#151515;
+  --card2:#1c1c1c;
+  --gold:#d9ad57;
+  --gold-light:#ffe0a0;
+  --white:#f8f8f8;
+  --muted:#898989;
+  --line:#292929;
+  --green:#25c76a;
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;min-height:100vh}
-button{font:inherit;cursor:pointer}
-.app{max-width:760px;min-height:100vh;margin:auto;padding-bottom:90px;position:relative}
-header{padding:22px 19px 15px;display:flex;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:11px}
-.logo{width:44px;height:44px;border-radius:14px;background:#000;border:1px solid #8e6a2c;display:grid;place-items:center;color:var(--gold2);font-size:28px;font-weight:800;box-shadow:0 0 18px #d8ad5520}
-.brand h1{font-size:21px}
-.brand p{font-size:10px;color:var(--gold);margin-top:4px;letter-spacing:1.5px}
-.header-actions{display:flex;gap:10px}
-.icon-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:13px;background:var(--panel);color:var(--gold2);font-size:19px}
-.search{margin:5px 17px 16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 15px;display:flex;gap:10px;align-items:center;color:var(--muted)}
-.search input{flex:1;background:none;border:0;outline:0;color:white;font-size:14px}
-.filters{display:flex;gap:9px;padding:0 17px 18px;overflow-x:auto}
-.filter{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:#aaa;padding:9px 15px;border-radius:30px;font-size:12px}
-.filter.active{background:#302515;color:var(--gold2);border-color:#8e6a2c}
-.section-title{padding:8px 19px 13px;display:flex;justify-content:space-between;align-items:center}
-.section-title h2{font-size:14px}
-.section-title span{font-size:11px;color:var(--gold)}
-.content{padding:0 17px}
-.empty{margin:12px 0 25px;padding:40px 20px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#151515,#0e0e0e);text-align:center}
-.empty-icon{width:65px;height:65px;border:1px solid #705526;background:#211a0e;border-radius:22px;display:grid;place-items:center;font-size:27px;color:var(--gold2);margin:0 auto 17px}
-.empty h3{font-size:16px;margin-bottom:8px}
-.empty p{color:var(--muted);font-size:12px;line-height:1.7;max-width:280px;margin:auto}
-.primary{margin-top:19px;border:0;border-radius:12px;padding:12px 19px;color:#171109;background:linear-gradient(110deg,var(--gold),var(--gold2));font-weight:700;font-size:12px}
+
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:Inter,Arial,sans-serif;
+  min-height:100vh;
+}
+
+button{font-family:inherit;cursor:pointer}
+
+.app{
+  max-width:760px;
+  min-height:100vh;
+  margin:auto;
+  padding-bottom:100px;
+  position:relative;
+}
+
+/* HEADER */
+
+header{
+  padding:22px 19px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo{
+  width:47px;
+  height:47px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg,#211a0c,#050505);
+  border:1px solid #a27b38;
+  color:var(--gold-light);
+  font-size:29px;
+  font-weight:800;
+  box-shadow:0 0 20px #d9ad5520;
+}
+
+.brand h1{
+  font-size:21px;
+  font-weight:800;
+  letter-spacing:-.5px;
+}
+
+.brand p{
+  color:var(--gold);
+  font-size:9px;
+  letter-spacing:2px;
+  margin-top:5px;
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  color:var(--gold-light);
+  font-size:22px;
+}
+
+.header-actions{
+  display:flex;
+  gap:9px;
+}
+
+/* WELCOME CARD */
+
+.welcome{
+  margin:0 17px 19px;
+  padding:20px;
+  border:1px solid #66502c;
+  border-radius:19px;
+  background:
+    radial-gradient(circle at 90% 0%,#6b4c1d35,transparent 45%),
+    linear-gradient(120deg,#1d1911,#111);
+  position:relative;
+  overflow:hidden;
+}
+
+.welcome h2{
+  font-size:19px;
+  margin-bottom:8px;
+}
+
+.welcome p{
+  font-size:12px;
+  line-height:1.6;
+  color:#aaa;
+  max-width:260px;
+}
+
+.welcome .gold-text{
+  color:var(--gold-light);
+}
+
+.welcome-mark{
+  position:absolute;
+  right:19px;
+  top:17px;
+  font-size:48px;
+  color:#d9ad5540;
+}
+
+/* SEARCH */
+
+.search{
+  margin:0 17px 17px;
+  padding:14px 15px;
+  border:1px solid var(--line);
+  background:var(--card);
+  border-radius:15px;
+  display:flex;
+  gap:11px;
+  align-items:center;
+}
+
+.search span{
+  font-size:20px;
+  color:var(--gold);
+}
+
+.search input{
+  flex:1;
+  background:none;
+  border:0;
+  outline:0;
+  color:white;
+  font-size:13px;
+}
+
+/* FILTERS */
+
+.filters{
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  padding:0 17px 19px;
+  scrollbar-width:none;
+}
+
+.filter{
+  flex-shrink:0;
+  padding:9px 16px;
+  background:var(--card);
+  border:1px solid var(--line);
+  color:#aaa;
+  border-radius:30px;
+  font-size:11px;
+}
+
+.filter.active{
+  background:#352817;
+  border-color:var(--gold);
+  color:var(--gold-light);
+}
+
+/* SECTION */
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:5px 19px 14px;
+}
+
+.section-title h2{
+  font-size:15px;
+  font-weight:700;
+}
+
+.section-title span{
+  font-size:9px;
+  letter-spacing:1px;
+  color:var(--gold);
+}
+
 .tab-page{display:none}
 .tab-page.active{display:block}
-.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:5px 17px 20px}
-.feature{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px}
-.feature-icon{font-size:23px;color:var(--gold2);margin-bottom:13px}
-.feature h3{font-size:13px;margin-bottom:6px}
-.feature p{font-size:11px;color:var(--muted);line-height:1.5}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:760px;background:#111;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:10px 5px max(10px,env(safe-area-inset-bottom));z-index:10}
-.nav-item{background:none;border:0;color:#777;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;padding:4px}
-.nav-icon{font-size:20px}
-.nav-item.active{color:var(--gold2)}
-.floating{position:fixed;right:max(20px,calc((100vw - 720px)/2));z-index:8;width:53px;height:53px;border-radius:18px;border:1px solid #a47b36;background:linear-gradient(145deg,#292012,#100e0a);color:var(--gold2);font-size:25px;box-shadow:0 5px 25px #0009,0 0 17px #d8ad5520}
-.ai-button{bottom:164px;font-size:21px}
-.plus-button{bottom:98px;font-size:28px}
-.overlay{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:center;justify-content:center;padding:20px}
+
+/* EMPTY STATES */
+
+.empty{
+  margin:0 17px 20px;
+  padding:39px 20px;
+  text-align:center;
+  background:linear-gradient(145deg,#181818,#101010);
+  border:1px solid var(--line);
+  border-radius:20px;
+}
+
+.empty-icon{
+  width:70px;
+  height:70px;
+  margin:0 auto 18px;
+  border-radius:23px;
+  display:grid;
+  place-items:center;
+  font-size:29px;
+  color:var(--gold-light);
+  background:#2b2111;
+  border:1px solid #775b2d;
+  box-shadow:0 0 20px #d9ad5510;
+}
+
+.empty h3{
+  font-size:16px;
+  margin-bottom:9px;
+}
+
+.empty p{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.7;
+  max-width:280px;
+  margin:auto;
+}
+
+.primary{
+  margin-top:20px;
+  padding:13px 20px;
+  border:0;
+  border-radius:12px;
+  color:#171109;
+  background:linear-gradient(110deg,var(--gold),var(--gold-light));
+  font-size:12px;
+  font-weight:800;
+}
+
+/* FEATURE CARDS */
+
+.feature-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  padding:0 17px 20px;
+}
+
+.feature{
+  background:linear-gradient(145deg,#1b1b1b,#111);
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:19px 15px;
+}
+
+.feature-icon{
+  font-size:26px;
+  color:var(--gold-light);
+  margin-bottom:15px;
+}
+
+.feature h3{
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.feature p{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.6;
+}
+
+/* FLOATING BUTTONS */
+
+.floating{
+  position:fixed;
+  right:max(20px,calc((100vw - 720px)/2));
+  width:55px;
+  height:55px;
+  border-radius:19px;
+  z-index:8;
+  background:linear-gradient(145deg,#302310,#100e0a);
+  border:1px solid #a47b36;
+  color:var(--gold-light);
+  box-shadow:0 5px 25px #000b,0 0 20px #d9ad5520;
+}
+
+.ai-button{
+  bottom:165px;
+  font-size:25px;
+}
+
+.plus-button{
+  bottom:98px;
+  font-size:30px;
+}
+
+/* BOTTOM NAVIGATION */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:760px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  background:#111;
+  border-top:1px solid var(--line);
+  padding:11px 5px max(12px,env(safe-area-inset-bottom));
+  z-index:10;
+}
+
+.nav-item{
+  background:none;
+  border:0;
+  color:#777;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  font-size:10px;
+}
+
+.nav-icon{font-size:21px}
+
+.nav-item.active{color:var(--gold-light)}
+
+/* MENUS */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:#000c;
+  z-index:30;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
 .overlay.show{display:flex}
-.modal{width:100%;max-width:390px;background:#171717;border:1px solid #554222;border-radius:21px;padding:23px;box-shadow:0 15px 60px #000b}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:19px}
-.modal h2{font-size:17px}
-.close{background:#292929;border:0;color:white;width:32px;height:32px;border-radius:10px}
-.action{width:100%;display:flex;align-items:center;gap:13px;padding:14px 11px;border:0;border-bottom:1px solid #292929;background:transparent;color:white;text-align:left}
-.action:last-child{border-bottom:0}
-.action-icon{width:38px;height:38px;border-radius:12px;background:#292012;color:var(--gold2);display:grid;place-items:center;font-size:18px}
-.action strong{font-size:13px;display:block}
-.action small{color:var(--muted);font-size:10px;display:block;margin-top:4px}
-.notice{font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px}
-@media(min-width:600px){.app{border-left:1px solid #1c1c1c;border-right:1px solid #1c1c1c}}
+
+.modal{
+  width:100%;
+  max-width:400px;
+  max-height:85vh;
+  overflow-y:auto;
+  background:#171717;
+  border:1px solid #604a27;
+  border-radius:21px;
+  padding:22px;
+  box-shadow:0 20px 60px #000c;
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:17px;
+}
+
+.modal-head h2{font-size:17px}
+
+.close{
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:10px;
+  background:#292929;
+  color:white;
+}
+
+.menu-item{
+  width:100%;
+  padding:14px 9px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  text-align:left;
+  color:white;
+  background:none;
+  border:0;
+  border-bottom:1px solid #292929;
+}
+
+.menu-icon{
+  width:39px;
+  height:39px;
+  display:grid;
+  place-items:center;
+  background:#292012;
+  color:var(--gold-light);
+  border-radius:12px;
+  font-size:19px;
+}
+
+.menu-item strong{
+  display:block;
+  font-size:12px;
+}
+
+.menu-item small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+  font-size:10px;
+}
+
+/* PROFILE AND SETTINGS */
+
+.profile-top{
+  text-align:center;
+  padding:15px 5px 23px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:12px;
+}
+
+.avatar{
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg,#49371b,#17120a);
+  border:2px solid var(--gold);
+  color:var(--gold-light);
+  font-size:29px;
+  margin:0 auto 12px;
+}
+
+.profile-top h3{font-size:16px}
+.profile-top p{color:var(--muted);font-size:11px;margin-top:6px}
+
+.notice{
+  font-size:12px;
+  color:#aaa;
+  line-height:1.7;
+}
+
+@media(min-width:600px){
+.app{
+border-left:1px solid #202020;
+border-right:1px solid #202020;
+}
+}
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
 <header>
-<div class="brand">
-<div class="logo">T</div>
-<div>
-<h1>Terzex Chat</h1>
-<p>CONNECT WITHOUT BORDERS</p>
-</div>
-</div>
-<div class="header-actions">
-<button class="icon-btn" onclick="showNotice('Camera')">▣</button>
-<button class="icon-btn" onclick="showMenu()">⋮</button>
-</div>
+  <div class="brand">
+    <div class="logo">T</div>
+    <div>
+      <h1>Terzex Chat</h1>
+      <p>CONNECT WITHOUT BORDERS</p>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <button class="icon-btn" onclick="showNotice('Camera')">▣</button>
+    <button class="icon-btn" onclick="openMenu()">⋮</button>
+  </div>
 </header>
 
-<div class="search">
-<span>⌕</span>
-<input id="searchInput" placeholder="Search messages and people...">
+<div class="welcome">
+  <div class="welcome-mark">✧</div>
+  <h2>Welcome to <span class="gold-text">Terzex.</span></h2>
+  <p>Your world, your conversations. Connect with people everywhere.</p>
 </div>
 
-<div class="filters" id="chatFilters">
-<button class="filter active" onclick="setFilter(this)">All</button>
-<button class="filter" onclick="setFilter(this)">Unread</button>
-<button class="filter" onclick="setFilter(this)">Favorites</button>
-<button class="filter" onclick="setFilter(this)">Groups</button>
+<div class="search">
+  <span>⌕</span>
+  <input placeholder="Search messages and people..." id="searchInput">
 </div>
+
+<div class="filters" id="filters">
+  <button class="filter active" onclick="setFilter(this)">All</button>
+  <button class="filter" onclick="setFilter(this)">Unread</button>
+  <button class="filter" onclick="setFilter(this)">Favorites</button>
+  <button class="filter" onclick="setFilter(this)">Groups</button>
+</div>
+
+<!-- CHATS -->
 
 <section class="tab-page active" id="chatsPage">
-<div class="section-title"><h2>Messages</h2><span>YOUR CONVERSATIONS</span></div>
-<div class="content">
+
+<div class="section-title">
+<h2>Messages</h2>
+<span>YOUR CONVERSATIONS</span>
+</div>
+
 <div class="empty">
 <div class="empty-icon">✉</div>
-<h3>Your chats will appear here</h3>
-<p>Start connecting with friends and people around the world on Terzex Chat.</p>
+<h3>Your conversations start here</h3>
+<p>Find friends, meet new people and connect with the world through Terzex Chat.</p>
 <button class="primary" onclick="openNewChat()">＋ Start New Chat</button>
 </div>
-</div>
+
 </section>
+
+<!-- UPDATES -->
 
 <section class="tab-page" id="updatesPage">
-<div class="section-title"><h2>Updates</h2><span>STATUS & CHANNELS</span></div>
-<div class="feature-grid">
-<div class="feature" onclick="showNotice('Add Status')"><div class="feature-icon">＋</div><h3>My Status</h3><p>Share a moment with your contacts.</p></div>
-<div class="feature" onclick="showNotice('Channels')"><div class="feature-icon">◉</div><h3>Discover Channels</h3><p>Follow updates from channels.</p></div>
+
+<div class="section-title">
+<h2>Updates</h2>
+<span>STATUS & CHANNELS</span>
 </div>
-<div class="content"><div class="empty"><div class="empty-icon">◉</div><h3>Stay updated</h3><p>Status updates and channels will appear here.</p></div></div>
+
+<div class="feature-grid">
+
+<div class="feature" onclick="showNotice('Add Status')">
+<div class="feature-icon">＋</div>
+<h3>My Status</h3>
+<p>Share moments with your contacts.</p>
+</div>
+
+<div class="feature" onclick="showNotice('Discover Channels')">
+<div class="feature-icon">◉</div>
+<h3>Channels</h3>
+<p>Follow updates and discover new channels.</p>
+</div>
+
+</div>
+
+<div class="empty">
+<div class="empty-icon">◉</div>
+<h3>Stay connected</h3>
+<p>Your status updates and followed channels will appear here.</p>
+</div>
+
 </section>
+
+<!-- COMMUNITIES -->
 
 <section class="tab-page" id="communitiesPage">
-<div class="section-title"><h2>Communities</h2><span>BRING PEOPLE TOGETHER</span></div>
-<div class="content">
+
+<div class="section-title">
+<h2>Communities</h2>
+<span>CONNECT TOGETHER</span>
+</div>
+
 <div class="empty">
 <div class="empty-icon">♧</div>
-<h3>Find your community</h3>
-<p>Create communities and bring groups of people together around shared interests.</p>
-<button class="primary" onclick="showNotice('Create Community')">＋ New Community</button>
+<h3>Your communities</h3>
+<p>Bring people together around shared interests and conversations.</p>
+<button class="primary" onclick="showNotice('Create Community')">＋ Create Community</button>
 </div>
-</div>
+
 </section>
+
+<!-- CALLS -->
 
 <section class="tab-page" id="callsPage">
-<div class="section-title"><h2>Calls</h2><span>VOICE & VIDEO</span></div>
-<div class="feature-grid">
-<div class="feature" onclick="showNotice('Voice Call')"><div class="feature-icon">☎</div><h3>Voice Call</h3><p>Talk with people anywhere.</p></div>
-<div class="feature" onclick="showNotice('Video Call')"><div class="feature-icon">▣</div><h3>Video Call</h3><p>Connect face to face.</p></div>
+
+<div class="section-title">
+<h2>Calls</h2>
+<span>VOICE & VIDEO</span>
 </div>
-<div class="content"><div class="empty"><div class="empty-icon">☎</div><h3>No recent calls</h3><p>Your call history will appear here.</p></div></div>
+
+<div class="feature-grid">
+
+<div class="feature" onclick="showNotice('Voice Calls')">
+<div class="feature-icon">☎</div>
+<h3>Voice Calls</h3>
+<p>Talk with friends around the world.</p>
+</div>
+
+<div class="feature" onclick="showNotice('Video Calls')">
+<div class="feature-icon">▣</div>
+<h3>Video Calls</h3>
+<p>Connect face to face.</p>
+</div>
+
+</div>
+
+<div class="empty">
+<div class="empty-icon">☎</div>
+<h3>No recent calls</h3>
+<p>Your recent calls will appear here.</p>
+</div>
+
 </section>
 
-<button class="floating ai-button" onclick="openAI()" aria-label="Terzex AI">✧</button>
-<button class="floating plus-button" onclick="showMenu()" aria-label="Quick actions">＋</button>
+<!-- FLOATING BUTTONS -->
+
+<button class="floating ai-button" onclick="openAI()">✧</button>
+<button class="floating plus-button" onclick="openNewChat()">＋</button>
+
+<!-- NAVIGATION -->
 
 <nav class="bottom-nav">
-<button class="nav-item active" onclick="switchTab('chats',this)"><span class="nav-icon">▤</span>Chats</button>
-<button class="nav-item" onclick="switchTab('updates',this)"><span class="nav-icon">◉</span>Updates</button>
-<button class="nav-item" onclick="switchTab('communities',this)"><span class="nav-icon">♧</span>Communities</button>
-<button class="nav-item" onclick="switchTab('calls',this)"><span class="nav-icon">☎</span>Calls</button>
+
+<button class="nav-item active" onclick="switchTab('chats',this)">
+<span class="nav-icon">▤</span>Chats
+</button>
+
+<button class="nav-item" onclick="switchTab('updates',this)">
+<span class="nav-icon">◉</span>Updates
+</button>
+
+<button class="nav-item" onclick="switchTab('communities',this)">
+<span class="nav-icon">♧</span>Communities
+</button>
+
+<button class="nav-item" onclick="switchTab('calls',this)">
+<span class="nav-icon">☎</span>Calls
+</button>
+
 </nav>
+
 </div>
+
+<!-- THREE DOT MENU -->
 
 <div class="overlay" id="menuOverlay" onclick="outsideClose(event,'menuOverlay')">
 <div class="modal">
-<div class="modal-head"><h2>Quick Actions</h2><button class="close" onclick="closeModal('menuOverlay')">✕</button></div>
-<button class="action" onclick="openNewChat()"><span class="action-icon">✉</span><span><strong>New Chat</strong><small>Start a conversation</small></span></button>
-<button class="action" onclick="showNotice('Create Group')"><span class="action-icon">♧</span><span><strong>New Group</strong><small>Chat with multiple people</small></span></button>
-<button class="action" onclick="showNotice('Create Channel')"><span class="action-icon">◉</span><span><strong>New Channel</strong><small>Share updates with followers</small></span></button>
-<button class="action" onclick="showNotice('Add Status')"><span class="action-icon">＋</span><span><strong>Add Status</strong><small>Share a moment</small></span></button>
-<button class="action" onclick="showNotice('Create Community')"><span class="action-icon">♧</span><span><strong>New Community</strong><small>Bring people together</small></span></button>
-<button class="action" onclick="showNotice('Video Call')"><span class="action-icon">▣</span><span><strong>Video Call</strong><small>Start a video call</small></span></button>
+
+<div class="modal-head">
+<h2>Terzex Menu</h2>
+<button class="close" onclick="closeModal('menuOverlay')">✕</button>
+</div>
+
+<button class="menu-item" onclick="showNotice('New Group')">
+<span class="menu-icon">♧</span>
+<span><strong>New Group</strong><small>Create a group conversation</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('New Channel')">
+<span class="menu-icon">◉</span>
+<span><strong>New Channel</strong><small>Create a channel</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Linked Devices')">
+<span class="menu-icon">▣</span>
+<span><strong>Linked Devices</strong><small>Manage your connected devices</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Starred Messages')">
+<span class="menu-icon">★</span>
+<span><strong>Starred Messages</strong><small>View saved messages</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Mark All as Read')">
+<span class="menu-icon">✓</span>
+<span><strong>Mark All as Read</strong><small>Clear unread message indicators</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Scheduled Calls')">
+<span class="menu-icon">◷</span>
+<span><strong>Scheduled Calls</strong><small>Plan your calls</small></span>
+</button>
+
+<button class="menu-item" onclick="openSettings()">
+<span class="menu-icon">⚙</span>
+<span><strong>Settings</strong><small>Profile, privacy and app preferences</small></span>
+</button>
+
 </div>
 </div>
 
-<div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')">
+<!-- SETTINGS MENU -->
+
+<div class="overlay" id="settingsOverlay" onclick="outsideClose(event,'settingsOverlay')">
 <div class="modal">
-<div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div>
-<div class="empty-icon">✧</div>
-<p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p>
-<button class="primary" onclick="closeModal('noticeOverlay')">Okay</button>
+
+<div class="modal-head">
+<h2>Settings</h2>
+<button class="close" onclick="closeModal('settingsOverlay')">✕</button>
+</div>
+
+<div class="profile-top">
+<div class="avatar" id="profileAvatar">T</div>
+<h3 id="profileName">Terzex User</h3>
+<p id="profileEmail">Your Terzex account</p>
+</div>
+
+<button class="menu-item" onclick="showNotice('My Profile')">
+<span class="menu-icon">◉</span>
+<span><strong>My Profile</strong><small>View your account information</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Edit Profile')">
+<span class="menu-icon">✎</span>
+<span><strong>Edit Profile</strong><small>Change your name, picture and bio</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Account')">
+<span class="menu-icon">♙</span>
+<span><strong>Account</strong><small>Manage your account</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Privacy & Security')">
+<span class="menu-icon">◆</span>
+<span><strong>Privacy & Security</strong><small>Control your privacy</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Notifications')">
+<span class="menu-icon">♢</span>
+<span><strong>Notifications</strong><small>Manage alerts and sounds</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Chats & Appearance')">
+<span class="menu-icon">◐</span>
+<span><strong>Chats & Appearance</strong><small>Customize your experience</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Storage & Data')">
+<span class="menu-icon">▤</span>
+<span><strong>Storage & Data</strong><small>Manage data usage</small></span>
+</button>
+
+<button class="menu-item" onclick="showNotice('Help & Support')">
+<span class="menu-icon">?</span>
+<span><strong>Help & Support</strong><small>Get assistance</small></span>
+</button>
+
+<button class="menu-item" onclick="logout()">
+<span class="menu-icon">↪</span>
+<span><strong>Log Out</strong><small>Sign out of your account</small></span>
+</button>
+
 </div>
 </div>
+
+<!-- NEW CHAT -->
 
 <div class="overlay" id="newChatOverlay" onclick="outsideClose(event,'newChatOverlay')">
 <div class="modal">
-<div class="modal-head"><h2>Start a New Chat</h2><button class="close" onclick="closeModal('newChatOverlay')">✕</button></div>
-<p class="notice">Search for someone by username or email. Contact search will be connected when the user directory is implemented.</p>
-<input id="newChatInput" placeholder="Enter username or email" style="width:100%;padding:14px;background:#090909;border:1px solid #393939;border-radius:11px;color:white;margin-top:16px">
-<button class="primary" onclick="showNotice('Contact Search')">Continue</button>
+
+<div class="modal-head">
+<h2>New Chat</h2>
+<button class="close" onclick="closeModal('newChatOverlay')">✕</button>
+</div>
+
+<p class="notice">
+Find someone on Terzex by their username or email address. Contact matching and messaging will be connected in the next development stage.
+</p>
+
+<input id="contactSearch" placeholder="Search username or email" style="width:100%;padding:14px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;margin-top:18px">
+
+<button class="primary" onclick="showNotice('Contact Search')">Find Contact</button>
+
+</div>
+</div>
+
+<!-- NOTICE -->
+
+<div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')">
+<div class="modal">
+
+<div class="modal-head">
+<h2 id="noticeTitle">Coming Soon</h2>
+<button class="close" onclick="closeModal('noticeOverlay')">✕</button>
+</div>
+
+<div class="empty-icon">✧</div>
+<p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p>
+
+<button class="primary" onclick="closeModal('noticeOverlay')">Okay</button>
+
 </div>
 </div>
 
@@ -190,63 +794,146 @@ header{padding:22px 19px 15px;display:flex;align-items:center;justify-content:sp
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 
 <script>
+
 const firebaseConfig = {
-apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
-authDomain: "terzex-chat.firebaseapp.com",
-projectId: "terzex-chat",
-storageBucket: "terzex-chat.firebasestorage.app",
-messagingSenderId: "439554401022",
-appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
-measurementId: "G-9BQYK88HN9"
+  apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
+  authDomain: "terzex-chat.firebaseapp.com",
+  projectId: "terzex-chat",
+  storageBucket: "terzex-chat.firebasestorage.app",
+  messagingSenderId: "439554401022",
+  appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
+  measurementId: "G-9BQYK88HN9"
 };
 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth = firebase.auth();
 
 auth.onAuthStateChanged(function(user){
-if(!user) window.location.href="index.html";
+
+  if(!user){
+    window.location.href="index.html";
+    return;
+  }
+
+  document.getElementById("profileEmail").textContent =
+    user.email || "Terzex account";
+
+  document.getElementById("profileName").textContent =
+    user.displayName || "Terzex User";
+
+  document.getElementById("profileAvatar").textContent =
+    (user.displayName || user.email || "T").charAt(0).toUpperCase();
+
 });
 
 function switchTab(tab,button){
-document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
-document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-document.getElementById(tab+'Page').classList.add('active');
-button.classList.add('active');
-document.getElementById('chatFilters').style.display=tab==='chats'?'flex':'none';
-}
 
-function showMenu(){document.getElementById('menuOverlay').classList.add('show')}
+  document.querySelectorAll(".tab-page").forEach(p=>{
+    p.classList.remove("active");
+  });
 
-function openNewChat(){
-closeModal('menuOverlay');
-document.getElementById('newChatOverlay').classList.add('show');
-}
+  document.querySelectorAll(".nav-item").forEach(b=>{
+    b.classList.remove("active");
+  });
 
-function openAI(){
-document.getElementById('noticeTitle').textContent='Terzex AI — Coming Soon';
-document.getElementById('noticeText').textContent='Your official Terzex AI assistant is coming soon. It will help with questions, writing, translation, summaries and more.';
-document.getElementById('noticeOverlay').classList.add('show');
-}
+  document.getElementById(tab+"Page").classList.add("active");
+  button.classList.add("active");
 
-function showNotice(name){
-closeModal('menuOverlay');
-closeModal('newChatOverlay');
-document.getElementById('noticeTitle').textContent=name+' — Coming Soon';
-document.getElementById('noticeText').textContent='We are preparing this feature for Terzex Chat. It is not active yet.';
-document.getElementById('noticeOverlay').classList.add('show');
-}
+  document.getElementById("filters").style.display =
+    tab==="chats" ? "flex" : "none";
 
-function closeModal(id){document.getElementById(id).classList.remove('show')}
-
-function outsideClose(event,id){
-if(event.target.id===id)closeModal(id);
 }
 
 function setFilter(button){
-document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
-button.classList.add('active');
+
+  document.querySelectorAll(".filter").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
 }
+
+function openMenu(){
+  document.getElementById("menuOverlay").classList.add("show");
+}
+
+function openSettings(){
+
+  closeModal("menuOverlay");
+
+  document.getElementById("settingsOverlay").classList.add("show");
+
+}
+
+function openNewChat(){
+
+  closeModal("menuOverlay");
+
+  document.getElementById("newChatOverlay").classList.add("show");
+
+}
+
+function openAI(){
+
+  document.getElementById("noticeTitle").textContent =
+    "Terzex AI — Coming Soon";
+
+  document.getElementById("noticeText").textContent =
+    "Your official Terzex AI assistant is coming soon. It will help with questions, writing, translation, summaries and navigating Terzex.";
+
+  document.getElementById("noticeOverlay").classList.add("show");
+
+}
+
+function showNotice(name){
+
+  closeModal("menuOverlay");
+  closeModal("settingsOverlay");
+  closeModal("newChatOverlay");
+
+  document.getElementById("noticeTitle").textContent =
+    name+" — Coming Soon";
+
+  document.getElementById("noticeText").textContent =
+    "We are preparing this feature for Terzex Chat. It is not active yet.";
+
+  document.getElementById("noticeOverlay").classList.add("show");
+
+}
+
+function closeModal(id){
+
+  document.getElementById(id).classList.remove("show");
+
+}
+
+function outsideClose(event,id){
+
+  if(event.target.id===id){
+    closeModal(id);
+  }
+
+}
+
+function logout(){
+
+  if(confirm("Are you sure you want to log out?")){
+
+    auth.signOut().then(function(){
+      window.location.href="index.html";
+    }).catch(function(error){
+      alert("Unable to log out: "+error.message);
+    });
+
+  }
+
+}
+
 </script>
+
 </body>
 </html>
