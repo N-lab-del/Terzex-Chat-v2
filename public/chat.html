@@ -37,6 +37,9 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
 .conversation-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .conversation-top strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .conversation-time{font-size:11px;color:#999;white-space:nowrap}
+.conversation-row.unread .conversation-top strong{font-weight:800;color:var(--gold-light)}
+.conversation-row.unread .conversation-preview{color:#f2dfbd;font-weight:600}
+.unread-badge{min-width:21px;height:21px;padding:0 6px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(120deg,var(--gold),var(--gold-light));color:#171109;font-size:10px;font-weight:800;flex-shrink:0}
 .conversation-preview{font-size:13px;color:#999;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .conversation-empty{padding:30px 18px;text-align:center;color:#999;font-size:12px;line-height:1.7}
 .conversation-row:active{background:#17130d}
