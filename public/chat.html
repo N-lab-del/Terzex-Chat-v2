@@ -156,7 +156,13 @@ async function watchConversationPreview(chatId,chatData){
   }
  });
 
- const rows=Object.values(uniquePeople).sort((a,b)=>b.time-a.time);
+ let rows=Object.values(uniquePeople);
+
+if(activeConversationFilter==="Unread"){
+ rows=rows.filter(row=>row.unreadCount>0);
+}
+
+rows.sort((a,b)=>b.time-a.time);
 
  if(!rows.length){
   list.innerHTML='<div class="conversation-empty">Your conversations will appear here.</div>';
