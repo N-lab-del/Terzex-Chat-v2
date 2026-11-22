@@ -467,7 +467,21 @@ function openAI(){document.getElementById("noticeTitle").textContent="Terzex AI 
 function showNotice(name){["menuOverlay","settingsOverlay","newChatOverlay","chatOptionsOverlay"].forEach(closeModal);document.getElementById("noticeTitle").textContent=name+" — Coming Soon";document.getElementById("noticeText").textContent="We are preparing this feature for Terzex Chat. It is not active yet.";document.getElementById("noticeOverlay").classList.add("show");}
 function closeModal(id){document.getElementById(id).classList.remove("show");}
 function outsideClose(e,id){if(e.target.id===id){if(id==="privateChatOverlay")closePrivateChat();else closeModal(id);}}
-function closePrivateChat(){if(privateMessagesUnsubscribe){privateMessagesUnsubscribe();privateMessagesUnsubscribe=null;}activePrivateChatId=null;privateChatTarget=null;hideMessageActions();closeModal("privateChatOverlay");document.getElementById("emojiPanel").classList.remove("show");}
+function closePrivateChat(){
+if(privateMessagesUnsubscribe){
+privateMessagesUnsubscribe();
+privateMessagesUnsubscribe=null;
+}
+if(privatePresenceUnsubscribe){
+privatePresenceUnsubscribe();
+privatePresenceUnsubscribe=null;
+}
+activePrivateChatId=null;
+privateChatTarget=null;
+hideMessageActions();
+closeModal("privateChatOverlay");
+document.getElementById("emojiPanel").classList.remove("show");
+}
 function logout(){if(confirm("Are you sure you want to log out?"))auth.signOut().then(()=>location.href="index.html").catch(e=>alert("Unable to log out: "+e.message));}
 document.addEventListener("click",e=>{if(!e.target.closest(".message-actions")&&!e.target.closest(".private-message"))hideMessageActions();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){hideMessageActions();document.querySelectorAll(".overlay.show").forEach(o=>o.classList.remove("show"));}});
