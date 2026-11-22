@@ -12,13 +12,11 @@
 :root {
   --bg:#090909;
   --card:#151515;
-  --card2:#1c1c1c;
   --gold:#d9ad57;
   --gold-light:#ffe0a0;
   --white:#f8f8f8;
   --muted:#898989;
   --line:#292929;
-  --green:#25c76a;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -29,37 +27,37 @@ button{font-family:inherit;cursor:pointer}
 
 header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-items:center}
 .brand{display:flex;align-items:center;gap:12px}
-.logo{width:47px;height:47px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#211a0c,#050505);border:1px solid #a27b38;color:var(--gold-light);font-size:29px;font-weight:800;box-shadow:0 0 20px #d9ad5520}
-.brand h1{font-size:21px;font-weight:800;letter-spacing:-.5px}
+.logo{width:47px;height:47px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#211a0c,#050505);border:1px solid #a27b38;color:var(--gold-light);font-size:29px;font-weight:800}
+.brand h1{font-size:21px;font-weight:800}
 .brand p{color:var(--gold);font-size:9px;letter-spacing:2px;margin-top:5px}
 .icon-btn{width:42px;height:42px;background:var(--card);border:1px solid var(--line);border-radius:14px;color:var(--gold-light);font-size:22px}
 .header-actions{display:flex;gap:9px}
 
-.welcome{margin:0 17px 19px;padding:20px;border:1px solid #66502c;border-radius:19px;background:radial-gradient(circle at 90% 0%,#6b4c1d35,transparent 45%),linear-gradient(120deg,#1d1911,#111);position:relative;overflow:hidden}
+.welcome{margin:0 17px 19px;padding:20px;border:1px solid #66502c;border-radius:19px;background:radial-gradient(circle at 90% 0%,#6b4c1d35,transparent 45%),linear-gradient(120deg,#1d1911,#111);position:relative}
 .welcome h2{font-size:19px;margin-bottom:8px}
-.welcome p{font-size:12px;line-height:1.6;color:#aaa;max-width:260px}
-.welcome .gold-text{color:var(--gold-light)}
+.welcome p{font-size:12px;line-height:1.6;color:#aaa}
+.gold-text{color:var(--gold-light)}
 .welcome-mark{position:absolute;right:19px;top:17px;font-size:48px;color:#d9ad5540}
 
 .search{margin:0 17px 17px;padding:14px 15px;border:1px solid var(--line);background:var(--card);border-radius:15px;display:flex;gap:11px;align-items:center}
 .search span{font-size:20px;color:var(--gold)}
 .search input{flex:1;background:none;border:0;outline:0;color:white;font-size:13px}
 
-.filters{display:flex;gap:9px;overflow-x:auto;padding:0 17px 19px;scrollbar-width:none}
+.filters{display:flex;gap:9px;overflow-x:auto;padding:0 17px 19px}
 .filter{flex-shrink:0;padding:9px 16px;background:var(--card);border:1px solid var(--line);color:#aaa;border-radius:30px;font-size:11px}
 .filter.active{background:#352817;border-color:var(--gold);color:var(--gold-light)}
 
 .section-title{display:flex;justify-content:space-between;align-items:center;padding:5px 19px 14px}
-.section-title h2{font-size:15px;font-weight:700}
+.section-title h2{font-size:15px}
 .section-title span{font-size:9px;letter-spacing:1px;color:var(--gold)}
 
 .tab-page{display:none}
 .tab-page.active{display:block}
 
 .empty{margin:0 17px 20px;padding:39px 20px;text-align:center;background:linear-gradient(145deg,#181818,#101010);border:1px solid var(--line);border-radius:20px}
-.empty-icon{width:70px;height:70px;margin:0 auto 18px;border-radius:23px;display:grid;place-items:center;font-size:29px;color:var(--gold-light);background:#2b2111;border:1px solid #775b2d;box-shadow:0 0 20px #d9ad5510}
+.empty-icon{width:70px;height:70px;margin:0 auto 18px;border-radius:23px;display:grid;place-items:center;font-size:29px;color:var(--gold-light);background:#2b2111;border:1px solid #775b2d}
 .empty h3{font-size:16px;margin-bottom:9px}
-.empty p{font-size:12px;color:var(--muted);line-height:1.7;max-width:280px;margin:auto}
+.empty p{font-size:12px;color:var(--muted);line-height:1.7;max-width:300px;margin:auto}
 
 .primary{margin-top:20px;padding:13px 20px;border:0;border-radius:12px;color:#171109;background:linear-gradient(110deg,var(--gold),var(--gold-light));font-size:12px;font-weight:800}
 
@@ -69,7 +67,7 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
 .feature h3{font-size:13px;margin-bottom:7px}
 .feature p{color:var(--muted);font-size:11px;line-height:1.6}
 
-.floating{position:fixed;right:max(20px,calc((100vw - 720px)/2));width:55px;height:55px;border-radius:19px;z-index:8;background:linear-gradient(145deg,#302310,#100e0a);border:1px solid #a47b36;color:var(--gold-light);box-shadow:0 5px 25px #000b,0 0 20px #d9ad5520}
+.floating{position:fixed;right:max(20px,calc((100vw - 720px)/2));width:55px;height:55px;border-radius:19px;z-index:8;background:linear-gradient(145deg,#302310,#100e0a);border:1px solid #a47b36;color:var(--gold-light);box-shadow:0 5px 25px #000b}
 .ai-button{bottom:165px;font-size:25px}
 .plus-button{bottom:98px;font-size:30px}
 
@@ -80,7 +78,7 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
 
 .overlay{position:fixed;inset:0;background:#000c;z-index:30;display:none;align-items:center;justify-content:center;padding:18px}
 .overlay.show{display:flex}
-.modal{width:100%;max-width:400px;max-height:85vh;overflow-y:auto;background:#171717;border:1px solid #604a27;border-radius:21px;padding:22px;box-shadow:0 20px 60px #000c}
+.modal{width:100%;max-width:400px;max-height:85vh;overflow-y:auto;background:#171717;border:1px solid #604a27;border-radius:21px;padding:22px}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
 .modal-head h2{font-size:17px}
 .close{width:34px;height:34px;border:0;border-radius:10px;background:#292929;color:white}
@@ -101,6 +99,16 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
 .contact-details strong{display:block;font-size:12px;overflow-wrap:anywhere}
 .contact-details small{display:block;color:#898989;font-size:10px;margin-top:5px;overflow-wrap:anywhere}
 .invite-button{padding:10px 12px;margin:0;border:0;border-radius:10px;background:linear-gradient(110deg,var(--gold),var(--gold-light));color:#171109;font-size:11px;font-weight:800}
+
+.search-results{margin-top:16px}
+.result-message{font-size:11px;color:#aaa;padding:12px 3px;line-height:1.6}
+.user-result{display:flex;align-items:center;gap:12px;padding:13px;margin-bottom:9px;background:#101010;border:1px solid #333;border-radius:14px}
+.user-result img,.user-initial{width:45px;height:45px;min-width:45px;border-radius:50%;object-fit:cover;border:1px solid var(--gold)}
+.user-initial{display:grid;place-items:center;background:#352817;color:var(--gold-light);font-weight:800}
+.user-info{flex:1;min-width:0}
+.user-info strong{font-size:12px;display:block;overflow-wrap:anywhere}
+.user-info small{font-size:10px;color:#aaa;display:block;margin-top:5px}
+.user-result button{border:0;border-radius:9px;padding:9px 11px;background:#3b2c16;color:var(--gold-light);font-size:10px;font-weight:700}
 
 @media(min-width:600px){
 .app{border-left:1px solid #202020;border-right:1px solid #202020}
@@ -143,7 +151,6 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
   <button class="filter" onclick="setFilter(this)">Groups</button>
 </div>
 
-<!-- CHATS -->
 <section class="tab-page active" id="chatsPage">
   <div class="section-title">
     <h2>Messages</h2>
@@ -157,7 +164,6 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
   </div>
 </section>
 
-<!-- CONTACTS -->
 <section class="tab-page" id="contactsPage">
   <div class="section-title">
     <h2>Terzex Contacts</h2>
@@ -169,9 +175,7 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
     <h3>Find your people on Terzex</h3>
     <p>Select contacts from your phone. Your selected contacts stay on this device and are not uploaded as an address book.</p>
     <button class="primary" onclick="importPhoneContacts()">Import Phone Contacts</button>
-    <p id="contactsSupport" style="margin-top:14px;font-size:10px">
-      Contact access depends on your browser and device.
-    </p>
+    <p id="contactsSupport" style="margin-top:14px;font-size:10px">Contact access depends on your browser and device.</p>
   </div>
 
   <div class="section-title">
@@ -180,150 +184,81 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
   </div>
 
   <div id="contactsList" style="padding:0 17px 20px">
-    <div class="empty" style="padding:24px">
-      <p>Your selected contacts will appear here.</p>
-    </div>
+    <div class="empty" style="padding:24px"><p>Your selected contacts will appear here.</p></div>
   </div>
 
   <div class="empty">
     <h3>Find Terzex users</h3>
-    <p>Secure phone-number matching is still being connected. We will protect private phone numbers and will not upload your address book without permission.</p>
+    <p>Search for Terzex users by username using the New Chat button.</p>
   </div>
 </section>
 
-<!-- UPDATES -->
 <section class="tab-page" id="updatesPage">
-  <div class="section-title">
-    <h2>Updates</h2>
-    <span>STATUS & CHANNELS</span>
-  </div>
+  <div class="section-title"><h2>Updates</h2><span>STATUS & CHANNELS</span></div>
   <div class="feature-grid">
     <div class="feature" onclick="showNotice('Add Status')">
-      <div class="feature-icon">＋</div>
-      <h3>My Status</h3>
-      <p>Share moments with your contacts.</p>
+      <div class="feature-icon">＋</div><h3>My Status</h3><p>Share moments with your contacts.</p>
     </div>
     <div class="feature" onclick="showNotice('Discover Channels')">
-      <div class="feature-icon">◉</div>
-      <h3>Channels</h3>
-      <p>Follow updates and discover new channels.</p>
+      <div class="feature-icon">◉</div><h3>Channels</h3><p>Follow updates and discover new channels.</p>
     </div>
   </div>
-  <div class="empty">
-    <div class="empty-icon">◉</div>
-    <h3>Stay connected</h3>
-    <p>Your status updates and followed channels will appear here.</p>
-  </div>
+  <div class="empty"><div class="empty-icon">◉</div><h3>Stay connected</h3><p>Your status updates and followed channels will appear here.</p></div>
 </section>
 
-<!-- COMMUNITIES -->
 <section class="tab-page" id="communitiesPage">
-  <div class="section-title">
-    <h2>Communities</h2>
-    <span>CONNECT TOGETHER</span>
-  </div>
+  <div class="section-title"><h2>Communities</h2><span>CONNECT TOGETHER</span></div>
   <div class="empty">
-    <div class="empty-icon">♧</div>
-    <h3>Your communities</h3>
+    <div class="empty-icon">♧</div><h3>Your communities</h3>
     <p>Bring people together around shared interests and conversations.</p>
     <button class="primary" onclick="showNotice('Create Community')">＋ Create Community</button>
   </div>
 </section>
 
-<!-- CALLS -->
 <section class="tab-page" id="callsPage">
-  <div class="section-title">
-    <h2>Calls</h2>
-    <span>VOICE & VIDEO</span>
-  </div>
+  <div class="section-title"><h2>Calls</h2><span>VOICE & VIDEO</span></div>
   <div class="feature-grid">
     <div class="feature" onclick="showNotice('Voice Calls')">
-      <div class="feature-icon">☎</div>
-      <h3>Voice Calls</h3>
-      <p>Talk with friends around the world.</p>
+      <div class="feature-icon">☎</div><h3>Voice Calls</h3><p>Talk with friends around the world.</p>
     </div>
     <div class="feature" onclick="showNotice('Video Calls')">
-      <div class="feature-icon">▣</div>
-      <h3>Video Calls</h3>
-      <p>Connect face to face.</p>
+      <div class="feature-icon">▣</div><h3>Video Calls</h3><p>Connect face to face.</p>
     </div>
   </div>
-  <div class="empty">
-    <div class="empty-icon">☎</div>
-    <h3>No recent calls</h3>
-    <p>Your recent calls will appear here.</p>
-  </div>
+  <div class="empty"><div class="empty-icon">☎</div><h3>No recent calls</h3><p>Your recent calls will appear here.</p></div>
 </section>
 
 <button class="floating ai-button" onclick="openAI()">✧</button>
 <button class="floating plus-button" onclick="openNewChat()">＋</button>
 
 <nav class="bottom-nav">
-  <button class="nav-item active" onclick="switchTab('chats',this)">
-    <span class="nav-icon">▤</span>Chats
-  </button>
-  <button class="nav-item" onclick="switchTab('contacts',this)">
-    <span class="nav-icon">♙</span>Contacts
-  </button>
-  <button class="nav-item" onclick="switchTab('updates',this)">
-    <span class="nav-icon">◉</span>Updates
-  </button>
-  <button class="nav-item" onclick="switchTab('communities',this)">
-    <span class="nav-icon">♧</span>Communities
-  </button>
-  <button class="nav-item" onclick="switchTab('calls',this)">
-    <span class="nav-icon">☎</span>Calls
-  </button>
+  <button class="nav-item active" onclick="switchTab('chats',this)"><span class="nav-icon">▤</span>Chats</button>
+  <button class="nav-item" onclick="switchTab('contacts',this)"><span class="nav-icon">♙</span>Contacts</button>
+  <button class="nav-item" onclick="switchTab('updates',this)"><span class="nav-icon">◉</span>Updates</button>
+  <button class="nav-item" onclick="switchTab('communities',this)"><span class="nav-icon">♧</span>Communities</button>
+  <button class="nav-item" onclick="switchTab('calls',this)"><span class="nav-icon">☎</span>Calls</button>
 </nav>
-
 </div>
 
-<!-- THREE DOT MENU -->
+<!-- MENU -->
 <div class="overlay" id="menuOverlay" onclick="outsideClose(event,'menuOverlay')">
 <div class="modal">
-  <div class="modal-head">
-    <h2>Terzex Menu</h2>
-    <button class="close" onclick="closeModal('menuOverlay')">✕</button>
-  </div>
+  <div class="modal-head"><h2>Terzex Menu</h2><button class="close" onclick="closeModal('menuOverlay')">✕</button></div>
 
-  <button class="menu-item" onclick="showNotice('New Group')">
-    <span class="menu-icon">♧</span>
-    <span><strong>New Group</strong><small>Create a group conversation</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('New Channel')">
-    <span class="menu-icon">◉</span>
-    <span><strong>New Channel</strong><small>Create a channel</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Linked Devices')">
-    <span class="menu-icon">▣</span>
-    <span><strong>Linked Devices</strong><small>Manage your connected devices</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Starred Messages')">
-    <span class="menu-icon">★</span>
-    <span><strong>Starred Messages</strong><small>View saved messages</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Mark All as Read')">
-    <span class="menu-icon">✓</span>
-    <span><strong>Mark All as Read</strong><small>Clear unread message indicators</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Scheduled Calls')">
-    <span class="menu-icon">◷</span>
-    <span><strong>Scheduled Calls</strong><small>Plan your calls</small></span>
-  </button>
-  <button class="menu-item" onclick="openSettings()">
-    <span class="menu-icon">⚙</span>
-    <span><strong>Settings</strong><small>Profile, privacy and app preferences</small></span>
-  </button>
+  <button class="menu-item" onclick="showNotice('New Group')"><span class="menu-icon">♧</span><span><strong>New Group</strong><small>Create a group conversation</small></span></button>
+  <button class="menu-item" onclick="showNotice('New Channel')"><span class="menu-icon">◉</span><span><strong>New Channel</strong><small>Create a channel</small></span></button>
+  <button class="menu-item" onclick="showNotice('Linked Devices')"><span class="menu-icon">▣</span><span><strong>Linked Devices</strong><small>Manage your connected devices</small></span></button>
+  <button class="menu-item" onclick="showNotice('Starred Messages')"><span class="menu-icon">★</span><span><strong>Starred Messages</strong><small>View saved messages</small></span></button>
+  <button class="menu-item" onclick="showNotice('Mark All as Read')"><span class="menu-icon">✓</span><span><strong>Mark All as Read</strong><small>Clear unread message indicators</small></span></button>
+  <button class="menu-item" onclick="showNotice('Scheduled Calls')"><span class="menu-icon">◷</span><span><strong>Scheduled Calls</strong><small>Plan your calls</small></span></button>
+  <button class="menu-item" onclick="openSettings()"><span class="menu-icon">⚙</span><span><strong>Settings</strong><small>Profile, privacy and app preferences</small></span></button>
 </div>
 </div>
 
 <!-- SETTINGS -->
 <div class="overlay" id="settingsOverlay" onclick="outsideClose(event,'settingsOverlay')">
 <div class="modal">
-  <div class="modal-head">
-    <h2>Settings</h2>
-    <button class="close" onclick="closeModal('settingsOverlay')">✕</button>
-  </div>
+  <div class="modal-head"><h2>Settings</h2><button class="close" onclick="closeModal('settingsOverlay')">✕</button></div>
 
   <div class="profile-top">
     <div class="avatar" id="profileAvatar">T</div>
@@ -331,42 +266,15 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
     <p id="profileEmail">Your Terzex account</p>
   </div>
 
-  <button class="menu-item" onclick="showNotice('My Profile')">
-    <span class="menu-icon">◉</span>
-    <span><strong>My Profile</strong><small>View your account information</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Edit Profile')">
-    <span class="menu-icon">✎</span>
-    <span><strong>Edit Profile</strong><small>Change your name, picture and bio</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Account')">
-    <span class="menu-icon">♙</span>
-    <span><strong>Account</strong><small>Manage your account</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Privacy & Security')">
-    <span class="menu-icon">◆</span>
-    <span><strong>Privacy & Security</strong><small>Control your privacy</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Notifications')">
-    <span class="menu-icon">♢</span>
-    <span><strong>Notifications</strong><small>Manage alerts and sounds</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Chats & Appearance')">
-    <span class="menu-icon">◐</span>
-    <span><strong>Chats & Appearance</strong><small>Customize your experience</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Storage & Data')">
-    <span class="menu-icon">▤</span>
-    <span><strong>Storage & Data</strong><small>Manage data usage</small></span>
-  </button>
-  <button class="menu-item" onclick="showNotice('Help & Support')">
-    <span class="menu-icon">?</span>
-    <span><strong>Help & Support</strong><small>Get assistance</small></span>
-  </button>
-  <button class="menu-item" onclick="logout()">
-    <span class="menu-icon">↪</span>
-    <span><strong>Log Out</strong><small>Sign out of your account</small></span>
-  </button>
+  <button class="menu-item" onclick="showNotice('My Profile')"><span class="menu-icon">◉</span><span><strong>My Profile</strong><small>View your account information</small></span></button>
+  <button class="menu-item" onclick="showNotice('Edit Profile')"><span class="menu-icon">✎</span><span><strong>Edit Profile</strong><small>Change your name, picture and bio</small></span></button>
+  <button class="menu-item" onclick="showNotice('Account')"><span class="menu-icon">♙</span><span><strong>Account</strong><small>Manage your account</small></span></button>
+  <button class="menu-item" onclick="showNotice('Privacy & Security')"><span class="menu-icon">◆</span><span><strong>Privacy & Security</strong><small>Control your privacy</small></span></button>
+  <button class="menu-item" onclick="showNotice('Notifications')"><span class="menu-icon">♢</span><span><strong>Notifications</strong><small>Manage alerts and sounds</small></span></button>
+  <button class="menu-item" onclick="showNotice('Chats & Appearance')"><span class="menu-icon">◐</span><span><strong>Chats & Appearance</strong><small>Customize your experience</small></span></button>
+  <button class="menu-item" onclick="showNotice('Storage & Data')"><span class="menu-icon">▤</span><span><strong>Storage & Data</strong><small>Manage data usage</small></span></button>
+  <button class="menu-item" onclick="showNotice('Help & Support')"><span class="menu-icon">?</span><span><strong>Help & Support</strong><small>Get assistance</small></span></button>
+  <button class="menu-item" onclick="logout()"><span class="menu-icon">↪</span><span><strong>Log Out</strong><small>Sign out of your account</small></span></button>
 </div>
 </div>
 
@@ -377,21 +285,28 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
     <h2>New Chat</h2>
     <button class="close" onclick="closeModal('newChatOverlay')">✕</button>
   </div>
-  <p class="notice">
-    Find someone on Terzex by their username or email address. Contact matching and messaging will be connected in the next development stage.
-  </p>
-  <input id="contactSearch" placeholder="Search username or email" style="width:100%;padding:14px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;margin-top:18px">
-  <button class="primary" onclick="showNotice('Contact Search')">Find Contact</button>
+
+  <p class="notice">Find people on Terzex by searching their username. Enter the username or the beginning of a username below.</p>
+
+  <input
+    id="contactSearch"
+    type="text"
+    autocomplete="off"
+    placeholder="Search Terzex username"
+    onkeydown="if(event.key==='Enter')searchTerzexUsers()"
+    style="width:100%;padding:14px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;margin-top:18px;outline:none"
+  >
+
+  <button class="primary" id="findContactButton" onclick="searchTerzexUsers()" style="width:100%">Find Contact</button>
+
+  <div id="contactSearchResults" class="search-results" aria-live="polite"></div>
 </div>
 </div>
 
 <!-- NOTICE -->
 <div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')">
 <div class="modal">
-  <div class="modal-head">
-    <h2 id="noticeTitle">Coming Soon</h2>
-    <button class="close" onclick="closeModal('noticeOverlay')">✕</button>
-  </div>
+  <div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div>
   <div class="empty-icon">✧</div>
   <p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p>
   <button class="primary" onclick="closeModal('noticeOverlay')">Okay</button>
@@ -400,6 +315,7 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -417,12 +333,17 @@ if (!firebase.apps.length) {
 }
 
 const auth = firebase.auth();
+const db = firebase.firestore();
 
-auth.onAuthStateChanged(function(user){
+let currentUser = null;
+
+auth.onAuthStateChanged(async function(user){
   if(!user){
-    window.location.href="index.html";
+    window.location.href = "index.html";
     return;
   }
+
+  currentUser = user;
 
   document.getElementById("profileEmail").textContent =
     user.email || "Terzex account";
@@ -435,39 +356,185 @@ auth.onAuthStateChanged(function(user){
 });
 
 function switchTab(tab,button){
-  document.querySelectorAll(".tab-page").forEach(function(p){
-    p.classList.remove("active");
+  document.querySelectorAll(".tab-page").forEach(function(page){
+    page.classList.remove("active");
   });
 
-  document.querySelectorAll(".nav-item").forEach(function(b){
-    b.classList.remove("active");
+  document.querySelectorAll(".nav-item").forEach(function(item){
+    item.classList.remove("active");
   });
 
   document.getElementById(tab+"Page").classList.add("active");
   button.classList.add("active");
 
   document.getElementById("filters").style.display =
-    tab==="chats" ? "flex" : "none";
+    tab === "chats" ? "flex" : "none";
 }
 
 function setFilter(button){
-  document.querySelectorAll(".filter").forEach(function(b){
-    b.classList.remove("active");
+  document.querySelectorAll(".filter").forEach(function(item){
+    item.classList.remove("active");
   });
   button.classList.add("active");
 }
 
+/* SEARCH TERZEX PUBLIC PROFILES */
+async function searchTerzexUsers(){
+  const input = document.getElementById("contactSearch");
+  const results = document.getElementById("contactSearchResults");
+  const button = document.getElementById("findContactButton");
+
+  const term = input.value.trim().replace(/^@/, "").toLowerCase();
+
+  results.innerHTML = "";
+
+  if(!currentUser){
+    results.textContent = "Please wait while your account loads.";
+    return;
+  }
+
+  if(term.length < 2){
+    results.textContent = "Enter at least 2 characters to search.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Searching...";
+
+  const loading = document.createElement("p");
+  loading.className = "result-message";
+  loading.textContent = "Searching Terzex users...";
+  results.appendChild(loading);
+
+  try{
+    const snapshot = await db.collection("public_profiles")
+      .orderBy("usernameLower")
+      .startAt(term)
+      .endAt(term + "\uf8ff")
+      .limit(20)
+      .get();
+
+    results.innerHTML = "";
+
+    const matches = [];
+
+    snapshot.forEach(function(doc){
+      const profile = doc.data();
+
+      if(doc.id !== currentUser.uid && profile.uid !== currentUser.uid){
+        matches.push({
+          id: doc.id,
+          profile: profile
+        });
+      }
+    });
+
+    if(matches.length === 0){
+      const message = document.createElement("p");
+      message.className = "result-message";
+      message.textContent = "No Terzex users found with that username. Check the spelling and try again.";
+      results.appendChild(message);
+      return;
+    }
+
+    const heading = document.createElement("p");
+    heading.className = "result-message";
+    heading.textContent = matches.length + " Terzex account(s) found:";
+    results.appendChild(heading);
+
+    matches.forEach(function(item){
+      const profile = item.profile;
+
+      const row = document.createElement("div");
+      row.className = "user-result";
+
+      const name =
+        profile.displayName ||
+        profile.username ||
+        "Terzex User";
+
+      const username = profile.username
+        ? "@" + profile.username
+        : "Terzex member";
+
+      if(profile.photoURL){
+        const photo = document.createElement("img");
+        photo.src = profile.photoURL;
+        photo.alt = "";
+        photo.onerror = function(){
+          const fallback = document.createElement("div");
+          fallback.className = "user-initial";
+          fallback.textContent = name.charAt(0).toUpperCase();
+          photo.replaceWith(fallback);
+        };
+        row.appendChild(photo);
+      }else{
+        const initial = document.createElement("div");
+        initial.className = "user-initial";
+        initial.textContent = name.charAt(0).toUpperCase();
+        row.appendChild(initial);
+      }
+
+      const info = document.createElement("div");
+      info.className = "user-info";
+
+      const displayName = document.createElement("strong");
+      displayName.textContent = name;
+
+      const handle = document.createElement("small");
+      handle.textContent = username;
+
+      info.appendChild(displayName);
+      info.appendChild(handle);
+
+      const messageButton = document.createElement("button");
+      messageButton.textContent = "Message";
+      messageButton.onclick = function(){
+        closeModal("newChatOverlay");
+        document.getElementById("noticeTitle").textContent = "Private Chat";
+        document.getElementById("noticeText").textContent =
+          "You found " + name + " on Terzex. The private conversation screen is the next feature we need to connect.";
+        document.getElementById("noticeOverlay").classList.add("show");
+      };
+
+      row.appendChild(info);
+      row.appendChild(messageButton);
+      results.appendChild(row);
+    });
+
+  }catch(error){
+    console.error("Terzex user search error:", error);
+    results.innerHTML = "";
+
+    const message = document.createElement("p");
+    message.className = "result-message";
+
+    if(error.code === "permission-denied"){
+      message.textContent = "Firestore permission denied. Please check the public_profiles read rules.";
+    }else{
+      message.textContent = "Search failed. Check your internet connection and try again.";
+    }
+
+    results.appendChild(message);
+
+  }finally{
+    button.disabled = false;
+    button.textContent = "Find Contact";
+  }
+}
+
+/* PHONE CONTACT PICKER */
 function importPhoneContacts(){
   const support = document.getElementById("contactsSupport");
 
-  if (!navigator.contacts ||
-      typeof navigator.contacts.select !== "function") {
+  if(!navigator.contacts ||
+     typeof navigator.contacts.select !== "function"){
     support.textContent =
       "This browser does not support phone contact selection. Full address-book access will require the Terzex Android or iPhone app.";
     return;
   }
 
-  navigator.contacts.select(["name","tel"], {multiple:true})
+  navigator.contacts.select(["name","tel"],{multiple:true})
     .then(function(contacts){
       const list = document.getElementById("contactsList");
       list.innerHTML = "";
@@ -475,18 +542,14 @@ function importPhoneContacts(){
       document.getElementById("contactsCount").textContent =
         contacts.length + " SELECTED";
 
-      if (!contacts.length) {
-        list.innerHTML =
-          '<div class="empty"><p>No contacts selected.</p></div>';
+      if(!contacts.length){
+        list.textContent = "No contacts selected.";
         return;
       }
 
       contacts.forEach(function(contact){
-        const name =
-          (contact.name && contact.name[0]) || "Phone contact";
-
-        const phone =
-          (contact.tel && contact.tel[0]) || "";
+        const name = (contact.name && contact.name[0]) || "Phone contact";
+        const phone = (contact.tel && contact.tel[0]) || "";
 
         const row = document.createElement("div");
         row.className = "contact-row";
@@ -515,16 +578,16 @@ function importPhoneContacts(){
           const message =
             "Join me on Terzex Chat: https://terzex-chat-v2.onrender.com";
 
-          if (phone) {
+          if(phone){
             window.location.href =
               "sms:" + encodeURIComponent(phone) +
               "?body=" + encodeURIComponent(message);
-          } else if (navigator.share) {
+          }else if(navigator.share){
             navigator.share({
               title:"Join Terzex Chat",
               text:message
             });
-          } else {
+          }else{
             showNotice("Invite Terzex");
           }
         };
@@ -536,10 +599,10 @@ function importPhoneContacts(){
       });
 
       support.textContent =
-        "Contacts were selected on this device only. Secure Terzex account matching is not connected yet.";
+        "Contacts were selected on this device only. Your address book has not been uploaded.";
     })
     .catch(function(error){
-      if (error && error.name !== "AbortError") {
+      if(error && error.name !== "AbortError"){
         support.textContent =
           "Could not read contacts. Check your browser permission and try again.";
       }
@@ -558,6 +621,9 @@ function openSettings(){
 function openNewChat(){
   closeModal("menuOverlay");
   document.getElementById("newChatOverlay").classList.add("show");
+  setTimeout(function(){
+    document.getElementById("contactSearch").focus();
+  },150);
 }
 
 function openAI(){
@@ -589,7 +655,7 @@ function closeModal(id){
 }
 
 function outsideClose(event,id){
-  if(event.target.id===id){
+  if(event.target.id === id){
     closeModal(id);
   }
 }
@@ -597,7 +663,7 @@ function outsideClose(event,id){
 function logout(){
   if(confirm("Are you sure you want to log out?")){
     auth.signOut().then(function(){
-      window.location.href="index.html";
+      window.location.href = "index.html";
     }).catch(function(error){
       alert("Unable to log out: " + error.message);
     });
