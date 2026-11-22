@@ -6,890 +6,114 @@
 <meta name="theme-color" content="#090909">
 <title>Terzex Chat</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --bg:#090909;
-  --card:#151515;
-  --gold:#d9ad57;
-  --gold-light:#ffe0a0;
-  --white:#f8f8f8;
-  --muted:#898989;
-  --line:#292929;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--white);font-family:Inter,Arial,sans-serif;min-height:100vh}
-button{font-family:inherit;cursor:pointer}
+:root{--bg:#090909;--card:#151515;--gold:#d9ad57;--gold-light:#ffe0a0;--white:#f8f8f8;--muted:#898989;--line:#292929}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--white);font-family:Inter,Arial,sans-serif;min-height:100vh}button{font-family:inherit;cursor:pointer}
 .app{max-width:760px;min-height:100vh;margin:auto;padding-bottom:100px;position:relative}
-header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-items:center}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:47px;height:47px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#211a0c,#050505);border:1px solid #a27b38;color:var(--gold-light);font-size:29px;font-weight:800}
-.brand h1{font-size:21px;font-weight:800}
-.brand p{color:var(--gold);font-size:9px;letter-spacing:2px;margin-top:5px}
-.icon-btn{width:42px;height:42px;background:var(--card);border:1px solid var(--line);border-radius:14px;color:var(--gold-light);font-size:22px}
-.header-actions{display:flex;gap:9px}
-.welcome{margin:0 17px 19px;padding:20px;border:1px solid #66502c;border-radius:19px;background:radial-gradient(circle at 90% 0%,#6b4c1d35,transparent 45%),linear-gradient(120deg,#1d1911,#111);position:relative}
-.welcome h2{font-size:19px;margin-bottom:8px}
-.welcome p{font-size:12px;line-height:1.6;color:#aaa}
-.gold-text{color:var(--gold-light)}
-.welcome-mark{position:absolute;right:19px;top:17px;font-size:48px;color:#d9ad5540}
-.search{margin:0 17px 17px;padding:14px 15px;border:1px solid var(--line);background:var(--card);border-radius:15px;display:flex;gap:11px;align-items:center}
-.search span{font-size:20px;color:var(--gold)}
-.search input{flex:1;background:none;border:0;outline:0;color:white;font-size:13px}
-.filters{display:flex;gap:9px;overflow-x:auto;padding:0 17px 19px}
-.filter{flex-shrink:0;padding:9px 16px;background:var(--card);border:1px solid var(--line);color:#aaa;border-radius:30px;font-size:11px}
-.filter.active{background:#352817;border-color:var(--gold);color:var(--gold-light)}
-.section-title{display:flex;justify-content:space-between;align-items:center;padding:5px 19px 14px}
-.section-title h2{font-size:15px}
-.section-title span{font-size:9px;letter-spacing:1px;color:var(--gold)}
-.tab-page{display:none}
-.tab-page.active{display:block}
-.empty{margin:0 17px 20px;padding:39px 20px;text-align:center;background:linear-gradient(145deg,#181818,#101010);border:1px solid var(--line);border-radius:20px}
-.empty-icon{width:70px;height:70px;margin:0 auto 18px;border-radius:23px;display:grid;place-items:center;font-size:29px;color:var(--gold-light);background:#2b2111;border:1px solid #775b2d}
-.empty h3{font-size:16px;margin-bottom:9px}
-.empty p{font-size:12px;color:var(--muted);line-height:1.7;max-width:300px;margin:auto}
-.primary{margin-top:20px;padding:13px 20px;border:0;border-radius:12px;color:#171109;background:linear-gradient(110deg,var(--gold),var(--gold-light));font-size:12px;font-weight:800}
-.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 17px 20px}
-.feature{background:linear-gradient(145deg,#1b1b1b,#111);border:1px solid var(--line);border-radius:17px;padding:19px 15px}
-.feature-icon{font-size:26px;color:var(--gold-light);margin-bottom:15px}
-.feature h3{font-size:13px;margin-bottom:7px}
-.feature p{color:var(--muted);font-size:11px;line-height:1.6}
-.floating{position:fixed;right:max(20px,calc((100vw - 720px)/2));width:55px;height:55px;border-radius:19px;z-index:8;background:linear-gradient(145deg,#302310,#100e0a);border:1px solid #a47b36;color:var(--gold-light);box-shadow:0 5px 25px #000b}
-.ai-button{bottom:165px;font-size:25px}
-.plus-button{bottom:98px;font-size:30px}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:760px;display:grid;grid-template-columns:repeat(5,1fr);background:#111;border-top:1px solid var(--line);padding:11px 5px max(12px,env(safe-area-inset-bottom));z-index:10}
-.nav-item{background:none;border:0;color:#777;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px}
-.nav-icon{font-size:21px}
-.nav-item.active{color:var(--gold-light)}
-.overlay{position:fixed;inset:0;background:#000c;z-index:30;display:none;align-items:center;justify-content:center;padding:18px}
-.overlay.show{display:flex}
-.modal{width:100%;max-width:400px;max-height:85vh;overflow-y:auto;background:#171717;border:1px solid #604a27;border-radius:21px;padding:22px}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
-.modal-head h2{font-size:17px}
-.close{width:34px;height:34px;border:0;border-radius:10px;background:#292929;color:white}
-.menu-item{width:100%;padding:14px 9px;display:flex;align-items:center;gap:13px;text-align:left;color:white;background:none;border:0;border-bottom:1px solid #292929}
-.menu-icon{width:39px;height:39px;display:grid;place-items:center;background:#292012;color:var(--gold-light);border-radius:12px;font-size:19px}
-.menu-item strong{display:block;font-size:12px}
-.menu-item small{display:block;color:var(--muted);margin-top:4px;font-size:10px}
-.profile-top{text-align:center;padding:15px 5px 23px;border-bottom:1px solid var(--line);margin-bottom:12px}
-.avatar{width:75px;height:75px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#49371b,#17120a);border:2px solid var(--gold);color:var(--gold-light);font-size:29px;margin:0 auto 12px}
-.profile-top h3{font-size:16px}
-.profile-top p{color:var(--muted);font-size:11px;margin-top:6px}
-.notice{font-size:12px;color:#aaa;line-height:1.7}
-.contact-row{display:flex;align-items:center;gap:12px;padding:14px;margin:0 0 9px;background:#151515;border:1px solid #292929;border-radius:14px}
-.contact-avatar{width:42px;height:42px;min-width:42px;border-radius:50%;display:grid;place-items:center;background:#352817;color:var(--gold-light);font-weight:700}
-.contact-details{flex:1;min-width:0}
-.contact-details strong{display:block;font-size:12px;overflow-wrap:anywhere}
-.contact-details small{display:block;color:#898989;font-size:10px;margin-top:5px;overflow-wrap:anywhere}
-.invite-button{padding:10px 12px;margin:0;border:0;border-radius:10px;background:linear-gradient(110deg,var(--gold),var(--gold-light));color:#171109;font-size:11px;font-weight:800}
-.search-results{margin-top:16px}
-.result-message{font-size:11px;color:#aaa;padding:12px 3px;line-height:1.6}
-.user-result{display:flex;align-items:center;gap:12px;padding:13px;margin-bottom:9px;background:#101010;border:1px solid #333;border-radius:14px}
-.user-result img,.user-initial{width:45px;height:45px;min-width:45px;border-radius:50%;object-fit:cover;border:1px solid var(--gold)}
-.user-initial{display:grid;place-items:center;background:#352817;color:var(--gold-light);font-weight:800}
-.user-info{flex:1;min-width:0}
-.user-info strong{font-size:12px;display:block;overflow-wrap:anywhere}
-.user-info small{font-size:10px;color:#aaa;display:block;margin-top:5px}
-.user-result button{border:0;border-radius:9px;padding:9px 11px;background:#3b2c16;color:var(--gold-light);font-size:10px;font-weight:700}
-
-/* PRIVATE CHAT WINDOW */
-.private-chat-modal{width:100%;max-width:520px;height:min(88vh,760px);display:flex;flex-direction:column;background:#111;border:1px solid #71552c;border-radius:20px;overflow:hidden}
-.private-chat-head{display:flex;align-items:center;gap:12px;padding:15px;border-bottom:1px solid #292929;background:#171717}
-.private-chat-head .user-initial,.private-chat-head img{width:42px;height:42px;min-width:42px;border-radius:50%;object-fit:cover}
-.private-chat-person{flex:1;min-width:0}
-.private-chat-person strong{display:block;font-size:13px}
-.private-chat-person small{display:block;color:#aaa;font-size:10px;margin-top:4px}
-.private-chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
-.private-chat-empty{margin:auto;text-align:center;color:#999;font-size:12px;line-height:1.7}
-.private-message{max-width:82%;padding:10px 12px;border-radius:14px;background:#242424;color:#f7f7f7;font-size:13px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
-.private-message.mine{align-self:flex-end;background:#493719;color:#fff1d2;border-bottom-right-radius:4px}
-.private-message.theirs{align-self:flex-start;border-bottom-left-radius:4px}
-.private-message-time{display:block;margin-top:5px;font-size:9px;color:#c5b28f;text-align:right}
-.private-message-status{margin-left:5px;font-size:11px;font-weight:800;color:#c5b28f}
-.private-message-status.read{color:#39bdf8}
-.private-chat-form{display:flex;gap:9px;padding:12px;border-top:1px solid #292929;background:#171717}
-.private-chat-form input{flex:1;min-width:0;padding:13px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;outline:none}
-.private-chat-form button{padding:0 17px;border:0;border-radius:12px;background:linear-gradient(110deg,var(--gold),var(--gold-light));color:#171109;font-weight:800}
-.private-chat-form button:disabled{opacity:.5}
-
-@media(min-width:600px){
-.app{border-left:1px solid #202020;border-right:1px solid #202020}
-}
+header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;align-items:center;gap:12px}.logo{width:47px;height:47px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#211a0c,#050505);border:1px solid #a27b38;color:var(--gold-light);font-size:29px;font-weight:800}.brand h1{font-size:21px;font-weight:800}.brand p{color:var(--gold);font-size:9px;letter-spacing:2px;margin-top:5px}.icon-btn{width:42px;height:42px;background:var(--card);border:1px solid var(--line);border-radius:14px;color:var(--gold-light);font-size:22px}.header-actions{display:flex;gap:9px}
+.welcome{margin:0 17px 19px;padding:20px;border:1px solid #66502c;border-radius:19px;background:radial-gradient(circle at 90% 0%,#6b4c1d35,transparent 45%),linear-gradient(120deg,#1d1911,#111);position:relative}.welcome h2{font-size:19px;margin-bottom:8px}.welcome p{font-size:12px;line-height:1.6;color:#aaa}.gold-text{color:var(--gold-light)}.welcome-mark{position:absolute;right:19px;top:17px;font-size:48px;color:#d9ad5540}
+.search{margin:0 17px 17px;padding:14px 15px;border:1px solid var(--line);background:var(--card);border-radius:15px;display:flex;gap:11px;align-items:center}.search span{font-size:20px;color:var(--gold)}.search input{flex:1;background:none;border:0;outline:0;color:white;font-size:13px}
+.filters{display:flex;gap:9px;overflow-x:auto;padding:0 17px 19px}.filter{flex-shrink:0;padding:9px 16px;background:var(--card);border:1px solid var(--line);color:#aaa;border-radius:30px;font-size:11px}.filter.active{background:#352817;border-color:var(--gold);color:var(--gold-light)}
+.section-title{display:flex;justify-content:space-between;align-items:center;padding:5px 19px 14px}.section-title h2{font-size:15px}.section-title span{font-size:9px;letter-spacing:1px;color:var(--gold)}.tab-page{display:none}.tab-page.active{display:block}
+.empty{margin:0 17px 20px;padding:39px 20px;text-align:center;background:linear-gradient(145deg,#181818,#101010);border:1px solid var(--line);border-radius:20px}.empty-icon{width:70px;height:70px;margin:0 auto 18px;border-radius:23px;display:grid;place-items:center;font-size:29px;color:var(--gold-light);background:#2b2111;border:1px solid #775b2d}.empty h3{font-size:16px;margin-bottom:9px}.empty p{font-size:12px;color:var(--muted);line-height:1.7;max-width:300px;margin:auto}.primary{margin-top:20px;padding:13px 20px;border:0;border-radius:12px;color:#171109;background:linear-gradient(110deg,var(--gold),var(--gold-light));font-size:12px;font-weight:800}
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 17px 20px}.feature{background:linear-gradient(145deg,#1b1b1b,#111);border:1px solid var(--line);border-radius:17px;padding:19px 15px}.feature-icon{font-size:26px;color:var(--gold-light);margin-bottom:15px}.feature h3{font-size:13px;margin-bottom:7px}.feature p{color:var(--muted);font-size:11px;line-height:1.6}
+.floating{position:fixed;right:max(20px,calc((100vw - 720px)/2));width:55px;height:55px;border-radius:19px;z-index:8;background:linear-gradient(145deg,#302310,#100e0a);border:1px solid #a47b36;color:var(--gold-light);box-shadow:0 5px 25px #000b}.ai-button{bottom:165px;font-size:25px}.plus-button{bottom:98px;font-size:30px}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:760px;display:grid;grid-template-columns:repeat(5,1fr);background:#111;border-top:1px solid var(--line);padding:11px 5px max(12px,env(safe-area-inset-bottom));z-index:10}.nav-item{background:none;border:0;color:#777;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px}.nav-icon{font-size:21px}.nav-item.active{color:var(--gold-light)}
+.overlay{position:fixed;inset:0;background:#000c;z-index:30;display:none;align-items:center;justify-content:center;padding:18px}.overlay.show{display:flex}.modal{width:100%;max-width:400px;max-height:85vh;overflow-y:auto;background:#171717;border:1px solid #604a27;border-radius:21px;padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.modal-head h2{font-size:17px}.close{width:34px;height:34px;border:0;border-radius:10px;background:#292929;color:white}.menu-item{width:100%;padding:14px 9px;display:flex;align-items:center;gap:13px;text-align:left;color:white;background:none;border:0;border-bottom:1px solid #292929}.menu-icon{width:39px;height:39px;display:grid;place-items:center;background:#292012;color:var(--gold-light);border-radius:12px;font-size:19px}.menu-item strong{display:block;font-size:12px}.menu-item small{display:block;color:var(--muted);margin-top:4px;font-size:10px}
+.profile-top{text-align:center;padding:15px 5px 23px;border-bottom:1px solid var(--line);margin-bottom:12px}.avatar{width:75px;height:75px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#49371b,#17120a);border:2px solid var(--gold);color:var(--gold-light);font-size:29px;margin:0 auto 12px}.profile-top h3{font-size:16px}.profile-top p{color:var(--muted);font-size:11px;margin-top:6px}.notice{font-size:12px;color:#aaa;line-height:1.7}
+.contact-row{display:flex;align-items:center;gap:12px;padding:14px;margin:0 0 9px;background:#151515;border:1px solid #292929;border-radius:14px}.contact-avatar{width:42px;height:42px;min-width:42px;border-radius:50%;display:grid;place-items:center;background:#352817;color:var(--gold-light);font-weight:700}.contact-details{flex:1;min-width:0}.contact-details strong{display:block;font-size:12px;overflow-wrap:anywhere}.contact-details small{display:block;color:#898989;font-size:10px;margin-top:5px;overflow-wrap:anywhere}.invite-button{padding:10px 12px;margin:0;border:0;border-radius:10px;background:linear-gradient(110deg,var(--gold),var(--gold-light));color:#171109;font-size:11px;font-weight:800}
+.search-results{margin-top:16px}.result-message{font-size:11px;color:#aaa;padding:12px 3px;line-height:1.6}.user-result{display:flex;align-items:center;gap:12px;padding:13px;margin-bottom:9px;background:#101010;border:1px solid #333;border-radius:14px}.user-result img,.user-initial{width:45px;height:45px;min-width:45px;border-radius:50%;object-fit:cover;border:1px solid var(--gold)}.user-initial{display:grid;place-items:center;background:#352817;color:var(--gold-light);font-weight:800}.user-info{flex:1;min-width:0}.user-info strong{font-size:12px;display:block;overflow-wrap:anywhere}.user-info small{font-size:10px;color:#aaa;display:block;margin-top:5px}.user-result button{border:0;border-radius:9px;padding:9px 11px;background:#3b2c16;color:var(--gold-light);font-size:10px;font-weight:700}
+/* PRIVATE CHAT */
+.private-chat-modal{width:100%;max-width:540px;height:min(90vh,780px);display:flex;flex-direction:column;background:#111;border:1px solid #71552c;border-radius:20px;overflow:hidden;position:relative}.private-chat-head{display:flex;align-items:center;gap:10px;padding:13px;border-bottom:1px solid #292929;background:#171717}.private-chat-head .user-initial,.private-chat-head img{width:42px;height:42px;min-width:42px;border-radius:50%;object-fit:cover}.private-chat-person{flex:1;min-width:0}.private-chat-person strong{display:block;font-size:13px}.private-chat-person small{display:block;color:#aaa;font-size:10px;margin-top:4px}.head-action{border:1px solid #40321d;background:#211a10;color:var(--gold-light);border-radius:10px;padding:9px 10px;font-size:11px}.private-chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}.private-chat-empty{margin:auto;text-align:center;color:#999;font-size:12px;line-height:1.7}.private-message{max-width:82%;padding:10px 12px;border-radius:14px;background:#242424;color:#f7f7f7;font-size:13px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap;position:relative;user-select:none;-webkit-user-select:none}.private-message.mine{align-self:flex-end;background:#493719;color:#fff1d2;border-bottom-right-radius:4px}.private-message.theirs{align-self:flex-start;border-bottom-left-radius:4px}.private-message-time{display:block;margin-top:5px;font-size:9px;color:#c5b28f;text-align:right}.private-message-status{margin-left:5px;font-size:11px;font-weight:800;color:#c5b28f}.private-message-status.read{color:#39bdf8}.message-media{display:block;max-width:220px;max-height:220px;border-radius:10px;margin-bottom:5px}.message-sticker{font-size:48px;line-height:1.2}.reaction-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}.reaction-chip{border:1px solid #806334;background:#211a10;color:#ffe0a0;border-radius:20px;padding:3px 7px;font-size:11px}.private-chat-form{display:flex;gap:7px;padding:10px;border-top:1px solid #292929;background:#171717;align-items:center}.private-chat-form input{flex:1;min-width:0;padding:13px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;outline:none}.tool-button{width:39px;height:42px;border:1px solid #39312a;border-radius:11px;background:#211a10;color:var(--gold-light);font-size:19px}.send-button{padding:0 15px;height:42px;border:0;border-radius:12px;background:linear-gradient(110deg,var(--gold),var(--gold-light));color:#171109;font-weight:800}.send-button:disabled{opacity:.5}
+.chat-panel{display:none;background:#181818;border-top:1px solid #39312a;padding:10px;max-height:145px;overflow:auto}.chat-panel.show{display:block}.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}.emoji-grid button,.sticker-grid button{border:0;background:#242424;border-radius:8px;padding:7px;font-size:22px}.sticker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.sticker-grid button{font-size:36px;padding:12px}.panel-tabs{display:flex;gap:8px;margin-bottom:9px}.panel-tabs button{background:#292929;border:1px solid #444;color:#ddd;border-radius:9px;padding:7px 12px;font-size:11px}.panel-tabs button.active{border-color:var(--gold);color:var(--gold-light)}.message-actions{position:absolute;z-index:50;display:none;background:#1d1d1d;border:1px solid #806334;border-radius:14px;padding:8px;box-shadow:0 8px 30px #000;min-width:190px}.message-actions.show{display:block}.quick-reactions{display:flex;justify-content:space-around;padding:4px 2px 8px;border-bottom:1px solid #393939;margin-bottom:5px}.quick-reactions button{background:none;border:0;font-size:22px}.message-actions button.action{display:block;width:100%;text-align:left;padding:10px;border:0;border-radius:8px;background:none;color:white;font-size:12px}.message-actions button.action:hover{background:#302719}.message-actions button.danger{color:#ff8f8f}.chat-hint{font-size:10px;color:#888;text-align:center;padding:5px 10px}
+@media(min-width:600px){.app{border-left:1px solid #202020;border-right:1px solid #202020}}
 </style>
 </head>
-
 <body>
 <div class="app">
-
-<header>
-  <div class="brand">
-    <div class="logo">T</div>
-    <div><h1>Terzex Chat</h1><p>CONNECT WITHOUT BORDERS</p></div>
-  </div>
-  <div class="header-actions">
-    <button class="icon-btn" onclick="showNotice('Camera')">▣</button>
-    <button class="icon-btn" onclick="openMenu()">⋮</button>
-  </div>
-</header>
-
-<div class="welcome">
-  <div class="welcome-mark">✧</div>
-  <h2>Welcome to <span class="gold-text">Terzex.</span></h2>
-  <p>Your world, your conversations. Connect with people everywhere.</p>
+<header><div class="brand"><div class="logo">T</div><div><h1>Terzex Chat</h1><p>CONNECT WITHOUT BORDERS</p></div></div><div class="header-actions"><button class="icon-btn" onclick="showNotice('Camera')">▣</button><button class="icon-btn" onclick="openMenu()">⋮</button></div></header>
+<div class="welcome"><div class="welcome-mark">✧</div><h2>Welcome to <span class="gold-text">Terzex.</span></h2><p>Your world, your conversations. Connect with people everywhere.</p></div>
+<div class="search"><span>⌕</span><input placeholder="Search messages and people..." id="searchInput"></div>
+<div class="filters" id="filters"><button class="filter active" onclick="setFilter(this)">All</button><button class="filter" onclick="setFilter(this)">Unread</button><button class="filter" onclick="setFilter(this)">Favorites</button><button class="filter" onclick="setFilter(this)">Groups</button></div>
+<section class="tab-page active" id="chatsPage"><div class="section-title"><h2>Messages</h2><span>YOUR CONVERSATIONS</span></div><div class="empty"><div class="empty-icon">✉</div><h3>Your conversations start here</h3><p>Find friends, meet new people and connect with the world through Terzex Chat.</p><button class="primary" onclick="openNewChat()">＋ Start New Chat</button></div></section>
+<section class="tab-page" id="contactsPage"><div class="section-title"><h2>Terzex Contacts</h2><span>YOUR PEOPLE</span></div><div class="empty"><div class="empty-icon">♙</div><h3>Find your people on Terzex</h3><p>Select contacts from your phone. Your selected contacts stay on this device and are not uploaded as an address book.</p><button class="primary" onclick="importPhoneContacts()">Import Phone Contacts</button><p id="contactsSupport" style="margin-top:14px;font-size:10px">Contact access depends on your browser and device.</p></div><div class="section-title"><h2>Selected Contacts</h2><span id="contactsCount">0 SELECTED</span></div><div id="contactsList" style="padding:0 17px 20px"><div class="empty" style="padding:24px"><p>Your selected contacts will appear here.</p></div></div><div class="empty"><h3>Find Terzex users</h3><p>Search for Terzex users by username using the New Chat button.</p></div></section>
+<section class="tab-page" id="updatesPage"><div class="section-title"><h2>Updates</h2><span>STATUS & CHANNELS</span></div><div class="feature-grid"><div class="feature" onclick="showNotice('Add Status')"><div class="feature-icon">＋</div><h3>My Status</h3><p>Share moments with your contacts.</p></div><div class="feature" onclick="showNotice('Discover Channels')"><div class="feature-icon">◉</div><h3>Channels</h3><p>Follow updates and discover new channels.</p></div></div><div class="empty"><div class="empty-icon">◉</div><h3>Stay connected</h3><p>Your status updates and followed channels will appear here.</p></div></section>
+<section class="tab-page" id="communitiesPage"><div class="section-title"><h2>Communities</h2><span>CONNECT TOGETHER</span></div><div class="empty"><div class="empty-icon">♧</div><h3>Your communities</h3><p>Bring people together around shared interests and conversations.</p><button class="primary" onclick="showNotice('Create Community')">＋ Create Community</button></div></section>
+<section class="tab-page" id="callsPage"><div class="section-title"><h2>Calls</h2><span>VOICE & VIDEO</span></div><div class="feature-grid"><div class="feature" onclick="showNotice('Voice Calls')"><div class="feature-icon">☎</div><h3>Voice Calls</h3><p>Talk with friends around the world.</p></div><div class="feature" onclick="showNotice('Video Calls')"><div class="feature-icon">▣</div><h3>Video Calls</h3><p>Connect face to face.</p></div></div><div class="empty"><div class="empty-icon">☎</div><h3>No recent calls</h3><p>Your recent calls will appear here.</p></div></section>
+<button class="floating ai-button" onclick="openAI()">✧</button><button class="floating plus-button" onclick="openNewChat()">＋</button>
+<nav class="bottom-nav"><button class="nav-item active" onclick="switchTab('chats',this)"><span class="nav-icon">▤</span>Chats</button><button class="nav-item" onclick="switchTab('contacts',this)"><span class="nav-icon">♙</span>Contacts</button><button class="nav-item" onclick="switchTab('updates',this)"><span class="nav-icon">◉</span>Updates</button><button class="nav-item" onclick="switchTab('communities',this)"><span class="nav-icon">♧</span>Communities</button><button class="nav-item" onclick="switchTab('calls',this)"><span class="nav-icon">☎</span>Calls</button></nav>
 </div>
 
-<div class="search">
-  <span>⌕</span>
-  <input placeholder="Search messages and people..." id="searchInput">
-</div>
+<div class="overlay" id="menuOverlay" onclick="outsideClose(event,'menuOverlay')"><div class="modal"><div class="modal-head"><h2>Terzex Menu</h2><button class="close" onclick="closeModal('menuOverlay')">✕</button></div>
+<button class="menu-item" onclick="showNotice('New Group')"><span class="menu-icon">♧</span><span><strong>New Group</strong><small>Create a group conversation</small></span></button><button class="menu-item" onclick="showNotice('New Channel')"><span class="menu-icon">◉</span><span><strong>New Channel</strong><small>Create a channel</small></span></button><button class="menu-item" onclick="showNotice('Linked Devices')"><span class="menu-icon">▣</span><span><strong>Linked Devices</strong><small>Manage your connected devices</small></span></button><button class="menu-item" onclick="showNotice('Starred Messages')"><span class="menu-icon">★</span><span><strong>Starred Messages</strong><small>View saved messages</small></span></button><button class="menu-item" onclick="showNotice('Mark All as Read')"><span class="menu-icon">✓</span><span><strong>Mark All as Read</strong><small>Clear unread message indicators</small></span></button><button class="menu-item" onclick="showNotice('Scheduled Calls')"><span class="menu-icon">◷</span><span><strong>Scheduled Calls</strong><small>Plan your calls</small></span></button><button class="menu-item" onclick="openSettings()"><span class="menu-icon">⚙</span><span><strong>Settings</strong><small>Profile, privacy and app preferences</small></span></button></div></div>
+<div class="overlay" id="settingsOverlay" onclick="outsideClose(event,'settingsOverlay')"><div class="modal"><div class="modal-head"><h2>Settings</h2><button class="close" onclick="closeModal('settingsOverlay')">✕</button></div><div class="profile-top"><div class="avatar" id="profileAvatar">T</div><h3 id="profileName">Terzex User</h3><p id="profileEmail">Your Terzex account</p></div>
+<button class="menu-item" onclick="showNotice('My Profile')"><span class="menu-icon">◉</span><span><strong>My Profile</strong><small>View your account information</small></span></button><button class="menu-item" onclick="showNotice('Edit Profile')"><span class="menu-icon">✎</span><span><strong>Edit Profile</strong><small>Change your name, picture and bio</small></span></button><button class="menu-item" onclick="showNotice('Account')"><span class="menu-icon">♙</span><span><strong>Account</strong><small>Manage your account</small></span></button><button class="menu-item" onclick="showNotice('Privacy & Security')"><span class="menu-icon">◆</span><span><strong>Privacy & Security</strong><small>Control your privacy</small></span></button><button class="menu-item" onclick="showNotice('Notifications')"><span class="menu-icon">♢</span><span><strong>Notifications</strong><small>Manage alerts and sounds</small></span></button><button class="menu-item" onclick="showNotice('Chats & Appearance')"><span class="menu-icon">◐</span><span><strong>Chats & Appearance</strong><small>Customize your experience</small></span></button><button class="menu-item" onclick="showNotice('Storage & Data')"><span class="menu-icon">▤</span><span><strong>Storage & Data</strong><small>Manage data usage</small></span></button><button class="menu-item" onclick="showNotice('Help & Support')"><span class="menu-icon">?</span><span><strong>Help & Support</strong><small>Get assistance</small></span></button><button class="menu-item" onclick="logout()"><span class="menu-icon">↪</span><span><strong>Log Out</strong><small>Sign out of your account</small></span></button></div></div>
+<div class="overlay" id="newChatOverlay" onclick="outsideClose(event,'newChatOverlay')"><div class="modal"><div class="modal-head"><h2>New Chat</h2><button class="close" onclick="closeModal('newChatOverlay')">✕</button></div><p class="notice">Find people on Terzex by searching their username. Enter the username or the beginning of a username below.</p><input id="contactSearch" type="text" autocomplete="off" placeholder="Search Terzex username" onkeydown="if(event.key==='Enter')searchTerzexUsers()" style="width:100%;padding:14px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;margin-top:18px;outline:none"><button class="primary" id="findContactButton" onclick="searchTerzexUsers()" style="width:100%">Find Contact</button><div id="contactSearchResults" class="search-results" aria-live="polite"></div></div></div>
 
-<div class="filters" id="filters">
-  <button class="filter active" onclick="setFilter(this)">All</button>
-  <button class="filter" onclick="setFilter(this)">Unread</button>
-  <button class="filter" onclick="setFilter(this)">Favorites</button>
-  <button class="filter" onclick="setFilter(this)">Groups</button>
-</div>
-
-<section class="tab-page active" id="chatsPage">
-  <div class="section-title"><h2>Messages</h2><span>YOUR CONVERSATIONS</span></div>
-  <div class="empty">
-    <div class="empty-icon">✉</div>
-    <h3>Your conversations start here</h3>
-    <p>Find friends, meet new people and connect with the world through Terzex Chat.</p>
-    <button class="primary" onclick="openNewChat()">＋ Start New Chat</button>
-  </div>
-</section>
-
-<section class="tab-page" id="contactsPage">
-  <div class="section-title"><h2>Terzex Contacts</h2><span>YOUR PEOPLE</span></div>
-  <div class="empty">
-    <div class="empty-icon">♙</div>
-    <h3>Find your people on Terzex</h3>
-    <p>Select contacts from your phone. Your selected contacts stay on this device and are not uploaded as an address book.</p>
-    <button class="primary" onclick="importPhoneContacts()">Import Phone Contacts</button>
-    <p id="contactsSupport" style="margin-top:14px;font-size:10px">Contact access depends on your browser and device.</p>
-  </div>
-  <div class="section-title"><h2>Selected Contacts</h2><span id="contactsCount">0 SELECTED</span></div>
-  <div id="contactsList" style="padding:0 17px 20px">
-    <div class="empty" style="padding:24px"><p>Your selected contacts will appear here.</p></div>
-  </div>
-  <div class="empty"><h3>Find Terzex users</h3><p>Search for Terzex users by username using the New Chat button.</p></div>
-</section>
-
-<section class="tab-page" id="updatesPage">
-  <div class="section-title"><h2>Updates</h2><span>STATUS & CHANNELS</span></div>
-  <div class="feature-grid">
-    <div class="feature" onclick="showNotice('Add Status')"><div class="feature-icon">＋</div><h3>My Status</h3><p>Share moments with your contacts.</p></div>
-    <div class="feature" onclick="showNotice('Discover Channels')"><div class="feature-icon">◉</div><h3>Channels</h3><p>Follow updates and discover new channels.</p></div>
-  </div>
-  <div class="empty"><div class="empty-icon">◉</div><h3>Stay connected</h3><p>Your status updates and followed channels will appear here.</p></div>
-</section>
-
-<section class="tab-page" id="communitiesPage">
-  <div class="section-title"><h2>Communities</h2><span>CONNECT TOGETHER</span></div>
-  <div class="empty"><div class="empty-icon">♧</div><h3>Your communities</h3><p>Bring people together around shared interests and conversations.</p><button class="primary" onclick="showNotice('Create Community')">＋ Create Community</button></div>
-</section>
-
-<section class="tab-page" id="callsPage">
-  <div class="section-title"><h2>Calls</h2><span>VOICE & VIDEO</span></div>
-  <div class="feature-grid">
-    <div class="feature" onclick="showNotice('Voice Calls')"><div class="feature-icon">☎</div><h3>Voice Calls</h3><p>Talk with friends around the world.</p></div>
-    <div class="feature" onclick="showNotice('Video Calls')"><div class="feature-icon">▣</div><h3>Video Calls</h3><p>Connect face to face.</p></div>
-  </div>
-  <div class="empty"><div class="empty-icon">☎</div><h3>No recent calls</h3><p>Your recent calls will appear here.</p></div>
-</section>
-
-<button class="floating ai-button" onclick="openAI()">✧</button>
-<button class="floating plus-button" onclick="openNewChat()">＋</button>
-
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="switchTab('chats',this)"><span class="nav-icon">▤</span>Chats</button>
-  <button class="nav-item" onclick="switchTab('contacts',this)"><span class="nav-icon">♙</span>Contacts</button>
-  <button class="nav-item" onclick="switchTab('updates',this)"><span class="nav-icon">◉</span>Updates</button>
-  <button class="nav-item" onclick="switchTab('communities',this)"><span class="nav-icon">♧</span>Communities</button>
-  <button class="nav-item" onclick="switchTab('calls',this)"><span class="nav-icon">☎</span>Calls</button>
-</nav>
-</div>
-
-<!-- MENU -->
-<div class="overlay" id="menuOverlay" onclick="outsideClose(event,'menuOverlay')">
-<div class="modal">
-  <div class="modal-head"><h2>Terzex Menu</h2><button class="close" onclick="closeModal('menuOverlay')">✕</button></div>
-  <button class="menu-item" onclick="showNotice('New Group')"><span class="menu-icon">♧</span><span><strong>New Group</strong><small>Create a group conversation</small></span></button>
-  <button class="menu-item" onclick="showNotice('New Channel')"><span class="menu-icon">◉</span><span><strong>New Channel</strong><small>Create a channel</small></span></button>
-  <button class="menu-item" onclick="showNotice('Linked Devices')"><span class="menu-icon">▣</span><span><strong>Linked Devices</strong><small>Manage your connected devices</small></span></button>
-  <button class="menu-item" onclick="showNotice('Starred Messages')"><span class="menu-icon">★</span><span><strong>Starred Messages</strong><small>View saved messages</small></span></button>
-  <button class="menu-item" onclick="showNotice('Mark All as Read')"><span class="menu-icon">✓</span><span><strong>Mark All as Read</strong><small>Clear unread message indicators</small></span></button>
-  <button class="menu-item" onclick="showNotice('Scheduled Calls')"><span class="menu-icon">◷</span><span><strong>Scheduled Calls</strong><small>Plan your calls</small></span></button>
-  <button class="menu-item" onclick="openSettings()"><span class="menu-icon">⚙</span><span><strong>Settings</strong><small>Profile, privacy and app preferences</small></span></button>
-</div>
-</div>
-
-<!-- SETTINGS -->
-<div class="overlay" id="settingsOverlay" onclick="outsideClose(event,'settingsOverlay')">
-<div class="modal">
-  <div class="modal-head"><h2>Settings</h2><button class="close" onclick="closeModal('settingsOverlay')">✕</button></div>
-  <div class="profile-top">
-    <div class="avatar" id="profileAvatar">T</div>
-    <h3 id="profileName">Terzex User</h3>
-    <p id="profileEmail">Your Terzex account</p>
-  </div>
-  <button class="menu-item" onclick="showNotice('My Profile')"><span class="menu-icon">◉</span><span><strong>My Profile</strong><small>View your account information</small></span></button>
-  <button class="menu-item" onclick="showNotice('Edit Profile')"><span class="menu-icon">✎</span><span><strong>Edit Profile</strong><small>Change your name, picture and bio</small></span></button>
-  <button class="menu-item" onclick="showNotice('Account')"><span class="menu-icon">♙</span><span><strong>Account</strong><small>Manage your account</small></span></button>
-  <button class="menu-item" onclick="showNotice('Privacy & Security')"><span class="menu-icon">◆</span><span><strong>Privacy & Security</strong><small>Control your privacy</small></span></button>
-  <button class="menu-item" onclick="showNotice('Notifications')"><span class="menu-icon">♢</span><span><strong>Notifications</strong><small>Manage alerts and sounds</small></span></button>
-  <button class="menu-item" onclick="showNotice('Chats & Appearance')"><span class="menu-icon">◐</span><span><strong>Chats & Appearance</strong><small>Customize your experience</small></span></button>
-  <button class="menu-item" onclick="showNotice('Storage & Data')"><span class="menu-icon">▤</span><span><strong>Storage & Data</strong><small>Manage data usage</small></span></button>
-  <button class="menu-item" onclick="showNotice('Help & Support')"><span class="menu-icon">?</span><span><strong>Help & Support</strong><small>Get assistance</small></span></button>
-  <button class="menu-item" onclick="logout()"><span class="menu-icon">↪</span><span><strong>Log Out</strong><small>Sign out of your account</small></span></button>
-</div>
-</div>
-
-<!-- NEW CHAT -->
-<div class="overlay" id="newChatOverlay" onclick="outsideClose(event,'newChatOverlay')">
-<div class="modal">
-  <div class="modal-head"><h2>New Chat</h2><button class="close" onclick="closeModal('newChatOverlay')">✕</button></div>
-  <p class="notice">Find people on Terzex by searching their username. Enter the username or the beginning of a username below.</p>
-  <input id="contactSearch" type="text" autocomplete="off" placeholder="Search Terzex username" onkeydown="if(event.key==='Enter')searchTerzexUsers()" style="width:100%;padding:14px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;margin-top:18px;outline:none">
-  <button class="primary" id="findContactButton" onclick="searchTerzexUsers()" style="width:100%">Find Contact</button>
-  <div id="contactSearchResults" class="search-results" aria-live="polite"></div>
-</div>
-</div>
-
-<!-- PRIVATE CHAT -->
-<div class="overlay" id="privateChatOverlay" onclick="outsideClose(event,'privateChatOverlay')">
-  <div class="private-chat-modal">
-    <div class="private-chat-head">
-      <div id="privateChatAvatar" class="user-initial">T</div>
-      <div class="private-chat-person">
-        <strong id="privateChatName">Terzex User</strong>
-        <small id="privateChatUsername">Private conversation</small>
-      </div>
-      <button class="close" onclick="closePrivateChat()">✕</button>
-    </div>
-    <div id="privateChatMessages" class="private-chat-messages">
-      <p class="private-chat-empty">Loading conversation...</p>
-    </div>
-    <form id="privateChatForm" class="private-chat-form" onsubmit="sendPrivateMessage(event)">
-      <input id="privateChatInput" type="text" maxlength="2000" autocomplete="off" placeholder="Write a message..." aria-label="Message">
-      <button id="privateChatSend" type="submit">Send</button>
-    </form>
-  </div>
-</div>
-
-<!-- NOTICE -->
-<div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')">
-<div class="modal">
-  <div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div>
-  <div class="empty-icon">✧</div>
-  <p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p>
-  <button class="primary" onclick="closeModal('noticeOverlay')">Okay</button>
-</div>
-</div>
+<div class="overlay" id="privateChatOverlay" onclick="outsideClose(event,'privateChatOverlay')"><div class="private-chat-modal">
+<div class="private-chat-head"><div id="privateChatAvatar" class="user-initial">T</div><div class="private-chat-person"><strong id="privateChatName">Terzex User</strong><small id="privateChatUsername">Private conversation</small></div><button class="head-action" onclick="openCallChoices()">Calls ▾</button><button class="head-action" onclick="openChatOptions()">⋮</button><button class="close" onclick="closePrivateChat()">✕</button></div>
+<div id="privateChatMessages" class="private-chat-messages"><p class="private-chat-empty">Loading conversation...</p></div><div class="chat-hint">Tap or hold a message for reactions and message options.</div>
+<div class="chat-panel" id="emojiPanel"><div class="panel-tabs"><button class="active" onclick="showComposerPanel('emoji',this)">Emojis</button><button onclick="showComposerPanel('stickers',this)">Stickers</button></div><div id="emojiGrid" class="emoji-grid"></div><div id="stickerGrid" class="sticker-grid" style="display:none"></div></div>
+<form id="privateChatForm" class="private-chat-form" onsubmit="sendPrivateMessage(event)"><button class="tool-button" type="button" onclick="toggleEmojiPanel()" aria-label="Emojis">☺</button><button class="tool-button" type="button" onclick="document.getElementById('attachmentInput').click()" aria-label="Attach file">＋</button><input id="privateChatInput" type="text" maxlength="2000" autocomplete="off" placeholder="Write a message..." aria-label="Message"><button id="privateChatSend" class="send-button" type="submit">Send</button><input id="attachmentInput" type="file" accept="image/*,video/*" hidden onchange="uploadChatAttachment(event)"></form>
+</div></div>
+<div class="overlay" id="callOverlay" onclick="outsideClose(event,'callOverlay')"><div class="modal"><div class="modal-head"><h2>Start a call</h2><button class="close" onclick="closeModal('callOverlay')">✕</button></div><button class="menu-item" onclick="requestCallSetup('voice')"><span class="menu-icon">☎</span><span><strong>Voice call</strong><small>Start an audio conversation</small></span></button><button class="menu-item" onclick="requestCallSetup('video')"><span class="menu-icon">▣</span><span><strong>Video call</strong><small>Start a video conversation</small></span></button></div></div>
+<div class="overlay" id="chatOptionsOverlay" onclick="outsideClose(event,'chatOptionsOverlay')"><div class="modal"><div class="modal-head"><h2>Chat settings</h2><button class="close" onclick="closeModal('chatOptionsOverlay')">✕</button></div><button class="menu-item" onclick="showNotice('Search in conversation')"><span class="menu-icon">⌕</span><span><strong>Search in conversation</strong></span></button><button class="menu-item" onclick="showNotice('Mute notifications')"><span class="menu-icon">♢</span><span><strong>Mute notifications</strong></span></button><button class="menu-item" onclick="showNotice('Clear conversation')"><span class="menu-icon">▤</span><span><strong>Clear conversation</strong></span></button><button class="menu-item" onclick="showNotice('Block contact')"><span class="menu-icon">⊘</span><span><strong>Block contact</strong></span></button></div></div>
+<div class="overlay" id="messageActionOverlay" onclick="outsideClose(event,'messageActionOverlay')"><div class="modal"><div class="modal-head"><h2>Message</h2><button class="close" onclick="closeModal('messageActionOverlay')">✕</button></div><div class="quick-reactions"><button onclick="reactToSelected('❤️')">❤️</button><button onclick="reactToSelected('😂')">😂</button><button onclick="reactToSelected('😮')">😮</button><button onclick="reactToSelected('😢')">😢</button><button onclick="reactToSelected('🙏')">🙏</button><button onclick="reactToSelected('👍')">👍</button></div><button class="menu-item" onclick="editSelectedMessage()"><span class="menu-icon">✎</span><span><strong>Edit message</strong></span></button><button class="menu-item" onclick="copySelectedMessage()"><span class="menu-icon">▣</span><span><strong>Copy message</strong></span></button><button class="menu-item" onclick="deleteSelectedMessage()"><span class="menu-icon">⌫</span><span><strong>Delete message</strong></span></button></div></div>
+<div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')"><div class="modal"><div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div><div class="empty-icon">✧</div><p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p><button class="primary" onclick="closeModal('noticeOverlay')">Okay</button></div></div>
+<div class="message-actions" id="messageActions"><div class="quick-reactions"><button onclick="reactToSelected('❤️')">❤️</button><button onclick="reactToSelected('😂')">😂</button><button onclick="reactToSelected('😮')">😮</button><button onclick="reactToSelected('😢')">😢</button><button onclick="reactToSelected('🙏')">🙏</button><button onclick="reactToSelected('👍')">👍</button></div><button class="action" onclick="editSelectedMessage()">✎ Edit message</button><button class="action" onclick="copySelectedMessage()">▣ Copy message</button><button class="action danger" onclick="deleteSelectedMessage()">⌫ Delete message</button></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",
-  authDomain: "terzex-chat.firebaseapp.com",
-  projectId: "terzex-chat",
-  storageBucket: "terzex-chat.firebasestorage.app",
-  messagingSenderId: "439554401022",
-  appId: "1:439554401022:web:2eddf4bebb81fab30ffbaf",
-  measurementId: "G-9BQYK88HN9"
-};
-
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let currentUser = null;
-let activePrivateChatId = null;
-let privateMessagesUnsubscribe = null;
-let privateChatTarget = null;
-
-auth.onAuthStateChanged(function(user){
-  if(!user){
-    window.location.href = "index.html";
-    return;
-  }
-
-  currentUser = user;
-
-  document.getElementById("profileEmail").textContent = user.email || "Terzex account";
-  document.getElementById("profileName").textContent = user.displayName || "Terzex User";
-  document.getElementById("profileAvatar").textContent =
-    (user.displayName || user.email || "T").charAt(0).toUpperCase();
-});
-
-function switchTab(tab,button){
-  document.querySelectorAll(".tab-page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-  document.getElementById(tab+"Page").classList.add("active");
-  button.classList.add("active");
-  document.getElementById("filters").style.display = tab === "chats" ? "flex" : "none";
-}
-
-function setFilter(button){
-  document.querySelectorAll(".filter").forEach(i=>i.classList.remove("active"));
-  button.classList.add("active");
-}
-
-/* SEARCH TERZEX USERS */
-async function searchTerzexUsers(){
-  const input = document.getElementById("contactSearch");
-  const results = document.getElementById("contactSearchResults");
-  const button = document.getElementById("findContactButton");
-  const term = input.value.trim().replace(/^@/,"").toLowerCase();
-
-  results.innerHTML = "";
-
-  if(!currentUser){
-    results.textContent = "Please wait while your account loads.";
-    return;
-  }
-  if(term.length < 2){
-    results.textContent = "Enter at least 2 characters to search.";
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Searching...";
-  results.textContent = "Searching Terzex users...";
-
-  try{
-    const snapshot = await db.collection("public_profiles")
-      .orderBy("usernameLower")
-      .startAt(term)
-      .endAt(term + "\uf8ff")
-      .limit(20)
-      .get();
-
-    results.innerHTML = "";
-    const matches = [];
-
-    snapshot.forEach(doc=>{
-      const profile = doc.data();
-      if(doc.id !== currentUser.uid && profile.uid !== currentUser.uid){
-        matches.push({id:doc.id,profile:profile});
-      }
-    });
-
-    if(!matches.length){
-      const msg = document.createElement("p");
-      msg.className = "result-message";
-      msg.textContent = "No Terzex users found with that username. Check the spelling and try again.";
-      results.appendChild(msg);
-      return;
-    }
-
-    const heading = document.createElement("p");
-    heading.className = "result-message";
-    heading.textContent = matches.length + " Terzex account(s) found:";
-    results.appendChild(heading);
-
-    matches.forEach(item=>{
-      const profile = item.profile;
-      const name = profile.displayName || profile.username || "Terzex User";
-      const username = profile.username ? "@" + profile.username : "Terzex member";
-      const row = document.createElement("div");
-      row.className = "user-result";
-
-      if(profile.photoURL){
-        const photo = document.createElement("img");
-        photo.src = profile.photoURL;
-        photo.alt = "";
-        photo.onerror = function(){
-          const fallback = document.createElement("div");
-          fallback.className = "user-initial";
-          fallback.textContent = name.charAt(0).toUpperCase();
-          photo.replaceWith(fallback);
-        };
-        row.appendChild(photo);
-      }else{
-        const initial = document.createElement("div");
-        initial.className = "user-initial";
-        initial.textContent = name.charAt(0).toUpperCase();
-        row.appendChild(initial);
-      }
-
-      const info = document.createElement("div");
-      info.className = "user-info";
-      const displayName = document.createElement("strong");
-      displayName.textContent = name;
-      const handle = document.createElement("small");
-      handle.textContent = username;
-      info.append(displayName,handle);
-
-      const messageButton = document.createElement("button");
-      messageButton.textContent = "Message";
-      messageButton.onclick = ()=>openPrivateChat(item.id,profile);
-
-      row.append(info,messageButton);
-      results.appendChild(row);
-    });
-
-  }catch(error){
-    console.error("Terzex user search error:",error);
-    results.innerHTML = "";
-    const msg = document.createElement("p");
-    msg.className = "result-message";
-    msg.textContent = error.code === "permission-denied"
-      ? "Firestore permission denied. Check public_profiles read rules."
-      : "Search failed. Check your internet connection and try again.";
-    results.appendChild(msg);
-  }finally{
-    button.disabled = false;
-    button.textContent = "Find Contact";
-  }
-}
-
-/* PRIVATE ONE-TO-ONE MESSAGING */
-function makePrivateChatId(uidA,uidB){
-  return [uidA,uidB].sort().join("_");
-}
-
-async function openPrivateChat(otherUid,profile){
-  if(!currentUser){
-    showNotice("Please wait for your account to load");
-    return;
-  }
-  if(!otherUid || otherUid === currentUser.uid){
-    showNotice("You cannot start a chat with this account");
-    return;
-  }
-
-  closeModal("newChatOverlay");
-
-  privateChatTarget = {
-    uid:otherUid,
-    name:profile.displayName || profile.username || "Terzex User",
-    username:profile.username ? "@"+profile.username : "Terzex member",
-    photoURL:profile.photoURL || ""
-  };
-
-  document.getElementById("privateChatName").textContent = privateChatTarget.name;
-  document.getElementById("privateChatUsername").textContent = privateChatTarget.username;
-
-  let avatar = document.getElementById("privateChatAvatar");
-  if(privateChatTarget.photoURL){
-    const photo = document.createElement("img");
-    photo.id = "privateChatAvatar";
-    photo.src = privateChatTarget.photoURL;
-    photo.alt = "";
-    photo.onerror = function(){
-      const fallback = document.createElement("div");
-      fallback.id = "privateChatAvatar";
-      fallback.className = "user-initial";
-      fallback.textContent = privateChatTarget.name.charAt(0).toUpperCase();
-      photo.replaceWith(fallback);
-    };
-    avatar.replaceWith(photo);
-  }else{
-    if(avatar.tagName.toLowerCase() !== "div"){
-      const fallback = document.createElement("div");
-      fallback.id = "privateChatAvatar";
-      fallback.className = "user-initial";
-      fallback.textContent = privateChatTarget.name.charAt(0).toUpperCase();
-      avatar.replaceWith(fallback);
-    }else{
-      avatar.textContent = privateChatTarget.name.charAt(0).toUpperCase();
-      avatar.className = "user-initial";
-    }
-  }
-
-  document.getElementById("privateChatMessages").innerHTML =
-    '<p class="private-chat-empty">Loading conversation...</p>';
-  document.getElementById("privateChatOverlay").classList.add("show");
-
-  if(privateMessagesUnsubscribe){
-    privateMessagesUnsubscribe();
-    privateMessagesUnsubscribe = null;
-  }
-
-  const participants = [currentUser.uid,otherUid].sort();
-  const chatId = makePrivateChatId(currentUser.uid,otherUid);
-  activePrivateChatId = chatId;
-
-  try{
-    const chatRef = db.collection("private_chats").doc(chatId);
-    const chatSnapshot = await chatRef.get();
-
-    if(!chatSnapshot.exists){
-      await chatRef.set({
-        participants:participants,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }else{
-      const existing = chatSnapshot.data().participants || [];
-      if(existing.length !== 2 ||
-         !existing.includes(currentUser.uid) ||
-         !existing.includes(otherUid)){
-        throw new Error("This conversation has invalid participant information.");
-      }
-    }
-
-    if(activePrivateChatId !== chatId) return;
-
-    privateMessagesUnsubscribe = chatRef.collection("messages")
-      .orderBy("createdAt","asc")
-      .limit(100)
-      .onSnapshot(snapshot=>{
-        if(activePrivateChatId !== chatId) return;
-        renderPrivateMessages(snapshot);
-        updateIncomingMessageReceipts(snapshot,chatId).catch(error=>{
-          console.warn("Could not update message receipts:",error);
-        });
-      },error=>{
-        console.error("Private message listener error:",error);
-        showPrivateChatError(error);
-      });
-
-    document.getElementById("privateChatInput").focus();
-
-  }catch(error){
-    console.error("Could not open private chat:",error);
-    showPrivateChatError(error);
-  }
-}
-
-// Mark incoming messages as delivered.
-// Mark them as read only while this conversation is visible.
-async function updateIncomingMessageReceipts(snapshot,chatId){
-  if(!currentUser || activePrivateChatId !== chatId) return;
-
-  const isVisible = document.visibilityState === "visible";
-  const writes = [];
-
-  snapshot.forEach(doc=>{
-    const message = doc.data();
-    if(message.senderId === currentUser.uid) return;
-
-    const changes = {};
-
-    if(!message.deliveredAt){
-      changes.deliveredAt =
-        firebase.firestore.FieldValue.serverTimestamp();
-    }
-
-    if(isVisible && !message.readAt){
-      changes.readAt =
-        firebase.firestore.FieldValue.serverTimestamp();
-    }
-
-    if(Object.keys(changes).length){
-      writes.push(doc.ref.update(changes));
-    }
-  });
-
-  if(writes.length) await Promise.all(writes);
-}
-
-function renderPrivateMessages(snapshot){
-  const container = document.getElementById("privateChatMessages");
-  container.innerHTML = "";
-
-  if(snapshot.empty){
-    const empty = document.createElement("p");
-    empty.className = "private-chat-empty";
-    empty.textContent = "This is the beginning of your private conversation. Send a message to say hello.";
-    container.appendChild(empty);
-    return;
-  }
-
-  snapshot.forEach(doc=>{
-    const message = doc.data();
-    const isMine = message.senderId === currentUser.uid;
-
-    const bubble = document.createElement("div");
-    bubble.className = "private-message " +
-      (isMine ? "mine" : "theirs");
-    bubble.textContent = message.text || "";
-
-    const time = document.createElement("span");
-    time.className = "private-message-time";
-
-    if(message.createdAt &&
-       typeof message.createdAt.toDate === "function"){
-      time.textContent = message.createdAt.toDate().toLocaleTimeString([],{
-        hour:"2-digit",
-        minute:"2-digit"
-      });
-    }
-
-    if(isMine){
-      const status = document.createElement("span");
-
-      status.className = "private-message-status" +
-        (message.readAt ? " read" : "");
-
-      status.textContent =
-        message.readAt || message.deliveredAt ? "✓✓" : "✓";
-
-      status.setAttribute(
-        "aria-label",
-        message.readAt
-          ? "Read"
-          : message.deliveredAt
-            ? "Delivered"
-            : "Sent"
-      );
-
-      time.appendChild(status);
-    }
-
-    bubble.appendChild(time);
-    container.appendChild(bubble);
-  });
-
-  container.scrollTop = container.scrollHeight;
-}
-
-// When the recipient returns to the open conversation,
-// update previously received messages to read.
-document.addEventListener("visibilitychange",async function(){
-  if(
-    document.visibilityState !== "visible" ||
-    !currentUser ||
-    !activePrivateChatId
-  ) return;
-
-  try{
-    const chatId = activePrivateChatId;
-
-    const snapshot = await db.collection("private_chats")
-      .doc(chatId)
-      .collection("messages")
-      .orderBy("createdAt","asc")
-      .limit(100)
-      .get();
-
-    await updateIncomingMessageReceipts(snapshot,chatId);
-
-  }catch(error){
-    console.warn("Could not mark messages as read:",error);
-  }
-});
-
-function showPrivateChatError(error){
-  const container = document.getElementById("privateChatMessages");
-  container.innerHTML = "";
-
-  const message = document.createElement("p");
-  message.className = "private-chat-empty";
-
-  message.textContent = error && error.code === "permission-denied"
-    ? "Firestore blocked this conversation. Check that the private_chats rules were published."
-    : (error && error.message) || "Could not load this conversation. Please try again.";
-
-  container.appendChild(message);
-}
-
-async function sendPrivateMessage(event){
-  event.preventDefault();
-
-  const input = document.getElementById("privateChatInput");
-  const sendButton = document.getElementById("privateChatSend");
-  const messageText = input.value.trim();
-
-  if(!messageText || !currentUser || !activePrivateChatId) return;
-
-  sendButton.disabled = true;
-
-  try{
-    await db.collection("private_chats")
-      .doc(activePrivateChatId)
-      .collection("messages")
-      .add({
-        text:messageText,
-        senderId:currentUser.uid,
-        senderName:currentUser.displayName ||
-          currentUser.email || "Terzex User",
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-    input.value = "";
-    input.focus();
-
-  }catch(error){
-    console.error("Message send failed:",error);
-
-    alert(error.code === "permission-denied"
-      ? "Message not sent: Firestore permissions blocked it. Check your published private chat rules."
-      : "Message not sent. Check your internet connection and try again.");
-
-  }finally{
-    sendButton.disabled = false;
-  }
-}
-
-function closePrivateChat(){
-  if(privateMessagesUnsubscribe){
-    privateMessagesUnsubscribe();
-    privateMessagesUnsubscribe = null;
-  }
-
-  activePrivateChatId = null;
-  privateChatTarget = null;
-  closeModal("privateChatOverlay");
-}
-
-/* PHONE CONTACT PICKER */
-function importPhoneContacts(){
-  const support = document.getElementById("contactsSupport");
-
-  if(!navigator.contacts ||
-     typeof navigator.contacts.select !== "function"){
-    support.textContent =
-      "This browser does not support phone contact selection. Full address-book access requires the Terzex Android or iPhone app.";
-    return;
-  }
-
-  navigator.contacts.select(["name","tel"],{multiple:true})
-    .then(contacts=>{
-      const list = document.getElementById("contactsList");
-      list.innerHTML = "";
-
-      document.getElementById("contactsCount").textContent =
-        contacts.length + " SELECTED";
-
-      if(!contacts.length){
-        list.textContent = "No contacts selected.";
-        return;
-      }
-
-      contacts.forEach(contact=>{
-        const name =
-          (contact.name && contact.name[0]) || "Phone contact";
-        const phone =
-          (contact.tel && contact.tel[0]) || "";
-
-        const row = document.createElement("div");
-        row.className = "contact-row";
-
-        const avatar = document.createElement("div");
-        avatar.className = "contact-avatar";
-        avatar.textContent = name.charAt(0).toUpperCase();
-
-        const details = document.createElement("div");
-        details.className = "contact-details";
-
-        const title = document.createElement("strong");
-        title.textContent = name;
-
-        const number = document.createElement("small");
-        number.textContent = phone;
-
-        details.append(title,number);
-
-        const invite = document.createElement("button");
-        invite.className = "invite-button";
-        invite.textContent = "Invite";
-
-        invite.onclick = function(){
-          const message =
-            "Join me on Terzex Chat: https://terzex-chat-v2.onrender.com";
-
-          if(phone){
-            window.location.href = "sms:" +
-              encodeURIComponent(phone) +
-              "?body=" + encodeURIComponent(message);
-
-          }else if(navigator.share){
-            navigator.share({
-              title:"Join Terzex Chat",
-              text:message
-            });
-
-          }else{
-            showNotice("Invite Terzex");
-          }
-        };
-
-        row.append(avatar,details,invite);
-        list.appendChild(row);
-      });
-
-      support.textContent =
-        "Contacts were selected on this device only. Your address book has not been uploaded.";
-    })
-    .catch(error=>{
-      if(error && error.name !== "AbortError"){
-        support.textContent =
-          "Could not read contacts. Check your browser permission and try again.";
-      }
-    });
-}
-
-/* MENUS AND GENERAL ACTIONS */
-function openMenu(){
-  document.getElementById("menuOverlay").classList.add("show");
-}
-
-function openSettings(){
-  closeModal("menuOverlay");
-  document.getElementById("settingsOverlay").classList.add("show");
-}
-
-function openNewChat(){
-  closeModal("menuOverlay");
-  document.getElementById("newChatOverlay").classList.add("show");
-
-  setTimeout(()=>{
-    document.getElementById("contactSearch").focus();
-  },150);
-}
-
-function openAI(){
-  document.getElementById("noticeTitle").textContent =
-    "Terzex AI — Coming Soon";
-
-  document.getElementById("noticeText").textContent =
-    "Your official Terzex AI assistant is coming soon. It will help with questions, writing, translation, summaries and navigating Terzex.";
-
-  document.getElementById("noticeOverlay").classList.add("show");
-}
-
-function showNotice(name){
-  closeModal("menuOverlay");
-  closeModal("settingsOverlay");
-  closeModal("newChatOverlay");
-
-  document.getElementById("noticeTitle").textContent =
-    name + " — Coming Soon";
-
-  document.getElementById("noticeText").textContent =
-    "We are preparing this feature for Terzex Chat. It is not active yet.";
-
-  document.getElementById("noticeOverlay").classList.add("show");
-}
-
-function closeModal(id){
-  document.getElementById(id).classList.remove("show");
-}
-
-function outsideClose(event,id){
-  if(event.target.id === id){
-    if(id === "privateChatOverlay"){
-      closePrivateChat();
-    }else{
-      closeModal(id);
-    }
-  }
-}
-
-function logout(){
-  if(confirm("Are you sure you want to log out?")){
-    auth.signOut()
-      .then(()=>window.location.href="index.html")
-      .catch(error=>alert("Unable to log out: "+error.message));
-  }
-}
+const firebaseConfig={apiKey:"AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",authDomain:"terzex-chat.firebaseapp.com",projectId:"terzex-chat",storageBucket:"terzex-chat.firebasestorage.app",messagingSenderId:"439554401022",appId:"1:439554401022:web:2eddf4bebb81fab30ffbaf",measurementId:"G-9BQYK88HN9"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore(),storage=firebase.storage();
+let currentUser=null,activePrivateChatId=null,privateMessagesUnsubscribe=null,privateChatTarget=null,selectedMessageId=null,selectedMessageData=null,composerMode="emoji";
+const emojiList="😀 😃 😄 😁 😆 😅 😂 🙂 🙃 😉 😊 😍 🥰 😘 😎 🤩 🥳 😭 😢 😡 🤔 🤗 🤫 😴 😮 🙄 😇 🥺 😋 😜 🤪 🤝 🙏 👏 👍 👎 👌 ✌️ 🤞 💪 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 💔 💕 💞 💯 🔥 ✨ ⭐ 🎉 🎊 🎂 🌹 🌸 ☀️ 🌙 ⚡ 🚀 🎵 🏆 🍕 🍔 ☕ 🥑 🐱 🐶 🦋".split(" ");
+const stickers=["🥳","😍","😂","😭","🤩","❤️","🔥","🙏","👍","🎉","💯","😎","🥰","🤗","🤔","✨"];
+auth.onAuthStateChanged(user=>{if(!user){location.href="index.html";return;}currentUser=user;document.getElementById("profileEmail").textContent=user.email||"Terzex account";document.getElementById("profileName").textContent=user.displayName||"Terzex User";document.getElementById("profileAvatar").textContent=(user.displayName||user.email||"T").charAt(0).toUpperCase();});
+function switchTab(tab,button){document.querySelectorAll(".tab-page").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));document.getElementById(tab+"Page").classList.add("active");button.classList.add("active");document.getElementById("filters").style.display=tab==="chats"?"flex":"none";}
+function setFilter(button){document.querySelectorAll(".filter").forEach(i=>i.classList.remove("active"));button.classList.add("active");}
+async function searchTerzexUsers(){const input=document.getElementById("contactSearch"),results=document.getElementById("contactSearchResults"),button=document.getElementById("findContactButton"),term=input.value.trim().replace(/^@/,"").toLowerCase();results.innerHTML="";if(!currentUser){results.textContent="Please wait while your account loads.";return;}if(term.length<2){results.textContent="Enter at least 2 characters to search.";return;}button.disabled=true;button.textContent="Searching...";results.textContent="Searching Terzex users...";try{const snap=await db.collection("public_profiles").orderBy("usernameLower").startAt(term).endAt(term+"\uf8ff").limit(20).get();results.innerHTML="";const matches=[];snap.forEach(doc=>{const p=doc.data();if(doc.id!==currentUser.uid&&p.uid!==currentUser.uid)matches.push({id:doc.id,profile:p});});if(!matches.length){results.textContent="No Terzex users found. Check the username and try again.";return;}const h=document.createElement("p");h.className="result-message";h.textContent=matches.length+" Terzex account(s) found:";results.appendChild(h);matches.forEach(item=>{const p=item.profile,name=p.displayName||p.username||"Terzex User",row=document.createElement("div");row.className="user-result";const av=document.createElement(p.photoURL?"img":"div");if(p.photoURL)av.src=p.photoURL;else{av.className="user-initial";av.textContent=name.charAt(0).toUpperCase();}row.appendChild(av);const info=document.createElement("div");info.className="user-info";const strong=document.createElement("strong"),small=document.createElement("small");strong.textContent=name;small.textContent=p.username?"@"+p.username:"Terzex member";info.append(strong,small);const b=document.createElement("button");b.textContent="Message";b.onclick=()=>openPrivateChat(item.id,p);row.append(info,b);results.appendChild(row);});}catch(e){console.error(e);results.textContent=e.code==="permission-denied"?"Firestore permission denied. Check public_profiles read rules.":"Search failed. Check your connection."; }finally{button.disabled=false;button.textContent="Find Contact";}}
+function makePrivateChatId(a,b){return[a,b].sort().join("_");}
+async function openPrivateChat(otherUid,p){if(!currentUser||!otherUid||otherUid===currentUser.uid)return;closeModal("newChatOverlay");privateChatTarget={uid:otherUid,name:p.displayName||p.username||"Terzex User",username:p.username?"@"+p.username:"Terzex member",photoURL:p.photoURL||""};document.getElementById("privateChatName").textContent=privateChatTarget.name;document.getElementById("privateChatUsername").textContent=privateChatTarget.username;const old=document.getElementById("privateChatAvatar"),av=privateChatTarget.photoURL?document.createElement("img"):document.createElement("div");av.id="privateChatAvatar";if(privateChatTarget.photoURL){av.src=privateChatTarget.photoURL;av.onerror=()=>{av.replaceWith(makeInitial(privateChatTarget.name));};}else{av.className="user-initial";av.textContent=privateChatTarget.name.charAt(0).toUpperCase();}old.replaceWith(av);document.getElementById("privateChatMessages").innerHTML='<p class="private-chat-empty">Loading conversation...</p>';document.getElementById("privateChatOverlay").classList.add("show");if(privateMessagesUnsubscribe)privateMessagesUnsubscribe();const participants=[currentUser.uid,otherUid].sort(),chatId=makePrivateChatId(currentUser.uid,otherUid);activePrivateChatId=chatId;try{const ref=db.collection("private_chats").doc(chatId),snap=await ref.get();if(!snap.exists)await ref.set({participants,createdAt:firebase.firestore.FieldValue.serverTimestamp()});else{const existing=snap.data().participants||[];if(existing.length!==2||!existing.includes(currentUser.uid)||!existing.includes(otherUid))throw Error("Invalid chat participants.");}if(activePrivateChatId!==chatId)return;privateMessagesUnsubscribe=ref.collection("messages").orderBy("createdAt","asc").limit(150).onSnapshot(s=>{if(activePrivateChatId!==chatId)return;renderPrivateMessages(s);updateIncomingMessageReceipts(s,chatId).catch(console.warn);},showPrivateChatError);document.getElementById("privateChatInput").focus();}catch(e){showPrivateChatError(e);}}
+function makeInitial(name){const d=document.createElement("div");d.id="privateChatAvatar";d.className="user-initial";d.textContent=(name||"T").charAt(0).toUpperCase();return d;}
+async function updateIncomingMessageReceipts(s,chatId){if(!currentUser||activePrivateChatId!==chatId)return;const visible=document.visibilityState==="visible",writes=[];s.forEach(doc=>{const m=doc.data();if(m.senderId===currentUser.uid)return;const changes={};if(!m.deliveredAt)changes.deliveredAt=firebase.firestore.FieldValue.serverTimestamp();if(visible&&!m.readAt)changes.readAt=firebase.firestore.FieldValue.serverTimestamp();if(Object.keys(changes).length)writes.push(doc.ref.update(changes));});if(writes.length)await Promise.all(writes);}
+function renderPrivateMessages(s){const box=document.getElementById("privateChatMessages");box.innerHTML="";if(s.empty){box.innerHTML='<p class="private-chat-empty">This is the beginning of your private conversation. Send a message to say hello.</p>';return;}s.forEach(doc=>{const m=doc.data(),mine=m.senderId===currentUser.uid,b=document.createElement("div");b.className="private-message "+(mine?"mine":"theirs");b.dataset.id=doc.id;if(m.mediaURL){if((m.mediaType||"").startsWith("video/")){const v=document.createElement("video");v.src=m.mediaURL;v.controls=true;v.className="message-media";b.appendChild(v);}else{const im=document.createElement("img");im.src=m.mediaURL;im.className="message-media";im.alt="Attachment";b.appendChild(im);}}if(m.sticker){const st=document.createElement("div");st.className="message-sticker";st.textContent=m.sticker;b.appendChild(st);}if(m.text){const t=document.createElement("div");t.textContent=m.text;b.appendChild(t);}const time=document.createElement("span");time.className="private-message-time";if(m.createdAt&&m.createdAt.toDate)time.textContent=m.createdAt.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});if(mine){const status=document.createElement("span");status.className="private-message-status"+(m.readAt?" read":"");status.textContent=m.readAt||m.deliveredAt?"✓✓":"✓";time.appendChild(status);}b.appendChild(time);if(m.reactions&&Object.keys(m.reactions).length){const row=document.createElement("div");row.className="reaction-row";Object.entries(m.reactions).forEach(([emoji,users])=>{const count=Array.isArray(users)?users.length:0;if(count){const chip=document.createElement("button");chip.className="reaction-chip";chip.textContent=emoji+" "+count;chip.onclick=()=>reactToMessage(doc.id,emoji);row.appendChild(chip);}});b.appendChild(row);}b.addEventListener("contextmenu",e=>{e.preventDefault();selectMessage(doc.id,m,b);});let timer;b.addEventListener("touchstart",()=>{timer=setTimeout(()=>selectMessage(doc.id,m,b),550);},{passive:true});["touchend","touchmove","touchcancel"].forEach(ev=>b.addEventListener(ev,()=>clearTimeout(timer),{passive:true}));b.addEventListener("click",()=>{if(window.matchMedia("(hover: hover)").matches)selectMessage(doc.id,m,b);});box.appendChild(b);});box.scrollTop=box.scrollHeight;}
+async function reactToMessage(id,emoji){if(!activePrivateChatId)return;const ref=db.collection("private_chats").doc(activePrivateChatId).collection("messages").doc(id);try{await db.runTransaction(async tx=>{const s=await tx.get(ref);if(!s.exists)return;const reactions=s.data().reactions||{},users=Array.isArray(reactions[emoji])?[...reactions[emoji]]:[];const i=users.indexOf(currentUser.uid);if(i>=0)users.splice(i,1);else users.push(currentUser.uid);if(users.length)reactions[emoji]=users;else delete reactions[emoji];tx.update(ref,{reactions});});}catch(e){alert("Reaction could not be saved. Your Firestore message rules may need to allow reaction updates.");}}
+function selectMessage(id,m,el){selectedMessageId=id;selectedMessageData=m;const menu=document.getElementById("messageActions");menu.classList.add("show");const r=el.getBoundingClientRect();menu.style.left=Math.max(10,Math.min(window.innerWidth-210,r.left))+"px";menu.style.top=Math.max(10,Math.min(window.innerHeight-230,r.top-150))+"px";if(m.senderId!==currentUser.uid){menu.querySelectorAll(".action")[0].style.display="none";menu.querySelectorAll(".action")[2].style.display="none";}else{menu.querySelectorAll(".action")[0].style.display="block";menu.querySelectorAll(".action")[2].style.display="block";}}
+function hideMessageActions(){document.getElementById("messageActions").classList.remove("show");}
+async function reactToSelected(e){if(selectedMessageId)await reactToMessage(selectedMessageId,e);hideMessageActions();closeModal("messageActionOverlay");}
+async function editSelectedMessage(){hideMessageActions();if(!selectedMessageData||selectedMessageData.senderId!==currentUser.uid)return;const next=prompt("Edit your message:",selectedMessageData.text||"");if(next===null)return;if(!next.trim())return alert("Message cannot be empty.");try{await messageRef(selectedMessageId).update({text:next.trim(),editedAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){alert("Edit failed. Firestore rules must allow the sender to edit their own message.");}}
+async function deleteSelectedMessage(){hideMessageActions();if(!selectedMessageData||selectedMessageData.senderId!==currentUser.uid)return;if(!confirm("Delete this message for everyone?"))return;try{await messageRef(selectedMessageId).delete();}catch(e){alert("Delete failed. Firestore rules must allow the sender to delete their own message.");}}
+function messageRef(id){return db.collection("private_chats").doc(activePrivateChatId).collection("messages").doc(id);}
+async function copySelectedMessage(){hideMessageActions();const text=selectedMessageData?.text||"";try{await navigator.clipboard.writeText(text);showNotice("Message copied");}catch(e){alert(text||"No text to copy.");}}
+function showPrivateChatError(e){console.error("Private chat error:",e);const box=document.getElementById("privateChatMessages");box.innerHTML="";const p=document.createElement("p");p.className="private-chat-empty";p.textContent=e&&e.code==="permission-denied"?"Firestore blocked this conversation. Check private chat rules.":(e&&e.message)||"Could not load this conversation.";box.appendChild(p);}
+async function sendPrivateMessage(e){e.preventDefault();const input=document.getElementById("privateChatInput"),btn=document.getElementById("privateChatSend"),text=input.value.trim();if(!text||!currentUser||!activePrivateChatId)return;btn.disabled=true;try{await messageCollection().add({text,senderId:currentUser.uid,senderName:currentUser.displayName||currentUser.email||"Terzex User",createdAt:firebase.firestore.FieldValue.serverTimestamp()});input.value="";input.focus();}catch(e){console.error(e);alert(e.code==="permission-denied"?"Message not sent: Firestore permissions blocked it.":"Message not sent. Check your connection.");}finally{btn.disabled=false;}}
+function messageCollection(){return db.collection("private_chats").doc(activePrivateChatId).collection("messages");}
+function toggleEmojiPanel(){document.getElementById("emojiPanel").classList.toggle("show");}
+function showComposerPanel(which,button){composerMode=which;document.querySelectorAll(".panel-tabs button").forEach(b=>b.classList.remove("active"));button.classList.add("active");document.getElementById("emojiGrid").style.display=which==="emoji"?"grid":"none";document.getElementById("stickerGrid").style.display=which==="stickers"?"grid":"none";}
+function insertEmoji(emoji){const input=document.getElementById("privateChatInput");input.value+=emoji;input.focus();}
+function sendSticker(sticker){if(!activePrivateChatId||!currentUser)return;messageCollection().add({sticker,senderId:currentUser.uid,senderName:currentUser.displayName||currentUser.email||"Terzex User",createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>alert("Sticker could not be sent. Check Firestore message rules."));document.getElementById("emojiPanel").classList.remove("show");}
+async function uploadChatAttachment(event){const file=event.target.files[0];event.target.value="";if(!file||!activePrivateChatId||!currentUser)return;if(!file.type.startsWith("image/")&&!file.type.startsWith("video/"))return alert("Choose an image or video.");if(file.size>25*1024*1024)return alert("Please choose a file smaller than 25 MB.");const btn=document.getElementById("privateChatSend");btn.disabled=true;btn.textContent="Uploading";try{const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_"),path=`private_chat_media/${activePrivateChatId}/${currentUser.uid}/${Date.now()}_${safeName}`,ref=storage.ref().child(path);const task=await ref.put(file,{contentType:file.type});const url=await task.ref.getDownloadURL();await messageCollection().add({text:"",mediaURL:url,mediaPath:path,mediaType:file.type,mediaName:file.name,senderId:currentUser.uid,senderName:currentUser.displayName||currentUser.email||"Terzex User",createdAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){console.error(e);alert("Upload failed. Check Firebase Storage rules and make sure Storage is enabled.");}finally{btn.disabled=false;btn.textContent="Send";}}
+function openCallChoices(){document.getElementById("callOverlay").classList.add("show");}
+function requestCallSetup(type){closeModal("callOverlay");showNotice(type==="voice"?"Voice call setup required":"Video call setup required");document.getElementById("noticeText").textContent="The "+type+" call option is ready in the interface, but live calling still needs WebRTC call signalling and TURN server configuration. No call has been started.";}
+function openChatOptions(){document.getElementById("chatOptionsOverlay").classList.add("show");}
+document.addEventListener("visibilitychange",async()=>{if(document.visibilityState!=="visible"||!currentUser||!activePrivateChatId)return;try{const s=await messageCollection().orderBy("createdAt","asc").limit(150).get();await updateIncomingMessageReceipts(s,activePrivateChatId);}catch(e){console.warn(e);}});
+function importPhoneContacts(){const support=document.getElementById("contactsSupport");if(!navigator.contacts||typeof navigator.contacts.select!=="function"){support.textContent="This browser does not support phone contact selection. Full address-book access requires the Terzex mobile app.";return;}navigator.contacts.select(["name","tel"],{multiple:true}).then(contacts=>{const list=document.getElementById("contactsList");list.innerHTML="";document.getElementById("contactsCount").textContent=contacts.length+" SELECTED";contacts.forEach(c=>{const name=(c.name&&c.name[0])||"Phone contact",phone=(c.tel&&c.tel[0])||"",row=document.createElement("div");row.className="contact-row";row.innerHTML='<div class="contact-avatar">'+name.charAt(0).toUpperCase()+'</div><div class="contact-details"><strong></strong><small></small></div><button class="invite-button">Invite</button>';row.querySelector("strong").textContent=name;row.querySelector("small").textContent=phone;row.querySelector("button").onclick=()=>{const msg="Join me on Terzex Chat: https://terzex-chat-v2.onrender.com";location.href="sms:"+encodeURIComponent(phone)+"?body="+encodeURIComponent(msg);};list.appendChild(row);});}).catch(()=>support.textContent="Could not read contacts. Check browser permissions.");}
+function openMenu(){document.getElementById("menuOverlay").classList.add("show");}function openSettings(){closeModal("menuOverlay");document.getElementById("settingsOverlay").classList.add("show");}
+function openNewChat(){closeModal("menuOverlay");document.getElementById("newChatOverlay").classList.add("show");setTimeout(()=>document.getElementById("contactSearch").focus(),150);}
+function openAI(){document.getElementById("noticeTitle").textContent="Terzex AI — Coming Soon";document.getElementById("noticeText").textContent="Your official Terzex AI assistant is coming soon. It will help with questions, writing, translation, summaries and navigating Terzex.";document.getElementById("noticeOverlay").classList.add("show");}
+function showNotice(name){["menuOverlay","settingsOverlay","newChatOverlay","chatOptionsOverlay"].forEach(closeModal);document.getElementById("noticeTitle").textContent=name+" — Coming Soon";document.getElementById("noticeText").textContent="We are preparing this feature for Terzex Chat. It is not active yet.";document.getElementById("noticeOverlay").classList.add("show");}
+function closeModal(id){document.getElementById(id).classList.remove("show");}function outsideClose(e,id){if(e.target.id===id){if(id==="privateChatOverlay")closePrivateChat();else closeModal(id);}}
+function closePrivateChat(){if(privateMessagesUnsubscribe){privateMessagesUnsubscribe();privateMessagesUnsubscribe=null;}activePrivateChatId=null;privateChatTarget=null;hideMessageActions();closeModal("privateChatOverlay");document.getElementById("emojiPanel").classList.remove("show");}
+function logout(){if(confirm("Are you sure you want to log out?"))auth.signOut().then(()=>location.href="index.html").catch(e=>alert("Unable to log out: "+e.message));}
+document.addEventListener("click",e=>{if(!e.target.closest(".message-actions")&&!e.target.closest(".private-message"))hideMessageActions();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){hideMessageActions();document.querySelectorAll(".overlay.show").forEach(o=>o.classList.remove("show"));}});
+document.getElementById("emojiGrid").innerHTML=emojiList.map(x=>`<button type="button" onclick="insertEmoji('${x}')">${x}</button>`).join("");
+document.getElementById("stickerGrid").innerHTML=stickers.map(x=>`<button type="button" onclick="sendSticker('${x}')">${x}</button>`).join("");
 </script>
 </body>
 </html>
