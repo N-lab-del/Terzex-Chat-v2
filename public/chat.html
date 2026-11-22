@@ -111,7 +111,7 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
 const firebaseConfig={apiKey:"AIzaSyD9EIBvB_1wlUCa2f4XzxjHvulEoELjJ6o",authDomain:"terzex-chat.firebaseapp.com",projectId:"terzex-chat",storageBucket:"terzex-chat.firebasestorage.app",messagingSenderId:"439554401022",appId:"1:439554401022:web:2eddf4bebb81fab30ffbaf",measurementId:"G-9BQYK88HN9"};
 if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.firestore(),storage=firebase.storage();
-let currentUser=null,activePrivateChatId=null,privateMessagesUnsubscribe=null,privateChatTarget=null,selectedMessageId=null,selectedMessageData=null,composerMode="emoji";
+let currentUser=null,activePrivateChatId=null,privateMessagesUnsubscribe=null,privateChatTarget=null,selectedMessageId=null,selectedMessageData=null,composerMode="emoji",replyToMessage=null;
   let conversationUnsubscribe=null;
 const conversationMessageUnsubs={};
 const conversationRows={};
