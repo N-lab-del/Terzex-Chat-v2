@@ -141,6 +141,23 @@ lastChanged:firebase.database.ServerValue.TIMESTAMP
 });
 }
 auth.onAuthStateChanged(user=>{if(!user){location.href="index.html";return;}currentUser=user;startPresence(user);document.getElementById("profileEmail").textContent=user.email||"Terzex account";document.getElementById("profileName").textContent=user.displayName||"Terzex User";document.getElementById("profileAvatar").textContent=(user.displayName||user.email||"T").charAt(0).toUpperCase();});
+  let privatePresenceUnsubscribe=null;
+
+function watchPrivatePresence(uid){
+if(privatePresenceUnsubscribe){privatePresenceUnsubscribe();privatePresenceUnsubscribe=null;}
+const label=document.getElementById("privateChatUsername");
+privatePresenceUnsubscribe=rtdb.ref("presence/"+uid).on("value",snap=>{
+const status=snap.val();
+if(!status){label.textContent="Offline";return;}
+if(status.state==="online"){label.textContent="🟢 Online";return;}
+const date=status.lastChanged?new Date(status.lastChanged):null;
+if(!date){label.textContent="Offline";}
+else{
+const today=new Date().toDateString()===date.toDateString();
+label.textContent="Last seen "+(today?"today":"on "+date.toLocaleDateString())+" at "+date.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+}
+});
+  }
   function switchTab(tab,button){document.querySelectorAll(".tab-page").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));document.getElementById(tab+"Page").classList.add("active");button.classList.add("active");document.getElementById("filters").style.display=tab==="chats"?"flex":"none";}
 function setFilter(button){
  document.querySelectorAll(".filter").forEach(i=>i.classList.remove("active"));
