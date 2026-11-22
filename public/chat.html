@@ -125,7 +125,15 @@ async function searchTerzexUsers(){const input=document.getElementById("contactS
 async function watchConversationPreview(chatId,chatData){
  const participants=chatData.participants||[],otherUid=participants.find(id=>id!==currentUser.uid);
  if(!otherUid)return;
- conversationRows[chatId]={chatId,otherUid,name:"Terzex User",username:"",photoURL:"",preview:"Start a conversation",time:0,profile:{uid:otherUid}};
+  conversationRows[chatId].unreadCount=0;
+ conversationUnreadUnsubs[chatId]=db.collection("private_chats").doc(chatId).collection("messages")
+  .where("senderId","==",otherUid)
+  .onSnapshot(unreadSnap=>{
+   const row=conversationRows[chatId];
+   if(!row)return;
+   row.unreadCount=unreadSnap.docs.reduce((count,message)=>count+(message.data().readAt?0:1),0);
+   renderConversationList();
+  },e=>console.warn("Unread message listener:",e));
  try{const p=await db.collection("public_profiles").doc(otherUid).get();if(p.exists){const profile=p.data();conversationRows[chatId].profile=profile;conversationRows[chatId].name=profile.displayName||profile.username||"Terzex User";conversationRows[chatId].username=profile.username||"";conversationRows[chatId].photoURL=profile.photoURL||"";renderConversationList();}}catch(e){console.warn("Could not load chat profile:",e);}
  conversationMessageUnsubs[chatId]=db.collection("private_chats").doc(chatId).collection("messages").orderBy("createdAt","desc").limit(1).onSnapshot(snap=>{
   const row=conversationRows[chatId];if(!row)return;
