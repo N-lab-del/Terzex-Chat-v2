@@ -277,7 +277,29 @@ async function deleteSelectedMessage(){hideMessageActions();if(!selectedMessageD
 function messageRef(id){return db.collection("private_chats").doc(activePrivateChatId).collection("messages").doc(id);}
 async function copySelectedMessage(){hideMessageActions();const text=selectedMessageData?.text||"";try{await navigator.clipboard.writeText(text);showNotice("Message copied");}catch(e){alert(text||"No text to copy.");}}
 function showPrivateChatError(e){console.error("Private chat error:",e);const box=document.getElementById("privateChatMessages");box.innerHTML="";const p=document.createElement("p");p.className="private-chat-empty";p.textContent=e&&e.code==="permission-denied"?"Firestore blocked this conversation. Check private chat rules.":(e&&e.message)||"Could not load this conversation.";box.appendChild(p);}
-async function sendPrivateMessage(e){e.preventDefault();const input=document.getElementById("privateChatInput"),btn=document.getElementById("privateChatSend"),text=input.value.trim();if(!text||!currentUser||!activePrivateChatId)return;btn.disabled=true;try{await messageCollection().add({text,senderId:currentUser.uid,senderName:currentUser.displayName||currentUser.email||"Terzex User",createdAt:firebase.firestore.FieldValue.serverTimestamp()});input.value="";input.focus();}catch(e){console.error(e);alert(e.code==="permission-denied"?"Message not sent: Firestore permissions blocked it.":"Message not sent. Check your connection.");}finally{btn.disabled=false;}}
+async function sendPrivateMessage(e){
+e.preventDefault();
+const input=document.getElementById("privateChatInput"),btn=document.getElementById("privateChatSend"),text=input.value.trim();
+if(!text||!currentUser||!activePrivateChatId)return;
+btn.disabled=true;
+try{
+await messageCollection().add({
+text,
+senderId:currentUser.uid,
+senderName:currentUser.displayName||currentUser.email||"Terzex User",
+replyTo:replyToMessage?{id:replyToMessage.id,text:replyToMessage.text,senderId:replyToMessage.senderId,senderName:replyToMessage.senderName}:null,
+createdAt:firebase.firestore.FieldValue.serverTimestamp()
+});
+input.value="";
+cancelReply();
+input.focus();
+}catch(e){
+console.error(e);
+alert(e.code==="permission-denied"?"Message not sent: Firestore permissions blocked it.":"Message not sent. Check your connection.");
+}finally{
+btn.disabled=false;
+}
+}
 function messageCollection(){return db.collection("private_chats").doc(activePrivateChatId).collection("messages");}
 function toggleEmojiPanel(){document.getElementById("emojiPanel").classList.toggle("show");}
   function showComposerPanel(which,button){composerMode=which;document.querySelectorAll(".panel-tabs button").forEach(b=>b.classList.remove("active"));button.classList.add("active");document.getElementById("emojiGrid").style.display=which==="emoji"?"grid":"none";document.getElementById("stickerGrid").style.display=which==="stickers"?"grid":"none";}
