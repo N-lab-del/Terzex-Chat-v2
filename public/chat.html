@@ -167,7 +167,7 @@ async function watchConversationPreview(chatId,chatData){
 
  rows.forEach(row=>{
   const item=document.createElement("div");
-  item.className="conversation-row";
+  item.className="conversation-row"+(row.unreadCount>0?" unread":"");
   item.onclick=()=>openConversationFromHistory(row);
 
   const avatar=document.createElement("div");
