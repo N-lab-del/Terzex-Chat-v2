@@ -258,7 +258,20 @@ function renderPrivateMessages(s){const box=document.getElementById("privateChat
   async function reactToMessage(id,emoji){if(!activePrivateChatId)return;const ref=db.collection("private_chats").doc(activePrivateChatId).collection("messages").doc(id);try{await db.runTransaction(async tx=>{const s=await tx.get(ref);if(!s.exists)return;const reactions=s.data().reactions||{},users=Array.isArray(reactions[emoji])?[...reactions[emoji]]:[];const i=users.indexOf(currentUser.uid);if(i>=0)users.splice(i,1);else users.push(currentUser.uid);if(users.length)reactions[emoji]=users;else delete reactions[emoji];tx.update(ref,{reactions});});}catch(e){alert("Reaction could not be saved. Your Firestore message rules may need to allow reaction updates.");}}
 function selectMessage(id,m,el){selectedMessageId=id;selectedMessageData=m;const menu=document.getElementById("messageActions");menu.classList.add("show");const r=el.getBoundingClientRect();menu.style.left=Math.max(10,Math.min(window.innerWidth-210,r.left))+"px";menu.style.top=Math.max(10,Math.min(window.innerHeight-230,r.top-150))+"px";if(m.senderId!==currentUser.uid){menu.querySelectorAll(".action")[0].style.display="none";menu.querySelectorAll(".action")[2].style.display="none";}else{menu.querySelectorAll(".action")[0].style.display="block";menu.querySelectorAll(".action")[2].style.display="block";}}
 function hideMessageActions(){document.getElementById("messageActions").classList.remove("show");}
-async function reactToSelected(e){if(selectedMessageId)await reactToMessage(selectedMessageId,e);hideMessageActions();closeModal("messageActionOverlay");}
+function replyToSelected(){
+if(!selectedMessageId||!selectedMessageData)return;
+replyToMessage={id:selectedMessageId,text:selectedMessageData.text||"Media message",senderId:selectedMessageData.senderId,senderName:selectedMessageData.senderName||"Terzex User"};
+document.getElementById("replyPreviewText").textContent=replyToMessage.senderName+": "+replyToMessage.text;
+document.getElementById("replyPreview").style.display="flex";
+hideMessageActions();
+document.getElementById("privateChatInput").focus();
+}
+function cancelReply(){
+replyToMessage=null;
+document.getElementById("replyPreview").style.display="none";
+document.getElementById("replyPreviewText").textContent="";
+}
+ async function reactToSelected(e){if(selectedMessageId)await reactToMessage(selectedMessageId,e);hideMessageActions();closeModal("messageActionOverlay");}
 async function editSelectedMessage(){hideMessageActions();if(!selectedMessageData||selectedMessageData.senderId!==currentUser.uid)return;const next=prompt("Edit your message:",selectedMessageData.text||"");if(next===null)return;if(!next.trim())return alert("Message cannot be empty.");try{await messageRef(selectedMessageId).update({text:next.trim(),editedAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){alert("Edit failed. Firestore rules must allow the sender to edit their own message.");}}
 async function deleteSelectedMessage(){hideMessageActions();if(!selectedMessageData||selectedMessageData.senderId!==currentUser.uid)return;if(!confirm("Delete this message for everyone?"))return;try{await messageRef(selectedMessageId).delete();}catch(e){alert("Delete failed. Firestore rules must allow the sender to delete their own message.");}}
 function messageRef(id){return db.collection("private_chats").doc(activePrivateChatId).collection("messages").doc(id);}
