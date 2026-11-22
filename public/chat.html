@@ -125,6 +125,7 @@ async function searchTerzexUsers(){const input=document.getElementById("contactS
 async function watchConversationPreview(chatId,chatData){
  const participants=chatData.participants||[],otherUid=participants.find(id=>id!==currentUser.uid);
  if(!otherUid)return;
+  conversationRows[chatId]={chatId,otherUid,name:"Terzex User",username:"",photoURL:"",preview:"Start a conversation",time:0,profile:{uid:otherUid}};
   conversationRows[chatId].unreadCount=0;
  conversationUnreadUnsubs[chatId]=db.collection("private_chats").doc(chatId).collection("messages")
   .where("senderId","==",otherUid)
