@@ -198,8 +198,17 @@ async function watchConversationPreview(chatId,chatData){
    ?new Date(row.time).toLocaleDateString([],{month:"short",day:"numeric"})
    :"";
 
-  top.append(name,time);
+  
+top.appendChild(name);
 
+if(row.unreadCount>0){
+ const badge=document.createElement("span");
+ badge.className="unread-badge";
+ badge.textContent=row.unreadCount>99?"99+":String(row.unreadCount);
+ top.appendChild(badge);
+}
+
+top.appendChild(time);
   const preview=document.createElement("div");
   preview.className="conversation-preview";
   preview.textContent=row.preview;
