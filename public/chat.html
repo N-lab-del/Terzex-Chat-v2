@@ -121,7 +121,7 @@ async function watchConversationPreview(chatId,chatData){
   renderConversationList();
  },e=>console.warn("Latest message listener:",e));
 }
-function renderConversationList(){
+  function renderConversationList(){
  const list=document.getElementById("conversationList");
  if(!list)return;
 
@@ -129,9 +129,7 @@ function renderConversationList(){
 
  Object.values(conversationRows).forEach(row=>{
   if(!row.otherUid)return;
-
   const existing=uniquePeople[row.otherUid];
-
   if(!existing || row.time>existing.time){
    uniquePeople[row.otherUid]=row;
   }
@@ -158,9 +156,7 @@ function renderConversationList(){
    const img=document.createElement("img");
    img.src=row.photoURL;
    img.alt="";
-   img.onerror=()=>{
-    avatar.textContent=(row.name||"T").charAt(0).toUpperCase();
-   };
+   img.onerror=()=>{avatar.textContent=(row.name||"T").charAt(0).toUpperCase();};
    avatar.appendChild(img);
   }else{
    avatar.textContent=(row.name||"T").charAt(0).toUpperCase();
@@ -185,21 +181,11 @@ function renderConversationList(){
 
   const preview=document.createElement("div");
   preview.className="conversation-preview";
- const list=document.getElementById("conversationList");if(!list)return;
- const rows=Object.values(conversationRows).sort((a,b)=>b.time-a.time);
- if(!rows.length){list.innerHTML='<div class="conversation-empty">Your conversations will appear here.</div>';return;}
- list.innerHTML="";
- rows.forEach(row=>{
-  const item=document.createElement("div");item.className="conversation-row";item.onclick=()=>openConversationFromHistory(row);
-  const avatar=document.createElement("div");avatar.className="conversation-avatar";
-  if(row.photoURL){const img=document.createElement("img");img.src=row.photoURL;img.alt="";img.onerror=()=>{avatar.textContent=(row.name||"T").charAt(0).toUpperCase();};avatar.appendChild(img);}else avatar.textContent=(row.name||"T").charAt(0).toUpperCase();
-  const main=document.createElement("div");main.className="conversation-main";
-  const top=document.createElement("div");top.className="conversation-top";
-  const name=document.createElement("strong");name.textContent=row.name;
-  const time=document.createElement("span");time.className="conversation-time";time.textContent=row.time?new Date(row.time).toLocaleDateString([], {month:"short",day:"numeric"}):"";
-  top.append(name,time);
-  const preview=document.createElement("div");preview.className="conversation-preview";preview.textContent=row.preview;
-  main.append(top,preview);item.append(avatar,main);list.appendChild(item);
+  preview.textContent=row.preview;
+
+  main.append(top,preview);
+  item.append(avatar,main);
+  list.appendChild(item);
  });
 }
 function openConversationFromHistory(row){openPrivateChat(row.otherUid,row.profile||{displayName:row.name,username:row.username,photoURL:row.photoURL});}
