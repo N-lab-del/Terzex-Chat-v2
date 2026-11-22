@@ -105,6 +105,8 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
 .private-message.mine{align-self:flex-end;background:#493719;color:#fff1d2;border-bottom-right-radius:4px}
 .private-message.theirs{align-self:flex-start;border-bottom-left-radius:4px}
 .private-message-time{display:block;margin-top:5px;font-size:9px;color:#c5b28f;text-align:right}
+.private-message-status{margin-left:5px;font-size:11px;font-weight:800;color:#c5b28f}
+.private-message-status.read{color:#39bdf8}
 .private-chat-form{display:flex;gap:9px;padding:12px;border-top:1px solid #292929;background:#171717}
 .private-chat-form input{flex:1;min-width:0;padding:13px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;outline:none}
 .private-chat-form button{padding:0 17px;border:0;border-radius:12px;background:linear-gradient(110deg,var(--gold),var(--gold-light));color:#171109;font-weight:800}
@@ -540,6 +542,9 @@ async function openPrivateChat(otherUid,profile){
       .onSnapshot(snapshot=>{
         if(activePrivateChatId !== chatId) return;
         renderPrivateMessages(snapshot);
+        updateIncomingMessageReceipts(snapshot,chatId).catch(error=>{
+          console.warn("Could not update message receipts:",error);
+        });
       },error=>{
         console.error("Private message listener error:",error);
         showPrivateChatError(error);
@@ -551,6 +556,38 @@ async function openPrivateChat(otherUid,profile){
     console.error("Could not open private chat:",error);
     showPrivateChatError(error);
   }
+}
+
+// Mark incoming messages as delivered.
+// Mark them as read only while this conversation is visible.
+async function updateIncomingMessageReceipts(snapshot,chatId){
+  if(!currentUser || activePrivateChatId !== chatId) return;
+
+  const isVisible = document.visibilityState === "visible";
+  const writes = [];
+
+  snapshot.forEach(doc=>{
+    const message = doc.data();
+    if(message.senderId === currentUser.uid) return;
+
+    const changes = {};
+
+    if(!message.deliveredAt){
+      changes.deliveredAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+    }
+
+    if(isVisible && !message.readAt){
+      changes.readAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+    }
+
+    if(Object.keys(changes).length){
+      writes.push(doc.ref.update(changes));
+    }
+  });
+
+  if(writes.length) await Promise.all(writes);
 }
 
 function renderPrivateMessages(snapshot){
@@ -567,28 +604,82 @@ function renderPrivateMessages(snapshot){
 
   snapshot.forEach(doc=>{
     const message = doc.data();
+    const isMine = message.senderId === currentUser.uid;
+
     const bubble = document.createElement("div");
     bubble.className = "private-message " +
-      (message.senderId === currentUser.uid ? "mine" : "theirs");
+      (isMine ? "mine" : "theirs");
     bubble.textContent = message.text || "";
 
-    if(message.createdAt && typeof message.createdAt.toDate === "function"){
-      const time = document.createElement("span");
-      time.className = "private-message-time";
+    const time = document.createElement("span");
+    time.className = "private-message-time";
+
+    if(message.createdAt &&
+       typeof message.createdAt.toDate === "function"){
       time.textContent = message.createdAt.toDate().toLocaleTimeString([],{
-        hour:"2-digit",minute:"2-digit"
+        hour:"2-digit",
+        minute:"2-digit"
       });
-      bubble.appendChild(time);
     }
+
+    if(isMine){
+      const status = document.createElement("span");
+
+      status.className = "private-message-status" +
+        (message.readAt ? " read" : "");
+
+      status.textContent =
+        message.readAt || message.deliveredAt ? "✓✓" : "✓";
+
+      status.setAttribute(
+        "aria-label",
+        message.readAt
+          ? "Read"
+          : message.deliveredAt
+            ? "Delivered"
+            : "Sent"
+      );
+
+      time.appendChild(status);
+    }
+
+    bubble.appendChild(time);
     container.appendChild(bubble);
   });
 
   container.scrollTop = container.scrollHeight;
 }
 
+// When the recipient returns to the open conversation,
+// update previously received messages to read.
+document.addEventListener("visibilitychange",async function(){
+  if(
+    document.visibilityState !== "visible" ||
+    !currentUser ||
+    !activePrivateChatId
+  ) return;
+
+  try{
+    const chatId = activePrivateChatId;
+
+    const snapshot = await db.collection("private_chats")
+      .doc(chatId)
+      .collection("messages")
+      .orderBy("createdAt","asc")
+      .limit(100)
+      .get();
+
+    await updateIncomingMessageReceipts(snapshot,chatId);
+
+  }catch(error){
+    console.warn("Could not mark messages as read:",error);
+  }
+});
+
 function showPrivateChatError(error){
   const container = document.getElementById("privateChatMessages");
   container.innerHTML = "";
+
   const message = document.createElement("p");
   message.className = "private-chat-empty";
 
@@ -617,7 +708,8 @@ async function sendPrivateMessage(event){
       .add({
         text:messageText,
         senderId:currentUser.uid,
-        senderName:currentUser.displayName || currentUser.email || "Terzex User",
+        senderName:currentUser.displayName ||
+          currentUser.email || "Terzex User",
         createdAt:firebase.firestore.FieldValue.serverTimestamp()
       });
 
@@ -626,9 +718,11 @@ async function sendPrivateMessage(event){
 
   }catch(error){
     console.error("Message send failed:",error);
+
     alert(error.code === "permission-denied"
       ? "Message not sent: Firestore permissions blocked it. Check your published private chat rules."
       : "Message not sent. Check your internet connection and try again.");
+
   }finally{
     sendButton.disabled = false;
   }
@@ -639,6 +733,7 @@ function closePrivateChat(){
     privateMessagesUnsubscribe();
     privateMessagesUnsubscribe = null;
   }
+
   activePrivateChatId = null;
   privateChatTarget = null;
   closeModal("privateChatOverlay");
@@ -648,8 +743,10 @@ function closePrivateChat(){
 function importPhoneContacts(){
   const support = document.getElementById("contactsSupport");
 
-  if(!navigator.contacts || typeof navigator.contacts.select !== "function"){
-    support.textContent = "This browser does not support phone contact selection. Full address-book access requires the Terzex Android or iPhone app.";
+  if(!navigator.contacts ||
+     typeof navigator.contacts.select !== "function"){
+    support.textContent =
+      "This browser does not support phone contact selection. Full address-book access requires the Terzex Android or iPhone app.";
     return;
   }
 
@@ -657,7 +754,9 @@ function importPhoneContacts(){
     .then(contacts=>{
       const list = document.getElementById("contactsList");
       list.innerHTML = "";
-      document.getElementById("contactsCount").textContent = contacts.length + " SELECTED";
+
+      document.getElementById("contactsCount").textContent =
+        contacts.length + " SELECTED";
 
       if(!contacts.length){
         list.textContent = "No contacts selected.";
@@ -665,8 +764,11 @@ function importPhoneContacts(){
       }
 
       contacts.forEach(contact=>{
-        const name = (contact.name && contact.name[0]) || "Phone contact";
-        const phone = (contact.tel && contact.tel[0]) || "";
+        const name =
+          (contact.name && contact.name[0]) || "Phone contact";
+        const phone =
+          (contact.tel && contact.tel[0]) || "";
+
         const row = document.createElement("div");
         row.className = "contact-row";
 
@@ -676,22 +778,34 @@ function importPhoneContacts(){
 
         const details = document.createElement("div");
         details.className = "contact-details";
+
         const title = document.createElement("strong");
         title.textContent = name;
+
         const number = document.createElement("small");
         number.textContent = phone;
+
         details.append(title,number);
 
         const invite = document.createElement("button");
         invite.className = "invite-button";
         invite.textContent = "Invite";
+
         invite.onclick = function(){
-          const message = "Join me on Terzex Chat: https://terzex-chat-v2.onrender.com";
+          const message =
+            "Join me on Terzex Chat: https://terzex-chat-v2.onrender.com";
+
           if(phone){
-            window.location.href = "sms:" + encodeURIComponent(phone) +
+            window.location.href = "sms:" +
+              encodeURIComponent(phone) +
               "?body=" + encodeURIComponent(message);
+
           }else if(navigator.share){
-            navigator.share({title:"Join Terzex Chat",text:message});
+            navigator.share({
+              title:"Join Terzex Chat",
+              text:message
+            });
+
           }else{
             showNotice("Invite Terzex");
           }
@@ -701,11 +815,13 @@ function importPhoneContacts(){
         list.appendChild(row);
       });
 
-      support.textContent = "Contacts were selected on this device only. Your address book has not been uploaded.";
+      support.textContent =
+        "Contacts were selected on this device only. Your address book has not been uploaded.";
     })
     .catch(error=>{
       if(error && error.name !== "AbortError"){
-        support.textContent = "Could not read contacts. Check your browser permission and try again.";
+        support.textContent =
+          "Could not read contacts. Check your browser permission and try again.";
       }
     });
 }
@@ -723,13 +839,19 @@ function openSettings(){
 function openNewChat(){
   closeModal("menuOverlay");
   document.getElementById("newChatOverlay").classList.add("show");
-  setTimeout(()=>document.getElementById("contactSearch").focus(),150);
+
+  setTimeout(()=>{
+    document.getElementById("contactSearch").focus();
+  },150);
 }
 
 function openAI(){
-  document.getElementById("noticeTitle").textContent = "Terzex AI — Coming Soon";
+  document.getElementById("noticeTitle").textContent =
+    "Terzex AI — Coming Soon";
+
   document.getElementById("noticeText").textContent =
     "Your official Terzex AI assistant is coming soon. It will help with questions, writing, translation, summaries and navigating Terzex.";
+
   document.getElementById("noticeOverlay").classList.add("show");
 }
 
@@ -737,9 +859,13 @@ function showNotice(name){
   closeModal("menuOverlay");
   closeModal("settingsOverlay");
   closeModal("newChatOverlay");
-  document.getElementById("noticeTitle").textContent = name + " — Coming Soon";
+
+  document.getElementById("noticeTitle").textContent =
+    name + " — Coming Soon";
+
   document.getElementById("noticeText").textContent =
     "We are preparing this feature for Terzex Chat. It is not active yet.";
+
   document.getElementById("noticeOverlay").classList.add("show");
 }
 
@@ -749,14 +875,18 @@ function closeModal(id){
 
 function outsideClose(event,id){
   if(event.target.id === id){
-    if(id === "privateChatOverlay") closePrivateChat();
-    else closeModal(id);
+    if(id === "privateChatOverlay"){
+      closePrivateChat();
+    }else{
+      closeModal(id);
+    }
   }
 }
 
 function logout(){
   if(confirm("Are you sure you want to log out?")){
-    auth.signOut().then(()=>window.location.href="index.html")
+    auth.signOut()
+      .then(()=>window.location.href="index.html")
       .catch(error=>alert("Unable to log out: "+error.message));
   }
 }
