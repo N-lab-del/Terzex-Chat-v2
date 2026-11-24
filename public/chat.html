@@ -238,6 +238,14 @@ async function watchConversationPreview(chatId,chatData){
  if(!otherUid)return;
   conversationRows[chatId]={chatId,otherUid,name:"Terzex User",username:"",photoURL:"",preview:"Start a conversation",time:0,profile:{uid:otherUid}};
   conversationRows[chatId].unreadCount=0;
+ conversationTypingUnsubs[chatId]=rtdb.ref("typing/"+chatId+"/"+otherUid).on("value",snap=>{
+ const row=conversationRows[chatId];
+ if(!row)return;
+ const data=snap.val();
+ const isTyping=data&&data.isTyping===true&&Date.now()-data.updatedAt<5000;
+ row.isTyping=!!isTyping;
+ renderConversationList();
+});
  conversationUnreadUnsubs[chatId]=db.collection("private_chats").doc(chatId).collection("messages")
   .where("senderId","==",otherUid)
   .onSnapshot(unreadSnap=>{
