@@ -141,7 +141,50 @@ lastChanged:firebase.database.ServerValue.TIMESTAMP
 });
 }
 auth.onAuthStateChanged(user=>{if(!user){location.href="index.html";return;}currentUser=user;startPresence(user);document.getElementById("profileEmail").textContent=user.email||"Terzex account";document.getElementById("profileName").textContent=user.displayName||"Terzex User";document.getElementById("profileAvatar").textContent=(user.displayName||user.email||"T").charAt(0).toUpperCase();});
+  let privatePresenceUnsubscribe=null;
 
+function watchPrivatePresence(uid){
+if(privatePresenceUnsubscribe){
+privatePresenceUnsubscribe();
+privatePresenceUnsubscribe=null;
+}
+
+const label=document.getElementById("privateChatUsername");
+const presenceRef=rtdb.ref("presence/"+uid);
+
+const handler=snap=>{
+const status=snap.val();
+
+if(!status){
+label.textContent="Offline";
+return;
+}
+
+if(status.state==="online"){
+label.textContent="🟢 Online";
+return;
+}
+
+const date=status.lastChanged?new Date(status.lastChanged):null;
+
+if(!date||isNaN(date.getTime())){
+label.textContent="Offline";
+}else{
+const today=new Date().toDateString()===date.toDateString();
+
+label.textContent="Last seen "+
+(today?"today":"on "+date.toLocaleDateString())+
+" at "+
+date.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+}
+};
+
+presenceRef.on("value",handler);
+
+privatePresenceUnsubscribe=()=>{
+presenceRef.off("value",handler);
+};
+ }
   function switchTab(tab,button){document.querySelectorAll(".tab-page").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));document.getElementById(tab+"Page").classList.add("active");button.classList.add("active");document.getElementById("filters").style.display=tab==="chats"?"flex":"none";}
 function setFilter(button){
  document.querySelectorAll(".filter").forEach(i=>i.classList.remove("active"));
@@ -184,74 +227,7 @@ async function watchConversationPreview(chatId,chatData){
  try{const p=await db.collection("public_profiles").doc(otherUid).get();if(p.exists){const profile=p.data();conversationRows[chatId].profile=profile;conversationRows[chatId].name=profile.displayName||profile.username||"Terzex User";conversationRows[chatId].username=profile.username||"";conversationRows[chatId].photoURL=profile.photoURL||"";renderConversationList();}}catch(e){console.warn("Could not load chat profile:",e);}
  conversationMessageUnsubs[chatId]=db.collection("private_chats").doc(chatId).collection("messages").orderBy("createdAt","desc").limit(1).onSnapshot(snap=>{
   const row=conversationRows[chatId];if(!row)return;
-  if(!snap.empty){const d=snap.docs[0].data();row.preview=d.text||(d.mediaURLlet privatePresenceUnsubscribe=null;
-let privateTypingUnsubscribe=null;
-let otherIsTyping=false;
-let privatePresenceText="Offline";
-
-function renderPrivateChatStatus(){
-const label=document.getElementById("privateChatUsername");
-label.textContent=otherIsTyping?"Typing…":privatePresenceText;
-}
-
-function watchPrivatePresence(uid){
-if(privatePresenceUnsubscribe){
-privatePresenceUnsubscribe();
-privatePresenceUnsubscribe=null;
-}
-
-const presenceRef=rtdb.ref("presence/"+uid);
-
-const handler=snap=>{
-const status=snap.val();
-
-if(!status){
-privatePresenceText="Offline";
-}else if(status.state==="online"){
-privatePresenceText="🟢 Online";
-}else{
-const date=status.lastChanged?new Date(status.lastChanged):null;
-if(!date||isNaN(date.getTime())){
-privatePresenceText="Offline";
-}else{
-const today=new Date().toDateString()===date.toDateString();
-privatePresenceText="Last seen "+
-(today?"today":"on "+date.toLocaleDateString())+
-" at "+
-date.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
-}
-}
-renderPrivateChatStatus();
-};
-
-presenceRef.on("value",handler);
-
-privatePresenceUnsubscribe=()=>{
-presenceRef.off("value",handler);
-};
-}
-
-function watchPrivateTyping(chatId,uid){
-if(privateTypingUnsubscribe){
-privateTypingUnsubscribe();
-privateTypingUnsubscribe=null;
-}
-
-otherIsTyping=false;
-const typingRef=rtdb.ref("typing/"+chatId+"/"+uid);
-
-const handler=snap=>{
-otherIsTyping=snap.val()===true;
-renderPrivateChatStatus();
-};
-
-typingRef.on("value",handler);
-
-privateTypingUnsubscribe=()=>{
-typingRef.off("value",handler);
-otherIsTyping=false;
-};
-                    }?"📷 Photo or video":d.sticker?"Sticker":"Message");row.time=d.createdAt&&d.createdAt.toMillis?d.createdAt.toMillis():0;}
+  if(!snap.empty){const d=snap.docs[0].data();row.preview=d.text||(d.mediaURL?"📷 Photo or video":d.sticker?"Sticker":"Message");row.time=d.createdAt&&d.createdAt.toMillis?d.createdAt.toMillis():0;}
   renderConversationList();
  },e=>console.warn("Latest message listener:",e));
 }
