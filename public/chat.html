@@ -242,7 +242,7 @@ async function watchConversationPreview(chatId,chatData){
  const row=conversationRows[chatId];
  if(!row)return;
  const data=snap.val();
- const isTyping=data&&data.isTyping===true&&Date.now()-data.updatedAt<5000;
+ const isTyping=!!(data&&data.typing===true&&data.updatedAt&&Date.now()-data.updatedAt<8000);
  row.isTyping=!!isTyping;
  renderConversationList();
 });
