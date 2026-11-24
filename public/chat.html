@@ -336,7 +336,11 @@ if(row.unreadCount>0){
 top.appendChild(time);
   const preview=document.createElement("div");
   preview.className="conversation-preview";
-  preview.textContent=row.preview;
+ if(row.isTyping){
+ preview.innerHTML='<span class="typing-dots" aria-label="Typing"><i></i><i></i><i></i></span>';
+}else{
+ preview.textContent=row.preview;
+}
 
   main.append(top,preview);
   item.append(avatar,main);
