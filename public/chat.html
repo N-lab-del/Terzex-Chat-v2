@@ -1622,6 +1622,184 @@ function openTerzexPrivacyOption(index) {
 
 // CONNECT SETTINGS BUTTONS
 
+// TERZEX CHAT SETTINGS SYSTEM
+
+const terzexSettingsDefaults = {
+  messageNotifications: true,
+  groupNotifications: true,
+  callNotifications: true,
+  notificationSound: true,
+  vibration: true,
+  messagePreview: true,
+  theme: "Dark",
+  fontSize: "Medium",
+  enterToSend: false,
+  autoDownloadImages: true,
+  autoDownloadVideos: false,
+  autoDownloadDocuments: false,
+  dataSaver: false
+};
+
+function getTerzexSettings() {
+  if (!currentUser) return {...terzexSettingsDefaults};
+
+  try {
+    return {
+      ...terzexSettingsDefaults,
+      ...JSON.parse(
+        localStorage.getItem("terzexSettings_" + currentUser.uid) || "{}"
+      )
+    };
+  } catch (error) {
+    return {...terzexSettingsDefaults};
+  }
+}
+
+function saveTerzexSetting(key, value) {
+  if (!currentUser) {
+    alert("Please sign in first.");
+    return;
+  }
+
+  const settings = getTerzexSettings();
+  settings[key] = value;
+
+  localStorage.setItem(
+    "terzexSettings_" + currentUser.uid,
+    JSON.stringify(settings)
+  );
+
+  const status = document.getElementById("terzexSettingsStatus");
+  if (status) status.textContent = "✓ Settings saved on this device.";
+}
+
+function settingSwitch(label, key, settings) {
+  return `
+    <label style="display:flex;justify-content:space-between;
+    align-items:center;padding:13px 0;border-bottom:1px solid #333;
+    color:white;gap:12px;">
+      <span>${label}</span>
+      <input type="checkbox"
+        ${settings[key] ? "checked" : ""}
+        onchange="saveTerzexSetting('${key}',this.checked)"
+        style="width:20px;height:20px;accent-color:gold;">
+    </label>`;
+}
+
+function settingSelect(label, key, options, settings) {
+  return `
+    <label style="display:block;padding:13px 0;color:white;">
+      ${label}
+      <select onchange="saveTerzexSetting('${key}',this.value)"
+        style="display:block;width:100%;padding:11px;margin-top:8px;
+        background:#171717;color:gold;border:1px solid #b8860b;
+        border-radius:8px;">
+        ${options.map(option =>
+          `<option value="${option}" ${settings[key] === option ? "selected" : ""}>
+            ${option}
+          </option>`
+        ).join("")}
+      </select>
+    </label>`;
+}
+
+function showTerzexSettings(name) {
+  const settings = getTerzexSettings();
+
+  let content = "";
+
+  if (name === "Notifications") {
+    content = `
+      <h3 style="color:gold;">Message notifications</h3>
+      ${settingSwitch("Private message alerts","messageNotifications",settings)}
+      ${settingSwitch("Group notifications","groupNotifications",settings)}
+      ${settingSwitch("Call notifications","callNotifications",settings)}
+      ${settingSwitch("Notification sounds","notificationSound",settings)}
+      ${settingSwitch("Vibration","vibration",settings)}
+      ${settingSwitch("Message previews","messagePreview",settings)}
+    `;
+  }
+
+  if (name === "Chats & Appearance") {
+    content = `
+      <h3 style="color:gold;">Appearance</h3>
+      ${settingSelect("App theme","theme",["Dark","Light","System"],settings)}
+      ${settingSelect("Message font size","fontSize",["Small","Medium","Large"],settings)}
+      <h3 style="color:gold;margin-top:18px;">Chat settings</h3>
+      ${settingSwitch("Press Enter to send","enterToSend",settings)}
+      <p style="color:#aaa;font-size:12px;">
+        Theme and font preferences are saved. Applying them across every
+        chat screen will require connecting these preferences to the app UI.
+      </p>
+      <p style="color:#aaa;font-size:12px;">
+        Message backup is not enabled yet.
+      </p>
+    `;
+  }
+
+  if (name === "Storage & Data") {
+    content = `
+      <h3 style="color:gold;">Media auto-download</h3>
+      ${settingSwitch("Automatically download images","autoDownloadImages",settings)}
+      ${settingSwitch("Automatically download videos","autoDownloadVideos",settings)}
+      ${settingSwitch("Automatically download documents","autoDownloadDocuments",settings)}
+      <h3 style="color:gold;margin-top:18px;">Data usage</h3>
+      ${settingSwitch("Data-saving mode","dataSaver",settings)}
+      <p id="terzexStorageUsage" style="color:#ccc;padding:12px 0;">
+        Checking available browser storage...
+      </p>
+      <button class="primary" onclick="checkTerzexStorage()">
+        Check storage again
+      </button>
+    `;
+  }
+
+  document.getElementById("noticeTitle").textContent = name;
+
+  document.getElementById("noticeText").innerHTML = `
+    <div style="max-height:60vh;overflow-y:auto;text-align:left;">
+      ${content}
+      <p id="terzexSettingsStatus"
+        style="color:#d4af37;font-size:12px;margin-top:15px;">
+        Your settings are saved on this device.
+      </p>
+    </div>
+  `;
+
+  ["menuOverlay","settingsOverlay","newChatOverlay","chatOptionsOverlay"]
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("show");
+    });
+
+  document.getElementById("noticeOverlay").classList.add("show");
+
+  if (name === "Storage & Data") {
+    checkTerzexStorage();
+  }
+}
+
+async function checkTerzexStorage() {
+  const display = document.getElementById("terzexStorageUsage");
+  if (!display) return;
+
+  if (!navigator.storage || !navigator.storage.estimate) {
+    display.textContent = "Storage information is unavailable in this browser.";
+    return;
+  }
+
+  try {
+    const estimate = await navigator.storage.estimate();
+    const used = ((estimate.usage || 0) / 1048576).toFixed(2);
+    const total = ((estimate.quota || 0) / 1048576).toFixed(2);
+
+    display.textContent =
+      "Browser storage used: " + used + " MB of approximately " + total + " MB.";
+  } catch (error) {
+    display.textContent = "Unable to check storage right now.";
+  }
+}
+
 function showNotice(name) {
   if (name === "Privacy & Security") {
     openTerzexPrivacy();
@@ -1644,22 +1822,19 @@ function showNotice(name) {
     return;
   }
 
-  ["menuOverlay", "settingsOverlay", "newChatOverlay", "chatOptionsOverlay"]
-    .forEach(function(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove("show");
-    });
-
-  const title = document.getElementById("noticeTitle");
-  const message = document.getElementById("noticeText");
-  const overlay = document.getElementById("noticeOverlay");
-
-  if (title && message && overlay) {
-    title.textContent = name + " — Coming Soon";
-    message.textContent =
-      "We are preparing this feature for Terzex Chat.";
-    overlay.classList.add("show");
+  if (
+    name === "Notifications" ||
+    name === "Chats & Appearance" ||
+    name === "Storage & Data"
+  ) {
+    showTerzexSettings(name);
+    return;
   }
+
+  document.getElementById("noticeTitle").textContent = name;
+  document.getElementById("noticeText").textContent =
+    "We are preparing this feature for Terzex Chat.";
+  document.getElementById("noticeOverlay").classList.add("show");
 }
 </script>
 </body>
