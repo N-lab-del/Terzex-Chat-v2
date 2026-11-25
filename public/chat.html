@@ -1586,55 +1586,78 @@ ${terzexPrivacyOptions.map((item, index) => `
 function openTerzexPrivacyOption(index) {
 const title = terzexPrivacyOptions[index][0];
 document.getElementById("privacyTitle").textContent = title;
+// TERZEX PRIVACY & SECURITY - REPAIRED
 
-let content = "";
+const terzexPrivacyOptions = [
+  ["Last Seen & Online", "Control who can see your activity.", "◷"],
+  ["Profile Photo Privacy", "Control who can see your profile picture.", "◉"],
+  ["Who Can Message Me", "Manage who can contact you.", "✉"],
+  ["Blocked Users", "Manage people you have blocked.", "⊘"],
+  ["Two-Step Verification", "Add extra protection to your account.", "♙"],
+  ["Active Sessions", "Review devices signed into your account.", "▣"],
+  ["Read Receipts", "Control message read indicators.", "✓"]
+];
 
-if (index === 0) {
-content = "<p class="notice">Choose who can see your activity.</p> <h3>Last Seen</h3> ${privacyChoices("lastSeen", ["Everyone", "My Contacts", "Nobody"])} <h3>Online Status</h3> ${privacyChoices("onlineStatus", ["Everyone", "Same as Last Seen"])}";
+let terzexPrivacySettings = {
+  lastSeen: "Everyone",
+  onlineStatus: "Everyone",
+  profilePhoto: "Everyone",
+  messages: "Everyone",
+  readReceipts: true
+};
+
+async function loadTerzexPrivacySettings() {
+  if (!currentUser) return;
+
+  try {
+    const snap = await db.collection("users")
+      .doc(currentUser.uid).get();
+
+    if (snap.exists && snap.data().privacy) {
+      terzexPrivacySettings = {
+        ...terzexPrivacySettings,
+        ...snap.data().privacy
+      };
+    }
+  } catch (error) {
+    console.error("Privacy loading error:", error);
+  }
 }
 
-if (index === 1) {
-content = "<p class="notice">Choose who can see your profile picture.</p> ${privacyChoices("profilePhoto", ["Everyone", "My Contacts", "Nobody"])}";
+async function saveTerzexPrivacySetting(key, value) {
+  if (!currentUser) {
+    alert("Please sign in first.");
+    return;
+  }
+
+  const previous = terzexPrivacySettings[key];
+  terzexPrivacySettings[key] = value;
+
+  try {
+    await db.collection("users").doc(currentUser.uid).set({
+      privacy: terzexPrivacySettings,
+      privacyUpdatedAt:
+        firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    const status = document.getElementById("privacySaveStatus");
+    if (status) status.textContent = "✓ Saved successfully";
+
+  } catch (error) {
+    terzexPrivacySettings[key] = previous;
+    console.error(error);
+    alert("Could not save your privacy setting. Check Firebase permissions.");
+  }
 }
 
-if (index === 2) {
-content = "<p class="notice">Choose who can send you private messages.</p> ${privacyChoices("messages", ["Everyone", "My Contacts", "Nobody"])}";
-}
+async function openTerzexPrivacy() {
+  ["menuOverlay", "settingsOverlay", "noticeOverlay"]
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("show");
+    });
 
-if (index === 3) {
-content = "<p class="notice"> Blocked-user management is the next security integration. No users have been blocked through this screen yet. </p>";
-}
-
-if (index === 4) {
-content = "<p class="notice"> Two-Step Verification requires a real Firebase multi-factor authentication setup. </p> <div class="notice"> <strong>Secure verification setup</strong> <br><br> This feature will be connected to Firebase authentication. It is not enabled yet. </div>";
-}
-
-if (index === 5) {
-content = "<p class="notice">Active device management.</p> <div class="notice"> <strong>Current device</strong> <br><br> You are using this Terzex session. <br><br> Other-device tracking and remote sign-out require backend integration. </div>";
-}
-
-if (index === 6) {
-content = "<p class="notice"> Choose whether your contacts can see when you read messages. </p> <label class="menu-item"> <span> <strong>Read Receipts</strong> <small>Show when messages have been read.</small> </span> <input type="checkbox" id="readReceiptsToggle" ${terzexPrivacySettings.readReceipts !== false ? "checked" : ""} onchange="saveTerzexPrivacySetting( 'readReceipts', this.checked )"> </label>";
-}
-
-document.getElementById("privacySecurityContent").innerHTML = "<button class="menu-item" onclick="showTerzexPrivacyMenu()"> ← Back to Privacy & Security </button> ${content} <p class="notice" id="privacySaveStatus"> Changes to available preferences are saved automatically. </p>";
-
-if ([0, 1, 2].includes(index)) {
-document.querySelectorAll(
-'#privacySecurityContent input[type="radio"]'
-).forEach(input => {
-input.addEventListener("change", () => {
-if (input.checked) {
-saveTerzexPrivacySetting(input.name, input.value);
-}
-});
-});
-}
-}
-
-function privacyChoices(id, choices) {
-return choices.map(choice => "<label class="menu-item"> <span>${choice}</span> <input type="radio" name="${id}" value="${choice}" ${terzexPrivacySettings[id] === choice ? "checked" : ""} > </label>").join("");
-}
+  let overlay =
 </script>
 </body>
 </html>
