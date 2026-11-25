@@ -1413,189 +1413,16 @@ async function sendTerzexPasswordReset() {
   }
 }
 
-// Connect the existing Settings buttons to the new screens.
-function showNotice(name) {
-  if (name === "Privacy & Security") {
-    openTerzexPrivacy();
-    return;
-  }
 
-  if (name === "My Profile" || name === "Edit Profile" || name === "Account") {
-    openTerzexProfile();
-
-    if (name === "Edit Profile") {
-      setTimeout(editTerzexProfile, 250);
-    } else if (name === "Account") {
-      setTimeout(openTerzexAccount, 250);
-    }
-    return;
-  }
-
-  ["menuOverlay","settingsOverlay","newChatOverlay","chatOptionsOverlay"]
-    .forEach(closeModal);
-
-  document.getElementById("noticeTitle").textContent = name + " — Coming Soon";
-  document.getElementById("noticeText").textContent =
-    "We are preparing this feature for Terzex Chat. It is not active yet.";
-  document.getElementById("noticeOverlay").classList.add("show");
-      }
-  if (index === 3) {
-    content = `
-      <p class="notice">People you block will appear here.</p>
-      <div class="notice">
-        You haven't blocked anyone yet.
-      </div>
-      <p class="notice">Block and unblock management is coming soon.</p>
-    `;
-  }
-
-  // TERZEX PRIVACY & SECURITY
-
-const terzexPrivacyOptions = [
-["Last Seen & Online", "Control who can see your activity.", "◷"],
-["Profile Photo Privacy", "Control who can see your profile picture.", "◉"],
-["Who Can Message Me", "Manage who can contact you.", "✉"],
-["Blocked Users", "Manage people you have blocked.", "⊘"],
-["Two-Step Verification", "Add extra protection to your account.", "♙"],
-["Active Sessions", "Review devices signed into your account.", "▣"],
-["Read Receipts", "Control message read indicators.", "✓"]
-];
-
-let terzexPrivacySettings = {
-lastSeen: "Everyone",
-onlineStatus: "Everyone",
-profilePhoto: "Everyone",
-messages: "Everyone",
-readReceipts: true
-};
-
-async function loadTerzexPrivacySettings() {
-if (!currentUser) return;
-
-try {
-const snap = await db.collection("users")
-.doc(currentUser.uid).get();
-
-if (snap.exists && snap.data().privacy) {
-  terzexPrivacySettings = {
-    ...terzexPrivacySettings,
-    ...snap.data().privacy
-  };
-}
-
-} catch (error) {
-console.error("Privacy settings load error:", error);
-}
-}
-
-async function saveTerzexPrivacySetting(key, value) {
-if (!currentUser) {
-alert("Please sign in first.");
-return;
-}
-
-const previous = terzexPrivacySettings[key];
-terzexPrivacySettings[key] = value;
-
-try {
-await db.collection("users").doc(currentUser.uid).set({
-privacy: terzexPrivacySettings,
-privacyUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true });
-
-const status = document.getElementById("privacySaveStatus");
-if (status) status.textContent = "✓ Saved successfully";
-
-} catch (error) {
-terzexPrivacySettings[key] = previous;
-console.error(error);
-alert("Could not save this setting. Please check your Firebase permissions.");
-openTerzexPrivacyOption(
-key === "lastSeen" || key === "onlineStatus" ? 0 :
-key === "profilePhoto" ? 1 :
-key === "messages" ? 2 : 6
-);
-}
-}
-
-async function openTerzexPrivacy() {
-["menuOverlay", "settingsOverlay", "noticeOverlay"]
-.forEach(closeModal);
-
-let overlay = document.getElementById("privacySecurityOverlay");
-
-if (!overlay) {
-overlay = document.createElement("div");
-overlay.id = "privacySecurityOverlay";
-overlay.className = "overlay";
-
-overlay.innerHTML = `
-  <div class="modal">
-    <div class="modal-head">
-      <h2 id="privacyTitle">Privacy & Security</h2>
-      <button class="close" onclick="closeTerzexPrivacy()">✕</button>
-    </div>
-    <div id="privacySecurityContent"></div>
-  </div>
-`;
-
-document.body.appendChild(overlay);
-
-}
-
-overlay.classList.add("show");
-document.getElementById("privacySecurityContent").innerHTML =
-'<p class="notice">Loading your privacy settings...</p>';
-
-await loadTerzexPrivacySettings();
-showTerzexPrivacyMenu();
-}
-
-function closeTerzexPrivacy() {
-document.getElementById("privacySecurityOverlay")
-?.classList.remove("show");
-}
-
-function showTerzexPrivacyMenu() {
-document.getElementById("privacyTitle").textContent =
-"Privacy & Security";
-
-document.getElementById("privacySecurityContent").innerHTML = `
-<p class="notice">
-Manage your privacy and account protection.
-</p>
-
-${terzexPrivacyOptions.map((item, index) => `
-  <button class="menu-item"
-    onclick="openTerzexPrivacyOption(${index})">
-    <span class="menu-icon">${item[2]}</span>
-    <span>
-      <strong>${item[0]}</strong>
-      <small>${item[1]}</small>
-    </span>
-  </button>
-`).join("")}
-
-<p class="notice" id="privacySaveStatus">
-  Your saved preferences are stored in Firebase.
-</p>
-
-`;
-}
-
-function openTerzexPrivacyOption(index) {
-const title = terzexPrivacyOptions[index][0];
-document.getElementById("privacyTitle").textContent = title;
-
- // TERZEX PRIVACY & SECURITY - REPAIRED
+// TERZEX SETTINGS AND PRIVACY - CLEAN REPAIR
 
 const terzexPrivacyOptions = [
   ["Last Seen & Online", "Control who can see your activity.", "◷"],
   ["Profile Photo Privacy", "Control who can see your profile picture.", "◉"],
   ["Who Can Message Me", "Manage who can contact you.", "✉"],
-  ["Blocked Users", "Manage people you have blocked.", "⊘"],
-  ["Two-Step Verification", "Add extra protection to your account.", "♙"],
-  ["Active Sessions", "Review devices signed into your account.", "▣"],
+  ["Blocked Users", "Manage blocked users.", "⊘"],
+  ["Two-Step Verification", "Extra account protection.", "♙"],
+  ["Active Sessions", "Review your signed-in devices.", "▣"],
   ["Read Receipts", "Control message read indicators.", "✓"]
 ];
 
@@ -1607,56 +1434,56 @@ let terzexPrivacySettings = {
   readReceipts: true
 };
 
-async function loadTerzexPrivacySettings() {
+function loadTerzexPrivacySettings() {
   if (!currentUser) return;
 
   try {
-    const snap = await db.collection("users")
-      .doc(currentUser.uid).get();
+    const saved = localStorage.getItem(
+      "terzexPrivacy_" + currentUser.uid
+    );
 
-    if (snap.exists && snap.data().privacy) {
-      terzexPrivacySettings = {
-        ...terzexPrivacySettings,
-        ...snap.data().privacy
-      };
+    if (saved) {
+      terzexPrivacySettings = Object.assign(
+        {},
+        terzexPrivacySettings,
+        JSON.parse(saved)
+      );
     }
   } catch (error) {
-    console.error("Privacy loading error:", error);
+    console.error("Privacy settings error:", error);
   }
 }
 
-async function saveTerzexPrivacySetting(key, value) {
+function saveTerzexPrivacySetting(key, value) {
   if (!currentUser) {
     alert("Please sign in first.");
     return;
   }
 
-  const previous = terzexPrivacySettings[key];
   terzexPrivacySettings[key] = value;
 
   try {
-    await db.collection("users").doc(currentUser.uid).set({
-      privacy: terzexPrivacySettings,
-      privacyUpdatedAt:
-        firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    localStorage.setItem(
+      "terzexPrivacy_" + currentUser.uid,
+      JSON.stringify(terzexPrivacySettings)
+    );
 
     const status = document.getElementById("privacySaveStatus");
-    if (status) status.textContent = "✓ Saved successfully";
+    if (status) status.textContent = "Saved successfully.";
 
   } catch (error) {
-    terzexPrivacySettings[key] = previous;
     console.error(error);
-    alert("Could not save your privacy setting. Check Firebase permissions.");
+    alert("Could not save this setting.");
   }
 }
 
-async function openTerzexPrivacy() {
-  ["menuOverlay", "settingsOverlay", "noticeOverlay"]
-    .forEach(id => {
+function openTerzexPrivacy() {
+  ["menuOverlay", "settingsOverlay", "noticeOverlay"].forEach(
+    function(id) {
       const el = document.getElementById(id);
       if (el) el.classList.remove("show");
-    });
+    }
+  );
 
   let overlay = document.getElementById("privacySecurityOverlay");
 
@@ -1665,26 +1492,22 @@ async function openTerzexPrivacy() {
     overlay.id = "privacySecurityOverlay";
     overlay.className = "overlay";
 
-    overlay.innerHTML = `
-      <div class="modal">
-        <div class="modal-head">
-          <h2 id="privacyTitle">Privacy & Security</h2>
-          <button class="close"
-            onclick="closeTerzexPrivacy()">✕</button>
-        </div>
-        <div id="privacySecurityContent"></div>
-      </div>
-    `;
+    const modal = document.createElement("div");
+    modal.className = "modal";
 
+    modal.innerHTML =
+      '<div class="modal-head">' +
+      '<h2 id="privacyTitle">Privacy & Security</h2>' +
+      '<button class="close" onclick="closeTerzexPrivacy()">✕</button>' +
+      '</div>' +
+      '<div id="privacySecurityContent"></div>';
+
+    overlay.appendChild(modal);
     document.body.appendChild(overlay);
   }
 
+  loadTerzexPrivacySettings();
   overlay.classList.add("show");
-
-  document.getElementById("privacySecurityContent").innerHTML =
-    '<p class="notice">Loading your settings...</p>';
-
-  await loadTerzexPrivacySettings();
   showTerzexPrivacyMenu();
 }
 
@@ -1697,141 +1520,107 @@ function showTerzexPrivacyMenu() {
   document.getElementById("privacyTitle").textContent =
     "Privacy & Security";
 
-  document.getElementById("privacySecurityContent").innerHTML = `
-    <p class="notice">
-      Manage your privacy and account protection.
-    </p>
+  let html =
+    '<p class="notice">Manage your privacy and account protection.</p>';
 
-    ${terzexPrivacyOptions.map((item, index) => `
-      <button class="menu-item"
-        onclick="openTerzexPrivacyOption(${index})">
-        <span class="menu-icon">${item[2]}</span>
-        <span>
-          <strong>${item[0]}</strong>
-          <small>${item[1]}</small>
-        </span>
-      </button>
-    `).join("")}
+  terzexPrivacyOptions.forEach(function(item, index) {
+    html +=
+      '<button class="menu-item" onclick="openTerzexPrivacyOption(' +
+      index + ')">' +
+      '<span class="menu-icon">' + item[2] + '</span>' +
+      '<span><strong>' + item[0] + '</strong>' +
+      '<small>' + item[1] + '</small></span></button>';
+  });
 
-    <p class="notice" id="privacySaveStatus">
-      Your preferences are stored in Firebase.
-    </p>
-  `;
+  html += '<p class="notice" id="privacySaveStatus">' +
+    'Your preferences are saved on this device.</p>';
+
+  document.getElementById("privacySecurityContent").innerHTML = html;
 }
 
-function privacyChoices(id, choices) {
-  return choices.map(choice => `
-    <label class="menu-item">
-      <span>${choice}</span>
-      <input
-        type="radio"
-        name="${id}"
-        value="${choice}"
-        ${terzexPrivacySettings[id] === choice ? "checked" : ""}
-        onchange="saveTerzexPrivacySetting('${id}', '${choice}')"
-      >
-    </label>
-  `).join("");
+function privacyChoices(key, choices) {
+  let html = "";
+
+  choices.forEach(function(choice) {
+    const checked =
+      terzexPrivacySettings[key] === choice ? "checked" : "";
+
+    html +=
+      '<label class="menu-item">' +
+      '<span>' + choice + '</span>' +
+      '<input type="radio" name="' + key + '" value="' +
+      choice + '" ' + checked +
+      ' onchange="saveTerzexPrivacySetting(\'' +
+      key + '\', \'' + choice + '\')">' +
+      '</label>';
+  });
+
+  return html;
 }
 
 function openTerzexPrivacyOption(index) {
-  const title = terzexPrivacyOptions[index][0];
+  const item = terzexPrivacyOptions[index];
+  if (!item) return;
 
-  document.getElementById("privacyTitle").textContent = title;
+  document.getElementById("privacyTitle").textContent = item[0];
 
   let content = "";
 
   if (index === 0) {
-    content = `
-      <p class="notice">Choose who can see your activity.</p>
-      <h3>Last Seen</h3>
-      ${privacyChoices("lastSeen",
-        ["Everyone", "My Contacts", "Nobody"])}
-      <h3>Online Status</h3>
-      ${privacyChoices("onlineStatus",
-        ["Everyone", "Same as Last Seen"])}
-    `;
+    content =
+      '<p class="notice">Choose who can see your activity.</p>' +
+      '<h3>Last Seen</h3>' +
+      privacyChoices("lastSeen", ["Everyone", "My Contacts", "Nobody"]) +
+      '<h3>Online Status</h3>' +
+      privacyChoices("onlineStatus", ["Everyone", "Same as Last Seen"]);
   }
 
   if (index === 1) {
-    content = `
-      <p class="notice">Choose who can see your profile picture.</p>
-      ${privacyChoices("profilePhoto",
-        ["Everyone", "My Contacts", "Nobody"])}
-    `;
+    content =
+      '<p class="notice">Choose who can see your profile picture.</p>' +
+      privacyChoices("profilePhoto", ["Everyone", "My Contacts", "Nobody"]);
   }
 
   if (index === 2) {
-    content = `
-      <p class="notice">Choose who can send you messages.</p>
-      ${privacyChoices("messages",
-        ["Everyone", "My Contacts", "Nobody"])}
-    `;
+    content =
+      '<p class="notice">Choose who can send you messages.</p>' +
+      privacyChoices("messages", ["Everyone", "My Contacts", "Nobody"]);
   }
 
-  if (index === 3) {
-    content = `
-      <p class="notice">
-        Blocked-user management still needs to be connected.
-      </p>
-    `;
-  }
 
   if (index === 4) {
-    content = `
-      <p class="notice">
-        Two-Step Verification requires Firebase multi-factor
-        authentication setup. It is not enabled yet.
-      </p>
-    `;
+    content =
+      '<p class="notice">Two-Step Verification requires additional Firebase authentication setup.</p>';
   }
 
   if (index === 5) {
-    content = `
-      <p class="notice">
-        You are using this Terzex session.
-        Tracking and remotely signing out other devices
-        still require backend integration.
-      </p>
-    `;
+    content =
+      '<p class="notice">Managing and signing out other devices requires backend integration.</p>';
   }
 
   if (index === 6) {
-    content = `
-      <p class="notice">
-        Control whether others can see when you read messages.
-      </p>
+    const checked =
+      terzexPrivacySettings.readReceipts !== false ? "checked" : "";
 
-      <label class="menu-item">
-        <span>
-          <strong>Read Receipts</strong>
-          <small>Show when messages have been read.</small>
-        </span>
-
-        <input type="checkbox"
-          ${terzexPrivacySettings.readReceipts !== false ? "checked" : ""}
-          onchange="saveTerzexPrivacySetting(
-            'readReceipts', this.checked
-          )">
-      </label>
-    `;
+    content =
+      '<p class="notice">Control your read receipt preference.</p>' +
+      '<label class="menu-item">' +
+      '<span><strong>Read Receipts</strong>' +
+      '<small>Show when messages have been read.</small></span>' +
+      '<input type="checkbox" ' + checked +
+      ' onchange="saveTerzexPrivacySetting(\'readReceipts\', this.checked)">' +
+      '</label>';
   }
 
-  document.getElementById("privacySecurityContent").innerHTML = `
-    <button class="menu-item"
-      onclick="showTerzexPrivacyMenu()">
-      ← Back to Privacy & Security
-    </button>
-
-    ${content}
-
-    <p class="notice" id="privacySaveStatus">
-      Changes are saved automatically where supported.
-    </p>
-  `;
+  document.getElementById("privacySecurityContent").innerHTML =
+    '<button class="menu-item" onclick="showTerzexPrivacyMenu()">' +
+    '← Back to Privacy & Security</button>' +
+    content +
+    '<p class="notice" id="privacySaveStatus">' +
+    'Changes are saved on this device.</p>';
 }
 
-// CONNECT PRIVACY TO THE SETTINGS MENU
+// CONNECT SETTINGS BUTTONS
 
 function showNotice(name) {
   if (name === "Privacy & Security") {
@@ -1839,9 +1628,24 @@ function showNotice(name) {
     return;
   }
 
-  ["menuOverlay", "settingsOverlay",
-   "newChatOverlay", "chatOptionsOverlay"]
-    .forEach(id => {
+  if (
+    name === "My Profile" ||
+    name === "Edit Profile" ||
+    name === "Account"
+  ) {
+    openTerzexProfile();
+
+    if (name === "Edit Profile") {
+      setTimeout(editTerzexProfile, 250);
+    } else if (name === "Account") {
+      setTimeout(openTerzexAccount, 250);
+    }
+
+    return;
+  }
+
+  ["menuOverlay", "settingsOverlay", "newChatOverlay", "chatOptionsOverlay"]
+    .forEach(function(id) {
       const el = document.getElementById(id);
       if (el) el.classList.remove("show");
     });
@@ -1856,7 +1660,7 @@ function showNotice(name) {
       "We are preparing this feature for Terzex Chat.";
     overlay.classList.add("show");
   }
- }
+}
 </script>
 </body>
 </html>
