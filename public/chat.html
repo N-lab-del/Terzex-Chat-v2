@@ -1800,41 +1800,123 @@ async function checkTerzexStorage() {
   }
 }
 
+function showTerzexHelp() {
+const content = `
+<div style="text-align:left;color:white;max-height:60vh;overflow-y:auto;">
+
+  <h3 style="color:gold;">Frequently Asked Questions</h3>
+
+  <details style="padding:12px;border-bottom:1px solid #444;">
+    <summary>How do I create an account?</summary>
+    <p>Register using your email address and follow the instructions.</p>
+  </details>
+
+  <details style="padding:12px;border-bottom:1px solid #444;">
+    <summary>How do I change my profile picture?</summary>
+    <p>Open Settings, select My Profile, and edit your profile.</p>
+  </details>
+
+  <details style="padding:12px;border-bottom:1px solid #444;">
+    <summary>How do I protect my account?</summary>
+    <p>Use a strong password and never share your login details.</p>
+  </details>
+
+  <details style="padding:12px;border-bottom:1px solid #444;">
+    <summary>What should I do if messages are not sending?</summary>
+    <p>Check your internet connection and try again.</p>
+  </details>
+
+  <h3 style="color:gold;margin-top:20px;">Contact Support</h3>
+
+  <p>Need assistance? Contact the Terzex Chat support team.</p>
+
+  <a href="mailto:atiripngi@gmail.com"
+     style="display:block;text-align:center;padding:13px;
+     background:#d4af37;color:black;border-radius:8px;
+     text-decoration:none;font-weight:bold;">
+     Email Terzex Support
+  </a>
+
+  <h3 style="color:gold;margin-top:20px;">Report a Problem</h3>
+
+  <textarea id="terzexProblem"
+    placeholder="Describe the problem you experienced..."
+    style="width:100%;height:100px;padding:12px;
+    background:#171717;color:white;border:1px solid gold;
+    border-radius:8px;box-sizing:border-box;"></textarea>
+
+  <button class="primary" onclick="reportTerzexProblem()">
+    Send Problem Report
+  </button>
+
+  <h3 style="color:gold;margin-top:20px;">About Terzex Chat</h3>
+  <p>Terzex Chat is a messaging platform built to connect people worldwide.</p>
+  <p>Support: atiripngi@gmail.com</p>
+</div>
+
+`;
+
+document.getElementById("noticeTitle").textContent = "Help & Support";
+document.getElementById("noticeText").innerHTML = content;
+document.getElementById("noticeOverlay").classList.add("show");
+}
+
+function reportTerzexProblem() {
+const problem = document.getElementById("terzexProblem").value.trim();
+
+if (!problem) {
+alert("Please describe the problem first.");
+return;
+}
+
+const subject = encodeURIComponent("Terzex Chat Problem Report");
+const body = encodeURIComponent(problem);
+
+window.location.href =
+"mailto:atiripngi@gmail.com?subject=" + subject + "&body=" + body;
+}
+
 function showNotice(name) {
-  if (name === "Privacy & Security") {
-    openTerzexPrivacy();
-    return;
-  }
+if (name === "Privacy & Security") {
+openTerzexPrivacy();
+return;
+}
 
-  if (
-    name === "My Profile" ||
-    name === "Edit Profile" ||
-    name === "Account"
-  ) {
-    openTerzexProfile();
+if (
+name === "My Profile" ||
+name === "Edit Profile" ||
+name === "Account"
+) {
+openTerzexProfile();
 
-    if (name === "Edit Profile") {
-      setTimeout(editTerzexProfile, 250);
-    } else if (name === "Account") {
-      setTimeout(openTerzexAccount, 250);
-    }
+if (name === "Edit Profile") {
+  setTimeout(editTerzexProfile, 250);
+} else if (name === "Account") {
+  setTimeout(openTerzexAccount, 250);
+}
 
-    return;
-  }
+return;
 
-  if (
-    name === "Notifications" ||
-    name === "Chats & Appearance" ||
-    name === "Storage & Data"
-  ) {
-    showTerzexSettings(name);
-    return;
-  }
+}
 
-  document.getElementById("noticeTitle").textContent = name;
-  document.getElementById("noticeText").textContent =
-    "We are preparing this feature for Terzex Chat.";
-  document.getElementById("noticeOverlay").classList.add("show");
+if (
+name === "Notifications" ||
+name === "Chats & Appearance" ||
+name === "Storage & Data"
+) {
+showTerzexSettings(name);
+return;
+}
+
+if (name === "Help & Support") {
+showTerzexHelp();
+return;
+}
+
+document.getElementById("noticeTitle").textContent = name;
+document.getElementById("noticeText").textContent =
+"We are preparing this feature for Terzex Chat.";
+document.getElementById("noticeOverlay").classList.add("show");
 }
 </script>
 </body>
