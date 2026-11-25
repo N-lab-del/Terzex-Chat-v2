@@ -1918,7 +1918,32 @@ if (name === "Help & Support") {
 showTerzexHelp();
 return;
 }
+if (name === "About Terzex Chat") {
+  document.getElementById("noticeTitle").textContent = "About Terzex Chat";
 
+  document.getElementById("noticeText").innerHTML = `
+    <div style="text-align:center;color:white;padding:10px;">
+      <div style="font-size:55px;color:gold;">⚡</div>
+      <h2 style="color:gold;">Terzex Chat</h2>
+      <p>Connect with people around the world.</p>
+      <p>Version 1.0</p>
+      <hr style="border-color:#444;">
+      <h3 style="color:gold;">Official Support</h3>
+      <p>atiripngi@gmail.com</p>
+      <a href="mailto:atiripngi@gmail.com"
+         style="color:gold;">Contact Terzex</a>
+      <hr style="border-color:#444;">
+      <h3 style="color:gold;">Privacy & Terms</h3>
+      <p>Please contact Terzex Support for information about our privacy policy and terms of service.</p>
+      <p style="color:#aaa;font-size:12px;">
+        © 2026 Terzex Chat. All rights reserved.
+      </p>
+    </div>
+  `;
+
+  document.getElementById("noticeOverlay").classList.add("show");
+  return;
+}
 document.getElementById("noticeTitle").textContent = name;
 document.getElementById("noticeText").textContent =
 "We are preparing this feature for Terzex Chat.";
