@@ -528,7 +528,53 @@ function toggleEmojiPanel(){document.getElementById("emojiPanel").classList.togg
   function showComposerPanel(which,button){composerMode=which;document.querySelectorAll(".panel-tabs button").forEach(b=>b.classList.remove("active"));button.classList.add("active");document.getElementById("emojiGrid").style.display=which==="emoji"?"grid":"none";document.getElementById("stickerGrid").style.display=which==="stickers"?"grid":"none";}
 function insertEmoji(emoji){const input=document.getElementById("privateChatInput");input.value+=emoji;input.focus();}
 function sendSticker(sticker){if(!activePrivateChatId||!currentUser)return;messageCollection().add({sticker,senderId:currentUser.uid,senderName:currentUser.displayName||currentUser.email||"Terzex User",createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>alert("Sticker could not be sent. Check Firestore message rules."));document.getElementById("emojiPanel").classList.remove("show");}
-async function uploadChatAttachment(event){const file=event.target.files[0];event.target.value="";if(!file||!activePrivateChatId||!currentUser)return;if(!file.type.startsWith("image/")&&!file.type.startsWith("video/"))return alert("Choose an image or video.");if(file.size>25*1024*1024)return alert("Please choose a file smaller than 25 MB.");const btn=document.getElementById("privateChatSend");btn.disabled=true;btn.textContent="Uploading";try{const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_"),path=`private_chat_media/${activePrivateChatId}/${currentUser.uid}/${Date.now()}_${safeName}`,ref=storage.ref().child(path);const task=await ref.put(file,{contentType:file.type});const url=await task.ref.getDownloadURL();await messageCollection().add({text:"",mediaURL:url,mediaPath:path,mediaType:file.type,mediaName:file.name,senderId:currentUser.uid,senderName:currentUser.displayName||currentUser.email||"Terzex User",createdAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){console.error(e);alert("Upload failed. Check Firebase Storage rules and make sure Storage is enabled.");}finally{btn.disabled=false;btn.textContent="Send";}}
+async function uploadChatAttachment(event){
+  const file=event.target.files[0];
+  event.target.value="";
+  if(!file||!activePrivateChatId||!currentUser)return;
+  if(!file.type.startsWith("image/")&&!file.type.startsWith("video/"))
+    return alert("Choose an image or video.");
+  if(file.size>25*1024*1024)
+    return alert("Please choose a file smaller than 25 MB.");
+
+  const btn=document.getElementById("privateChatSend");
+  btn.disabled=true;
+  btn.textContent="Uploading";
+
+  try{
+    const resourceType=file.type.startsWith("video/")?"video":"image";
+    const endpoint="https://api.cloudinary.com/v1_1/aqdwrxha/"+resourceType+"/upload";
+
+    const form=new FormData();
+    form.append("file",file);
+    form.append("upload_preset","terzex_upload");
+    form.append("folder","terzex_chat/"+activePrivateChatId+"/"+currentUser.uid);
+
+    const response=await fetch(endpoint,{method:"POST",body:form});
+    const result=await response.json();
+
+    if(!response.ok||!result.secure_url)
+      throw new Error(result.error?.message||"Cloudinary upload failed.");
+
+    await messageCollection().add({
+      text:"",
+      mediaURL:result.secure_url,
+      mediaPath:result.public_id||"",
+      mediaType:file.type,
+      mediaName:file.name,
+      senderId:currentUser.uid,
+      senderName:currentUser.displayName||currentUser.email||"Terzex User",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  }catch(e){
+    console.error(e);
+    alert("Upload failed: "+(e.message||"Check your Cloudinary settings and internet connection."));
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Send";
+  }
+}
 function openCallChoices(){document.getElementById("callOverlay").classList.add("show");}
 function requestCallSetup(type){closeModal("callOverlay");showNotice(type==="voice"?"Voice call setup required":"Video call setup required");document.getElementById("noticeText").textContent="The "+type+" call option is ready in the interface, but live calling still needs WebRTC call signalling and TURN server configuration. No call has been started.";}
 function openChatOptions(){document.getElementById("chatOptionsOverlay").classList.add("show");}
