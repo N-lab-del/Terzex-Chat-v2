@@ -166,49 +166,46 @@ auth.onAuthStateChanged(user=>{if(!user){location.href="index.html";return;}curr
 let privatePresenceUnsubscribe=null;
 
 function watchPrivatePresence(uid){
-if(privatePresenceUnsubscribe){
-privatePresenceUnsubscribe();
-privatePresenceUnsubscribe=null;
-}
+  if(privatePresenceUnsubscribe){
+    privatePresenceUnsubscribe();
+    privatePresenceUnsubscribe=null;
+  }
 
-const label=document.getElementById("privateChatUsername");
-const presenceRef=rtdb.ref("presence/"+uid);
+  const label=document.getElementById("privateChatUsername");
+  const presenceRef=rtdb.ref("presence/"+uid);
 
-const handler=snap=>{
-const status=snap.val();
+  const handler=snap=>{
+    const status=snap.val();
 
-if(!status){
-label.textContent="Offline";
-return;
-}
- label.textContent="Offline";
-return;
-}
+    if(!status){
+      label.textContent="Offline";
+      return;
+    }
 
-if(status.state==="online"){
-label.textContent="🟢 Online";
-return;
-}
+    if(status.state==="online"){
+      label.textContent="🟢 Online";
+      return;
+    }
 
-const date=status.lastChanged?new Date(status.lastChanged):null;
+    const date=status.lastChanged?new Date(status.lastChanged):null;
 
-if(!date||isNaN(date.getTime())){
-label.textContent="Offline";
-}else{
-const today=new Date().toDateString()===date.toDateString();
+    if(!date||isNaN(date.getTime())){
+      label.textContent="Offline";
+    }else{
+      const today=new Date().toDateString()===date.toDateString();
 
-label.textContent="Last seen "+
-(today?"today":"on "+date.toLocaleDateString())+
-" at "+
-date.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
-}
-};
+      label.textContent="Last seen "+
+        (today?"today":"on "+date.toLocaleDateString())+
+        " at "+
+        date.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+    }
+  };
 
-presenceRef.on("value",handler);
+  presenceRef.on("value",handler);
 
-privatePresenceUnsubscribe=()=>{
-presenceRef.off("value",handler);
-};
+  privatePresenceUnsubscribe=()=>{
+    presenceRef.off("value",handler);
+  };
 }
 
 function switchTab(tab,button){
