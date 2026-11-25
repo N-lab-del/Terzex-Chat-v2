@@ -1415,6 +1415,11 @@ async function sendTerzexPasswordReset() {
 
 // Connect the existing Settings buttons to the new screens.
 function showNotice(name) {
+  if (name === "Privacy & Security") {
+    openTerzexPrivacy();
+    return;
+  }
+
   if (name === "My Profile" || name === "Edit Profile" || name === "Account") {
     openTerzexProfile();
 
@@ -1433,6 +1438,69 @@ function showNotice(name) {
   document.getElementById("noticeText").textContent =
     "We are preparing this feature for Terzex Chat. It is not active yet.";
   document.getElementById("noticeOverlay").classList.add("show");
+}
+ // TERZEX PRIVACY & SECURITY
+function openTerzexPrivacy() {
+  ["menuOverlay", "settingsOverlay", "noticeOverlay"]
+    .forEach(closeModal);
+
+  let overlay = document.getElementById("privacySecurityOverlay");
+
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "privacySecurityOverlay";
+    overlay.className = "overlay";
+
+    overlay.innerHTML = `
+      <div class="modal">
+        <div class="modal-head">
+          <h2>Privacy & Security</h2>
+          <button class="close" onclick="closeTerzexPrivacy()">✕</button>
+        </div>
+
+        <p class="notice">
+          Manage who can see your information and how your account is protected.
+        </p>
+
+        <div id="privacySecurityOptions"></div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+  }
+
+  const options = [
+    ["Last Seen & Online", "Control who can see your activity."],
+    ["Profile Photo Privacy", "Control who can see your profile picture."],
+    ["Who Can Message Me", "Manage who can contact you."],
+    ["Blocked Users", "Manage people you've blocked."],
+    ["Two-Step Verification", "Add extra protection to your account."],
+    ["Active Sessions", "Review devices signed into your account."],
+    ["Read Receipts", "Control message read indicators."]
+  ];
+
+  document.getElementById("privacySecurityOptions").innerHTML =
+    options.map(([name, description]) => `
+      <button class="menu-item"
+        onclick="openTerzexPrivacyOption('${name}')">
+        <span class="menu-icon">◆</span>
+        <span>
+          <strong>${name}</strong>
+          <small>${description}</small>
+        </span>
+      </button>
+    `).join("");
+
+  overlay.classList.add("show");
+}
+
+function closeTerzexPrivacy() {
+  document.getElementById("privacySecurityOverlay")
+    ?.classList.remove("show");
+}
+
+function openTerzexPrivacyOption(name) {
+  alert(name + " settings will be configured next.");
 }
 </script>
 </body>
