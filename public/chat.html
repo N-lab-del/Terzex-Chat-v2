@@ -1438,8 +1438,19 @@ function showNotice(name) {
   document.getElementById("noticeText").textContent =
     "We are preparing this feature for Terzex Chat. It is not active yet.";
   document.getElementById("noticeOverlay").classList.add("show");
-}
+      }
  // TERZEX PRIVACY & SECURITY
+
+const terzexPrivacyOptions = [
+  ["Last Seen & Online", "Control who can see your activity.", "◷"],
+  ["Profile Photo Privacy", "Control who can see your profile picture.", "◉"],
+  ["Who Can Message Me", "Manage who can contact you.", "✉"],
+  ["Blocked Users", "Manage people you have blocked.", "⊘"],
+  ["Two-Step Verification", "Add extra protection to your account.", "♙"],
+  ["Active Sessions", "Review devices signed into your account.", "▣"],
+  ["Read Receipts", "Control message read indicators.", "✓"]
+];
+
 function openTerzexPrivacy() {
   ["menuOverlay", "settingsOverlay", "noticeOverlay"]
     .forEach(closeModal);
@@ -1454,43 +1465,18 @@ function openTerzexPrivacy() {
     overlay.innerHTML = `
       <div class="modal">
         <div class="modal-head">
-          <h2>Privacy & Security</h2>
+          <h2 id="privacyTitle">Privacy & Security</h2>
           <button class="close" onclick="closeTerzexPrivacy()">✕</button>
         </div>
 
-        <p class="notice">
-          Manage who can see your information and how your account is protected.
-        </p>
-
-        <div id="privacySecurityOptions"></div>
+        <div id="privacySecurityContent"></div>
       </div>
     `;
 
     document.body.appendChild(overlay);
   }
 
-  const options = [
-    ["Last Seen & Online", "Control who can see your activity."],
-    ["Profile Photo Privacy", "Control who can see your profile picture."],
-    ["Who Can Message Me", "Manage who can contact you."],
-    ["Blocked Users", "Manage people you've blocked."],
-    ["Two-Step Verification", "Add extra protection to your account."],
-    ["Active Sessions", "Review devices signed into your account."],
-    ["Read Receipts", "Control message read indicators."]
-  ];
-
-  document.getElementById("privacySecurityOptions").innerHTML =
-    options.map(([name, description]) => `
-      <button class="menu-item"
-        onclick="openTerzexPrivacyOption('${name}')">
-        <span class="menu-icon">◆</span>
-        <span>
-          <strong>${name}</strong>
-          <small>${description}</small>
-        </span>
-      </button>
-    `).join("");
-
+  showTerzexPrivacyMenu();
   overlay.classList.add("show");
 }
 
@@ -1499,8 +1485,142 @@ function closeTerzexPrivacy() {
     ?.classList.remove("show");
 }
 
-function openTerzexPrivacyOption(name) {
-  alert(name + " settings will be configured next.");
+function showTerzexPrivacyMenu() {
+  document.getElementById("privacyTitle").textContent =
+    "Privacy & Security";
+
+  document.getElementById("privacySecurityContent").innerHTML = `
+    <p class="notice">
+      Manage who can see your information and how your account is protected.
+    </p>
+
+    ${terzexPrivacyOptions.map((item, index) => `
+      <button class="menu-item"
+        onclick="openTerzexPrivacyOption(${index})">
+        <span class="menu-icon">${item[2]}</span>
+        <span>
+          <strong>${item[0]}</strong>
+          <small>${item[1]}</small>
+        </span>
+      </button>
+    `).join("")}
+
+    <p class="notice" style="margin-top:15px;">
+      Some privacy controls are coming soon.
+    </p>
+  `;
+}
+
+function openTerzexPrivacyOption(index) {
+  const title = terzexPrivacyOptions[index][0];
+
+  document.getElementById("privacyTitle").textContent = title;
+
+  let content = "";
+
+  if (index === 0) {
+    content = `
+      <p class="notice">Choose who can see your last seen and online status.</p>
+      <h3>Last Seen</h3>
+      ${privacyChoices("lastSeen", ["Everyone", "My Contacts", "Nobody"])}
+      <h3>Online Status</h3>
+      ${privacyChoices("onlineStatus", ["Everyone", "Same as Last Seen"])}
+    `;
+  }
+
+  if (index === 1) {
+    content = `
+      <p class="notice">Choose who can see your profile photo.</p>
+      ${privacyChoices("profilePhoto", ["Everyone", "My Contacts", "Nobody"])}
+    `;
+  }
+
+  if (index === 2) {
+    content = `
+      <p class="notice">Choose who can send you private messages.</p>
+      ${privacyChoices("messages", ["Everyone", "My Contacts"])}
+    `;
+  }
+
+  if (index === 3) {
+    content = `
+      <p class="notice">People you block will appear here.</p>
+      <div class="notice">
+        You haven't blocked anyone yet.
+      </div>
+      <p class="notice">Block and unblock management is coming soon.</p>
+    `;
+  }
+
+  if (index === 4) {
+    content = `
+      <p class="notice">
+        Add another layer of protection to your Terzex account.
+      </p>
+      <div class="notice">
+        Two-Step Verification
+        <br><br>
+        <strong>Coming Soon</strong>
+        <br>
+        Secure your account with an additional verification step.
+      </div>
+      <button class="menu-item" disabled>
+        Set Up Two-Step Verification
+      </button>
+    `;
+  }
+
+  if (index === 5) {
+    content = `
+      <p class="notice">Devices currently signed into your account.</p>
+      <div class="notice">
+        <strong>This Device</strong>
+        <br><br>
+        Current Terzex session
+        <br>
+        <small>Full device management coming soon.</small>
+      </div>
+    `;
+  }
+
+  if (index === 6) {
+    content = `
+      <p class="notice">
+        Choose whether other people can see when you have read their messages.
+      </p>
+      <label class="menu-item">
+        <span>
+          <strong>Read Receipts</strong>
+          <small>Show when messages have been read.</small>
+        </span>
+        <input type="checkbox" id="readReceiptsToggle" checked>
+      </label>
+    `;
+  }
+
+  document.getElementById("privacySecurityContent").innerHTML = `
+    <button class="menu-item" onclick="showTerzexPrivacyMenu()">
+      ← Back to Privacy & Security
+    </button>
+    ${content}
+    <p class="notice" style="margin-top:15px;">
+      Settings are currently a preview. Changes are not yet saved or enforced.
+    </p>
+  `;
+}
+
+function privacyChoices(id, choices) {
+  return choices.map((choice, index) => `
+    <label class="menu-item">
+      <span>${choice}</span>
+      <input
+        type="radio"
+        name="${id}"
+        value="${choice}"
+        ${index === 0 ? "checked" : ""}
+      >
+    </label>
+  `).join("");
 }
 </script>
 </body>
