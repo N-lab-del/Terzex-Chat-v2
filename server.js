@@ -97,6 +97,126 @@ app.get("/api/firebase-test", async (req, res) => {
   }
 });
 
+// Secure private message deletion
+app.post("/api/messages/delete", requireAuth, async (req, res) => {
+  try {
+    const uid = req.user.uid;
+    const { chatId, messageId, action } = req.body;
+
+    if (!chatId || !messageId || !["forMe", "forEveryone"].includes(action)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid deletion request."
+      });
+    }
+
+    const chatRef = db.collection("private_chats").doc(chatId);
+    const chatDoc = await chatRef.get();
+
+    if (!chatDoc.exists || !chatDoc.data().participants?.includes(uid)) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not a participant in this chat."
+      });
+    }
+
+    const messageRef = chatRef.collection("messages").doc(messageId);
+    const messageDoc = await messageRef.get();
+
+    if (!messageDoc.exists) {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found."
+      });
+    }
+
+    const message = messageDoc.data();
+
+    if (action === "forMe") {
+      await messageRef.update({
+        hiddenFor: FieldValue.arrayUnion(uid)
+      });
+    } else {
+      if (message.senderId !== uid) {
+        return res.status(403).json({
+          success: false,
+          message: "You can only delete your own message for everyone."
+        });
+      }
+
+      if (message.mediaPath) {
+        const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+        const apiKey = process.env.CLOUDINARY_API_KEY;
+        const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+        const expectedPrefix = `terzex_chat/${chatId}/${uid}/`;
+
+        if (!cloudName || !apiKey || !apiSecret ||
+            !message.mediaPath.startsWith(expectedPrefix)) {
+          return res.status(500).json({
+            success: false,
+            message: "Media deletion could not be verified."
+          });
+        }
+
+        const resourceType = message.mediaType?.startsWith("video/")
+          ? "video"
+          : "image";
+
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        const signature = crypto
+          .createHash("sha1")
+          .update(`public_id=${message.mediaPath}&timestamp=${timestamp}${apiSecret}`)
+          .digest("hex");
+
+        const form = new URLSearchParams({
+          public_id: message.mediaPath,
+          timestamp: String(timestamp),
+          api_key: apiKey,
+          signature,
+          invalidate: "true"
+        });
+
+        const cloudResponse = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/destroy`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: form
+          }
+        );
+
+        const cloudResult = await cloudResponse.json();
+
+        if (!cloudResponse.ok ||
+            !["ok", "not found"].includes(cloudResult.result)) {
+          return res.status(502).json({
+            success: false,
+            message: "Media could not be deleted. The message was kept."
+          });
+        }
+      }
+
+      await messageRef.delete();
+    }
+
+    return res.json({
+      success: true,
+      message: "Message deletion completed."
+    });
+
+  } catch (error) {
+    console.error("Message deletion error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Message deletion failed."
+    });
+  }
+});
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Terzex Chat running on port ${PORT}`);
 });
