@@ -3,6 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+import { getDatabase } from "firebase-admin/database";
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -36,10 +39,36 @@ const serviceAccount = JSON.parse(
 );
 
 initializeApp({
-  credential: cert(serviceAccount)
+  credential: cert(serviceAccount),
+  databaseURL: "https://terzex-chat-default-rtdb.firebaseio.com"
 });
 
 const db = getFirestore();
+const adminAuth = getAuth();
+const rtdb = getDatabase();
+// Verify Firebase users before allowing protected actions
+async function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization || "";
+
+  if (!authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication required."
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    req.user = await adminAuth.verifyIdToken(token);
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired login session."
+    });
+  }
+}
 
 // Health check
 app.get("/health", (req, res) => {
