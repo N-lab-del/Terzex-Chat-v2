@@ -1185,7 +1185,16 @@ let stickerDragReady = false;
  let stickerBrushMode = "move";
 let stickerBrushStrokes = [];
 let stickerActiveBrushStroke = null;
+function setStickerBrushMode(mode){
+  if(!stickerSourceImage){
+    alert("Choose a photo first.");
+    return;
+  }
 
+  stickerBrushMode = mode;
+
+  alert(mode === "erase" ? "Eraser selected." : "Restore selected.");
+ }
 function addStickerDecoration(emoji){
   if(!stickerSourceImage){
     alert("Choose a photo first.");
