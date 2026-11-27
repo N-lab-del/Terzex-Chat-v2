@@ -1389,6 +1389,7 @@ if(!stickerDragging) return;
   });
 
   function stopStickerDragging(){
+   stickerActiveBrushStroke = null;
     stickerDragging = false;
     stickerDraggingDecorationIndex = -1;
   }
