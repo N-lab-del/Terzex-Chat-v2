@@ -1550,6 +1550,16 @@ favoriteButton.addEventListener("click", function(){
 });
 
 grid.appendChild(favoriteButton);
+   const packButton = document.createElement("button");
+packButton.type = "button";
+packButton.textContent = "📦";
+packButton.title = "Add to Sticker Pack";
+
+packButton.addEventListener("click", function(){
+  addStickerToPack({image: sticker.image});
+});
+
+grid.appendChild(packButton);
    const deleteButton = document.createElement("button");
 deleteButton.type = "button";
 deleteButton.textContent = "🗑️";
