@@ -1539,7 +1539,6 @@ senderName:currentUser.displayName||currentUser.email||"Terzex User",
 createdAt:firebase.firestore.FieldValue.serverTimestamp()
 }).catch(e=>alert("Sticker could not be sent. Check Firestore message rules."));
 document.getElementById("emojiPanel").classList.remove("show");
-let pendingChatAttachment = null;
 }
 
 let pendingChatAttachment = null;
