@@ -608,19 +608,28 @@ if(original)original.scrollIntoView({behavior:"smooth",block:"center"});
 b.appendChild(quote);
 }
 if(m.mediaURL){
-if((m.mediaType||"").startsWith("video/")){
-const v=document.createElement("video");
-v.src=m.mediaURL;
-v.controls=true;
-v.className="message-media";
-b.appendChild(v);
-}else{
-const im=document.createElement("img");
-im.src=m.mediaURL;
-im.className="message-media";
-im.alt="Attachment";
-b.appendChild(im);
-}
+ if((m.mediaType||"").startsWith("audio/")||m.type==="voice"){
+  const a=document.createElement("audio");
+  a.src=m.mediaURL;
+  a.controls=true;
+  a.preload="metadata";
+  a.style.display="block";
+  a.style.width="min(260px,65vw)";
+  a.style.marginBottom="5px";
+  b.appendChild(a);
+ }else if((m.mediaType||"").startsWith("video/")){
+  const v=document.createElement("video");
+  v.src=m.mediaURL;
+  v.controls=true;
+  v.className="message-media";
+  b.appendChild(v);
+ }else{
+  const im=document.createElement("img");
+  im.src=m.mediaURL;
+  im.className="message-media";
+  im.alt="Attachment";
+  b.appendChild(im);
+ }
 }
 if(m.sticker){
 const st=document.createElement("div");
