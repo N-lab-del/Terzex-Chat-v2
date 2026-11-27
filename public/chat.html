@@ -942,7 +942,188 @@ async function uploadChatAttachment(event){
   }
 }
 
-function openCallChoices(){
+let voiceRecorder = null;
+let voiceChunks = [];
+let voiceBlob = null;
+let voiceTimer = null;
+let voiceSeconds = 0;
+let voiceStream = null;
+
+function showVoicePreview(blob) {
+  voiceBlob = blob;
+
+  let panel = document.getElementById("voicePreview");
+
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "voicePreview";
+    panel.style.cssText =
+      "padding:12px;background:#211a10;border-top:1px solid #806334;";
+
+    document.getElementById("privateChatForm")
+      .before(panel);
+  }
+
+  const audioURL = URL.createObjectURL(blob);
+
+  panel.innerHTML = `
+    <p style="color:#ffe0a0;font-size:12px;margin-bottom:9px;">
+      Voice note preview
+    </p>
+    <audio controls src="${audioURL}" style="width:100%;"></audio>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button type="button" class="tool-button"
+        onclick="cancelVoiceNote()">Cancel</button>
+      <button type="button" class="send-button"
+        onclick="sendVoiceNote()">Send voice note</button>
+    </div>
+  `;
+}
+
+async function toggleVoiceRecording() {
+  if (voiceRecorder && voiceRecorder.state === "recording") {
+    voiceRecorder.stop();
+    return;
+  }
+
+  if (!navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia ||
+      !window.MediaRecorder) {
+    alert("Voice recording is not supported by this browser.");
+    return;
+  }
+
+  try {
+    voiceStream =
+      await navigator.mediaDevices.getUserMedia({audio:true});
+
+    voiceChunks = [];
+    voiceSeconds = 0;
+
+    const mimeType =
+      MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : "";
+
+    voiceRecorder = mimeType
+      ? new MediaRecorder(voiceStream, {mimeType})
+      : new MediaRecorder(voiceStream);
+
+    voiceRecorder.ondataavailable = event => {
+      if (event.data.size > 0) voiceChunks.push(event.data);
+    };
+
+    voiceRecorder.onstop = () => {
+      clearInterval(voiceTimer);
+
+      voiceStream.getTracks().forEach(track => track.stop());
+      voiceStream = null;
+
+      const blob = new Blob(voiceChunks, {
+        type: voiceRecorder.mimeType || "audio/webm"
+      });
+
+      if (blob.size > 0) {
+        showVoicePreview(blob);
+      } else {
+        alert("No voice recording was captured.");
+      }
+
+      const button = document.getElementById("voiceRecordButton");
+      if (button) button.textContent = "🎤";
+    };
+
+    voiceRecorder.start();
+
+    const button = document.getElementById("voiceRecordButton");
+    button.textContent = "■";
+
+    voiceTimer = setInterval(() => {
+      voiceSeconds++;
+
+      if (voiceSeconds >= 180) {
+        voiceRecorder.stop();
+        alert("Maximum recording time reached.");
+      }
+    }, 1000);
+
+  } catch (error) {
+    console.error(error);
+    alert("Microphone access was denied or unavailable.");
+  }
+}
+
+function cancelVoiceNote() {
+  const panel = document.getElementById("voicePreview");
+
+  if (panel) panel.remove();
+
+  voiceBlob = null;
+}
+
+async function sendVoiceNote() {
+  if (!voiceBlob || !activePrivateChatId || !currentUser) {
+    alert("Open a chat before sending a voice note.");
+    return;
+  }
+
+  const button = document.getElementById("voiceRecordButton");
+  button.disabled = true;
+
+  try {
+    const extension =
+      voiceBlob.type.includes("mp4") ? "m4a" : "webm";
+
+    const form = new FormData();
+
+    form.append("file", voiceBlob, "voice-note." + extension);
+    form.append("upload_preset", "terzex_upload");
+    form.append(
+      "folder",
+      "terzex_chat/" + activePrivateChatId + "/" + currentUser.uid
+    );
+
+    const endpoint =
+      "https://api.cloudinary.com/v1_1/aqdwrxha/video/upload";
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      body: form
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.secure_url) {
+      throw new Error(
+        result.error?.message || "Voice upload failed."
+      );
+    }
+
+    await messageCollection().add({
+      text: "",
+      type: "voice",
+      mediaURL: result.secure_url,
+      mediaPath: result.public_id || "",
+      mediaType: voiceBlob.type || "audio/webm",
+      mediaName: "Voice note",
+      senderId: currentUser.uid,
+      senderName:
+        currentUser.displayName ||
+        currentUser.email ||
+        "Terzex User",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    cancelVoiceNote();
+
+  } catch (error) {
+    console.error(error);
+    alert("Could not send voice note: " + error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
+ function openCallChoices(){
 document.getElementById("callOverlay").classList.add("show");
 }
 
