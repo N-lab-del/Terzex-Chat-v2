@@ -1294,6 +1294,15 @@ function setupStickerCanvasDrag(){
     if(stickerDraggingDecorationIndex === -1){
       const text = document.getElementById("stickerTextInput").value.trim();
       if(!text) return;
+     const textSize = Number(document.getElementById("stickerTextSize").value);
+const textWidth = Math.max(40, text.length * textSize * 0.6);
+
+if(
+  x < stickerTextX - textWidth/2 ||
+  x > stickerTextX + textWidth/2 ||
+  y < stickerTextY - textSize ||
+  y > stickerTextY + 10
+) return;
     }
 
     stickerDragging = true;
