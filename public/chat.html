@@ -580,7 +580,9 @@ box.innerHTML='<p class="private-chat-empty">This is the beginning of your priva
 return;
 }
 s.forEach(doc=>{
-const m=doc.data(),mine=m.senderId===currentUser.uid,b=document.createElement("div");
+const m=doc.data();
+if(Array.isArray(m.hiddenFor)&&m.hiddenFor.includes(currentUser.uid))return;
+const mine=m.senderId===currentUser.uid,b=document.createElement("div");
 b.className="private-message "+(mine?"mine":"theirs");
 b.dataset.id=doc.id;
 if(m.replyTo){
