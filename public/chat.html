@@ -570,6 +570,11 @@ const item=document.createElement("div");
 item.className="conversation-row"+(row.unreadCount>0?" unread":"");
 item.onclick=()=>openConversationFromHistory(row);
 const avatar=document.createElement("div");
+ avatar.style.cursor = "pointer";
+avatar.onclick = (event) => {
+  event.stopPropagation();
+  openOtherTerzexProfile(row.otherUid);
+};
 avatar.className="conversation-avatar";
 if(row.photoURL){
 const img=document.createElement("img");
