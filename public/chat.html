@@ -139,6 +139,67 @@ animation:typingBounce .6s infinite alternate;
 from{transform:translateY(3px);opacity:.5}
 to{transform:translateY(-3px);opacity:1}
 }
+.terzex-camera-modal{
+  width:100%;
+  max-width:480px;
+  background:#080808;
+  border:1px solid #806334;
+}
+
+.terzex-camera-preview{
+  position:relative;
+  width:100%;
+  height:55vh;
+  min-height:280px;
+  max-height:520px;
+  background:#000;
+  overflow:hidden;
+  border-radius:14px;
+}
+
+.terzex-camera-preview video,
+.terzex-camera-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.terzex-camera-modes,
+.terzex-camera-controls{
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  gap:10px;
+  padding:15px 5px;
+}
+
+.terzex-camera-modes button,
+.terzex-camera-controls button{
+  background:#211a10;
+  color:#f5d27a;
+  border:1px solid #806334;
+  border-radius:25px;
+  padding:11px 14px;
+}
+
+.terzex-camera-controls button{
+  width:48px;
+  height:48px;
+  font-size:20px;
+}
+
+#terzexCameraCapture{
+  width:65px;
+  height:65px;
+  border:3px solid #f5d27a;
+  font-size:30px;
+}
+
+#terzexCameraStatus{
+  text-align:center;
+  color:#f5d27a;
+  font-size:12px;
+}
 </style>
 </head>
 <body>
