@@ -327,6 +327,9 @@ to{transform:translateY(-3px);opacity:1}
 <input id="stickerTextColor" type="color"
   value="#ffffff"
   oninput="updateStickerEditor()">
+   <label style="display:block;margin-top:12px">Text rotation</label>
+<input type="range" min="-180" max="180" value="0"
+  oninput="stickerTextRotation=Number(this.value);updateStickerEditor()">
 
 <p class="notice">Drag your text around the photo with your finger.</p>
    <label style="display:block;margin-top:15px">Sticker Decorations</label>
