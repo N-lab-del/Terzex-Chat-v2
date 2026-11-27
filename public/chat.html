@@ -278,7 +278,52 @@ to{transform:translateY(-3px);opacity:1}
 <div class="overlay" id="callOverlay" onclick="outsideClose(event,'callOverlay')"><div class="modal"><div class="modal-head"><h2>Start a call</h2><button class="close" onclick="closeModal('callOverlay')">✕</button></div><button class="menu-item" onclick="requestCallSetup('voice')"><span class="menu-icon">☎</span><span><strong>Voice call</strong><small>Start an audio conversation</small></span></button><button class="menu-item" onclick="requestCallSetup('video')"><span class="menu-icon">▣</span><span><strong>Video call</strong><small>Start a video conversation</small></span></button></div></div>
 <div class="overlay" id="chatOptionsOverlay" onclick="outsideClose(event,'chatOptionsOverlay')"><div class="modal"><div class="modal-head"><h2>Chat settings</h2><button class="close" onclick="closeModal('chatOptionsOverlay')">✕</button></div><button class="menu-item" onclick="showNotice('Search in conversation')"><span class="menu-icon">⌕</span><span><strong>Search in conversation</strong></span></button><button class="menu-item" onclick="showNotice('Mute notifications')"><span class="menu-icon">♢</span><span><strong>Mute notifications</strong></span></button><button class="menu-item" onclick="showNotice('Clear conversation')"><span class="menu-icon">▤</span><span><strong>Clear conversation</strong></span></button><button class="menu-item" onclick="showNotice('Block contact')"><span class="menu-icon">⊘</span><span><strong>Block contact</strong></span></button></div></div>
 <div class="overlay" id="messageActionOverlay" onclick="outsideClose(event,'messageActionOverlay')"><div class="modal"><div class="modal-head"><h2>Message</h2><button class="close" onclick="closeModal('messageActionOverlay')">✕</button></div><div class="quick-reactions"><button onclick="reactToSelected('❤️')">❤️</button><button onclick="reactToSelected('😂')">😂</button><button onclick="reactToSelected('😮')">😮</button><button onclick="reactToSelected('😢')">😢</button><button onclick="reactToSelected('🙏')">🙏</button><button onclick="reactToSelected('👍')">👍</button></div><button class="menu-item" onclick="editSelectedMessage()"><span class="menu-icon">✎</span><span><strong>Edit message</strong></span></button><button class="menu-item" onclick="copySelectedMessage()"><span class="menu-icon">▣</span><span><strong>Copy message</strong></span></button><button class="menu-item" onclick="deleteSelectedMessage()"><span class="menu-icon">⌫</span><span><strong>Delete message</strong></span></button></div></div>
-<div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')"><div class="modal"><div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div><div class="empty-icon">✧</div><p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p><button class="primary" onclick="closeModal('noticeOverlay')">Okay</button></div></div>
+<div class="overlay" id="stickerMakerOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Terzex Sticker Maker</h2>
+      <button class="close" onclick="closeModal('stickerMakerOverlay')">✕</button>
+    </div>
+
+    <p class="notice">Choose a photo to create your own sticker.</p>
+
+    <input
+      id="stickerImageInput"
+      type="file"
+      accept="image/*"
+      hidden
+      onchange="loadStickerImage(event)"
+    >
+
+    <button class="primary" type="button"
+      onclick="document.getElementById('stickerImageInput').click()">
+      Choose Photo
+    </button>
+
+    <div style="margin-top:15px;text-align:center">
+      <canvas id="stickerCanvas"
+        width="400" height="400"
+        style="width:100%;max-width:300px;background:#111;border:1px solid #66501f;border-radius:12px">
+      </canvas>
+    </div>
+
+    <input id="stickerTextInput"
+      type="text"
+      placeholder="Add text to your sticker"
+      style="width:100%;padding:13px;margin-top:15px;background:#090909;color:white;border:1px solid #66501f;border-radius:10px">
+
+    <button class="primary" type="button"
+      onclick="drawStickerText()">
+      Add Text
+    </button>
+
+    <button class="primary" type="button"
+      onclick="saveCustomSticker()">
+      Save Sticker
+    </button>
+  </div>
+</div>
+ <div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')"><div class="modal"><div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div><div class="empty-icon">✧</div><p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p><button class="primary" onclick="closeModal('noticeOverlay')">Okay</button></div></div>
 <div class="message-actions" id="messageActions"><div class="quick-reactions"><button onclick="reactToSelected('❤️')">❤️</button><button onclick="reactToSelected('😂')">😂</button><button onclick="reactToSelected('😮')">😮</button><button onclick="reactToSelected('😢')">😢</button><button onclick="reactToSelected('🙏')">🙏</button><button onclick="reactToSelected('👍')">👍</button></div><button onclick="replyToSelected()">↩ Reply</button><button class="action" onclick="editSelectedMessage()">✎ Edit message</button><button class="action" onclick="copySelectedMessage()">▣ Copy message</button><button class="action danger" onclick="deleteSelectedMessage()">⌫ Delete message</button></div>
 
 <div id="terzexCameraOverlay" class="overlay">
