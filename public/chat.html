@@ -1549,14 +1549,25 @@ deleteButton.addEventListener("click", function(){
 grid.appendChild(deleteButton);
   });
 }
- function showComposerPanel(which,button){
-composerMode=which;
-document.querySelectorAll(".panel-tabs button").forEach(b=>b.classList.remove("active"));
-button.classList.add("active");
-document.getElementById("emojiGrid").style.display=which==="emoji"?"grid":"none";
-document.getElementById("stickerGrid").style.display=which==="stickers"?"grid":"none";
-}
+function showComposerPanel(which,button){
+  composerMode=which;
 
+  document.querySelectorAll(".panel-tabs button").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+
+  document.getElementById("emojiGrid").style.display =
+    which==="emoji" ? "grid" : "none";
+
+  document.getElementById("stickerGrid").style.display =
+    which==="stickers" ? "grid" : "none";
+
+  document.getElementById("favoriteStickerGrid").style.display =
+    which==="favorites" ? "grid" : "none";
+
+  if(which==="favorites"){
+    renderFavoriteStickerGrid();
+  }
+}
 function insertEmoji(emoji){
 const input=document.getElementById("privateChatInput");
 input.value+=emoji;
