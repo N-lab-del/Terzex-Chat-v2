@@ -2472,6 +2472,359 @@ function setCameraMode(mode) {
     mode === "photo" ? "Photo mode" :
     mode === "video" ? "Video mode" : "Video Note mode";
 }
+ // ===================================
+// TERZEX CAMERA SYSTEM
+// ===================================
+
+let terzexCameraStream = null;
+let terzexCameraFacing = "environment";
+let terzexCameraCurrentMode = "photo";
+let terzexMediaRecorder = null;
+let terzexRecordedChunks = [];
+let terzexRecordingTimer = null;
+let terzexFlashEnabled = false;
+
+async function openTerzexCamera() {
+  const overlay = document.getElementById("terzexCameraOverlay");
+
+  overlay.classList.add("show");
+
+  await startTerzexCamera();
+}
+
+async function startTerzexCamera() {
+  const video = document.getElementById("terzexCameraVideo");
+  const status = document.getElementById("terzexCameraStatus");
+
+  stopTerzexCameraStream();
+
+  status.textContent = "Opening camera...";
+
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new Error("Camera requires HTTPS and browser permission.");
+    }
+
+    terzexCameraStream =
+      await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: terzexCameraFacing }
+        },
+        audio: terzexCameraCurrentMode !== "photo"
+      });
+
+    video.srcObject = terzexCameraStream;
+    await video.play();
+
+    terzexFlashEnabled = false;
+
+    status.textContent = "Camera ready";
+
+  } catch (error) {
+    console.error("Camera error:", error);
+    status.textContent =
+      error.message || "Camera permission denied or unavailable.";
+  }
+}
+
+function stopTerzexCameraStream() {
+  if (terzexCameraStream) {
+    terzexCameraStream.getTracks().forEach(track => track.stop());
+    terzexCameraStream = null;
+  }
+
+  const video = document.getElementById("terzexCameraVideo");
+
+  if (video) video.srcObject = null;
+}
+
+function closeTerzexCamera() {
+  if (terzexMediaRecorder &&
+      terzexMediaRecorder.state !== "inactive") {
+    terzexMediaRecorder.onstop = null;
+    terzexMediaRecorder.stop();
+  }
+
+  clearInterval(terzexRecordingTimer);
+
+  stopTerzexCameraStream();
+
+  document.getElementById("terzexCameraOverlay")
+    .classList.remove("show");
+
+  document.getElementById("terzexCameraStatus")
+    .textContent = "Ready";
+
+  document.getElementById("terzexCameraCapture")
+    .textContent = "●";
+}
+
+async function switchTerzexCamera() {
+  terzexCameraFacing =
+    terzexCameraFacing === "environment"
+      ? "user"
+      : "environment";
+
+  await startTerzexCamera();
+}
+
+async function setCameraMode(mode) {
+  if (terzexMediaRecorder &&
+      terzexMediaRecorder.state !== "inactive") {
+    alert("Stop recording before changing camera mode.");
+    return;
+  }
+
+  terzexCameraCurrentMode = mode;
+
+  const status = document.getElementById("terzexCameraStatus");
+
+  status.textContent =
+    mode === "photo" ? "Photo mode" :
+    mode === "video" ? "Video mode" :
+    "Video Note mode";
+
+  if (terzexCameraStream) {
+    await startTerzexCamera();
+  }
+}
+
+// ===================================
+// PHOTO CAPTURE
+// ===================================
+
+async function captureCameraMedia() {
+  if (!terzexCameraStream) {
+    alert("Please open the camera first.");
+    return;
+  }
+
+  if (terzexCameraCurrentMode === "photo") {
+    captureTerzexPhoto();
+    return;
+  }
+
+  if (terzexMediaRecorder &&
+      terzexMediaRecorder.state === "recording") {
+    terzexMediaRecorder.stop();
+    return;
+  }
+
+  startTerzexVideoRecording();
+}
+
+function captureTerzexPhoto() {
+  const video = document.getElementById("terzexCameraVideo");
+  const canvas = document.getElementById("terzexCameraCanvas");
+
+  if (!video.videoWidth || !video.videoHeight) {
+    alert("Camera is not ready yet.");
+    return;
+  }
+
+  const context = canvas.getContext("2d");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  context.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  canvas.toBlob(async function(blob) {
+    if (!blob) {
+      alert("Could not capture photo.");
+      return;
+    }
+
+    const photoFile = new File(
+      [blob],
+      "terzex-photo-" + Date.now() + ".jpg",
+      { type: "image/jpeg" }
+    );
+
+    closeTerzexCamera();
+
+    await uploadTerzexCapturedFile(photoFile);
+
+  }, "image/jpeg", 0.92);
+}
+
+// ===================================
+// VIDEO AND VIDEO NOTE RECORDING
+// ===================================
+
+function startTerzexVideoRecording() {
+  if (!window.MediaRecorder) {
+    alert("Video recording is not supported by this browser.");
+    return;
+  }
+
+  const stream = terzexCameraStream;
+
+  const formats = [
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm"
+  ];
+
+  let mimeType = "";
+
+  for (const format of formats) {
+    if (MediaRecorder.isTypeSupported(format)) {
+      mimeType = format;
+      break;
+    }
+  }
+
+  try {
+    terzexRecordedChunks = [];
+
+    terzexMediaRecorder = new MediaRecorder(
+      stream,
+      mimeType ? { mimeType } : {}
+    );
+
+    terzexMediaRecorder.ondataavailable = event => {
+      if (event.data && event.data.size > 0) {
+        terzexRecordedChunks.push(event.data);
+      }
+    };
+
+    terzexMediaRecorder.onstop = async () => {
+      clearInterval(terzexRecordingTimer);
+
+      const actualMime =
+        terzexMediaRecorder.mimeType || "video/webm";
+
+      const videoBlob = new Blob(
+        terzexRecordedChunks,
+        { type: actualMime }
+      );
+
+      if (!videoBlob.size) {
+        document.getElementById("terzexCameraStatus")
+          .textContent = "Recording was empty.";
+        return;
+      }
+
+      const videoFile = new File(
+        [videoBlob],
+        "terzex-video-" + Date.now() + ".webm",
+        { type: actualMime }
+      );
+
+      closeTerzexCamera();
+
+      await uploadTerzexCapturedFile(videoFile);
+    };
+
+    terzexMediaRecorder.start();
+
+    document.getElementById("terzexCameraCapture")
+      .textContent = "■";
+
+    document.getElementById("terzexCameraStatus")
+      .textContent = "Recording... Tap ■ to finish.";
+
+    let seconds = 0;
+
+    terzexRecordingTimer = setInterval(() => {
+      seconds++;
+
+      document.getElementById("terzexCameraStatus")
+        .textContent = "Recording: " + seconds + "s";
+
+      if (seconds >= 60) {
+        terzexMediaRecorder.stop();
+      }
+    }, 1000);
+
+  } catch (error) {
+    console.error(error);
+    alert("Could not start video recording.");
+  }
+}
+
+// ===================================
+// SEND CAPTURED MEDIA
+// ===================================
+
+async function uploadTerzexCapturedFile(file) {
+  if (!activePrivateChatId || !currentUser) {
+    alert("Open a private chat before capturing media.");
+    return;
+  }
+
+  await uploadChatAttachment({
+    target: {
+      files: [file],
+      value: ""
+    }
+  });
+}
+
+// ===================================
+// GALLERY
+// ===================================
+
+function openCameraGallery() {
+  const input = document.getElementById("attachmentInput");
+
+  if (input) {
+    input.click();
+  }
+}
+
+// ===================================
+// FLASH / TORCH
+// ===================================
+
+async function toggleCameraFlash() {
+  if (!terzexCameraStream) {
+    alert("Open the camera first.");
+    return;
+  }
+
+  const track = terzexCameraStream.getVideoTracks()[0];
+
+  if (!track) return;
+
+  const capabilities = track.getCapabilities
+    ? track.getCapabilities()
+    : {};
+
+  if (!capabilities.torch) {
+    document.getElementById("terzexCameraStatus")
+      .textContent = "Flash is not supported by this camera.";
+
+    return;
+  }
+
+  try {
+    terzexFlashEnabled = !terzexFlashEnabled;
+
+    await track.applyConstraints({
+      advanced: [{ torch: terzexFlashEnabled }]
+    });
+
+    document.getElementById("terzexCameraStatus")
+      .textContent = terzexFlashEnabled
+        ? "Flash enabled"
+        : "Flash disabled";
+
+  } catch (error) {
+    console.error(error);
+
+    terzexFlashEnabled = false;
+
+    alert("Could not control the camera flash.");
+  }
+}
 </script>
 </body>
 </html>
