@@ -45,6 +45,53 @@ header{padding:22px 19px 18px;display:flex;justify-content:space-between;align-i
  color:#f7f7f7;
  border-bottom-left-radius:4px;
 }.private-message-time{display:block;margin-top:5px;font-size:9px;color:#c5b28f;text-align:right}.private-message-status{margin-left:5px;font-size:11px;font-weight:800;color:#c5b28f}.private-message-status.read{color:#39bdf8}.message-media{display:block;max-width:220px;max-height:220px;border-radius:10px;margin-bottom:5px}.message-sticker{font-size:48px;line-height:1.2}.reaction-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}.reaction-chip{border:1px solid #806334;background:#211a10;color:#ffe0a0;border-radius:20px;padding:3px 7px;font-size:11px}.private-chat-form{display:flex;gap:7px;padding:10px;border-top:1px solid #292929;background:#171717;align-items:center}.private-chat-form input{flex:1;min-width:0;padding:13px;background:#090909;border:1px solid #393939;border-radius:12px;color:white;outline:none}.tool-button{width:39px;height:42px;border:1px solid #39312a;border-radius:11px;background:#211a10;color:var(--gold-light);font-size:19px}.send-button{padding:0 15px;height:42px;border:0;border-radius:12px;background:linear-gradient(110deg,var(--gold),var(--gold-light));color:#171109;font-size:11px;font-weight:800}
+ .composer-input-wrap{
+  flex:1;
+  min-width:0;
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+.composer-input-wrap input{
+  width:100%;
+  min-width:0;
+  padding:13px 45px 13px 13px;
+  background:#090909;
+  border:1px solid #393939;
+  border-radius:25px;
+  color:white;
+  outline:none;
+}
+
+.attachment-button{
+  position:absolute;
+  right:8px;
+  width:32px;
+  height:32px;
+  border:0;
+  background:transparent;
+  color:var(--gold-light);
+  font-size:20px;
+}
+
+.private-chat-form .tool-button{
+  flex-shrink:0;
+}
+
+@media(max-width:380px){
+  .private-chat-form{
+    gap:5px;
+    padding:7px;
+  }
+  .private-chat-form .tool-button{
+    width:34px;
+    height:38px;
+  }
+  .send-button{
+    padding:0 9px;
+  }
+}
  .reply-preview{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:#211a10;border-top:1px solid #806334;color:#f5d27a;font-size:12px}
 .reply-preview strong{display:block;font-size:10px;color:#c99532;margin-bottom:3px}
 .reply-preview span{display:block;color:#eee;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
