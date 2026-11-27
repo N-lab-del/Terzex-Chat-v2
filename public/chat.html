@@ -1513,7 +1513,12 @@ function saveCustomSticker(){
     img.style.cssText = "width:65px;height:65px;object-fit:contain;";
 
     button.appendChild(img);
-    grid.appendChild(button);
+
+button.addEventListener("click", function(){
+  sendCustomSticker(sticker.image);
+});
+
+grid.appendChild(button);
   });
 }
  function showComposerPanel(which,button){
