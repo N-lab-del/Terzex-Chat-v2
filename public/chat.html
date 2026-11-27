@@ -127,7 +127,8 @@ to{transform:translateY(-3px);opacity:1}
 <div id="replyPreview" class="reply-preview" style="display:none"><div><strong>Replying to</strong><span id="replyPreviewText"></span></div><button type="button" onclick="cancelReply()">✕</button></div>
 <form id="privateChatForm" class="private-chat-form" onsubmit="sendPrivateMessage(event)">
 <button class="tool-button" type="button" onclick="toggleEmojiPanel()" aria-label="Emojis">☺</button>
-<button class="tool-button" type="button" onclick="document.getElementById('attachmentInput').click()" aria-label="Attach file">＋</button>
+<button class="tool-button" type="button" onclick="document.getElementById('cameraInput').click()" aria-label="Take photo">📷</button>
+<button class="tool-button" type="button" onclick="document.getElementById('attachmentInput').click()" aria-label="Open gallery">🖼️</button>
 <button class="tool-button" type="button" id="voiceRecordButton" onclick="toggleVoiceRecording()" aria-label="Record voice note">🎤</button>
 <input id="privateChatInput" type="text" maxlength="2000" autocomplete="off" placeholder="Write a message..." aria-label="Message">
 <button id="privateChatSend" class="send-button" type="submit">Send</button>
