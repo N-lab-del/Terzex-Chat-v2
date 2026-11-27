@@ -2851,6 +2851,22 @@ async function loadOtherTerzexProfile(uid) {
     }
 
     const profile = snap.data();
+   rtdb.ref("presence/" + uid).once("value")
+  .then(statusSnap => {
+    const status = statusSnap.val();
+    const statusElement = document.getElementById(
+      "otherProfileOnlineStatus"
+    );
+
+    if (!statusElement) return;
+
+    if (status && status.state === "online") {
+      statusElement.textContent = "🟢 Online";
+      statusElement.style.color = "#36d17c";
+    } else {
+      statusElement.textContent = "⚫ Offline";
+    }
+  });
 
     const name = profile.displayName || "Terzex User";
     const username = profile.username || "";
