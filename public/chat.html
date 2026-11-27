@@ -1158,6 +1158,24 @@ let stickerTextX = 200;
 let stickerTextY = 350;
 let stickerDragging = false;
 let stickerDragReady = false;
+ let stickerDecorations = [];
+
+function addStickerDecoration(emoji){
+  if(!stickerSourceImage){
+    alert("Choose a photo first.");
+    return;
+  }
+
+  const index = stickerDecorations.length;
+
+  stickerDecorations.push({
+    emoji: emoji,
+    x: 65 + ((index * 83) % 270),
+    y: 80 + ((index * 97) % 240)
+  });
+
+  updateStickerEditor();
+}
 
 function openStickerMaker(){
   document.getElementById("emojiPanel").classList.remove("show");
