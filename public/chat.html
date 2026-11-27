@@ -1673,6 +1673,43 @@ function showComposerPanel(which,button){
     grid.appendChild(removeButton);
   });
 }
+ function addStickerToPack(sticker){
+  const packs = JSON.parse(
+    localStorage.getItem("terzexStickerPacks") || "[]"
+  );
+
+  if(packs.length === 0){
+    alert("Create a sticker pack first!");
+    return;
+  }
+
+  const names = packs.map((pack,index)=>
+    (index + 1) + ". " + pack.name
+  ).join("\n");
+
+  const choice = prompt(
+    "Choose a pack number:\n" + names
+  );
+
+  if(!choice) return;
+
+  const index = Number(choice) - 1;
+
+  if(!Number.isInteger(index) || !packs[index]){
+    alert("Invalid pack number.");
+    return;
+  }
+
+  packs[index].stickers.push(sticker);
+
+  localStorage.setItem(
+    "terzexStickerPacks",
+    JSON.stringify(packs)
+  );
+
+  alert("Sticker added to " + packs[index].name + "!");
+  renderStickerPacks();
+}
  function renderStickerPacks(){
   const grid = document.getElementById("stickerPacksGrid");
 
