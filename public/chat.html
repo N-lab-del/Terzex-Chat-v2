@@ -1259,6 +1259,11 @@ function updateStickerEditor(){
     ctx.fillText(text,stickerTextX,stickerTextY,360);
   }
 
+ stickerDecorations.forEach(function(item){
+  ctx.font = "42px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(item.emoji,item.x,item.y);
+});
   ctx.restore();
 }
 
