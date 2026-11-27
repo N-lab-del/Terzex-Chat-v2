@@ -1314,6 +1314,19 @@ function setupStickerCanvasDrag(){
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX-rect.left) * 400/rect.width;
     const y = (e.clientY-rect.top) * 400/rect.height;
+   if(stickerBrushMode === "erase" || stickerBrushMode === "restore"){
+  const brushSize = Number(document.getElementById("stickerBrushSize").value);
+
+  stickerActiveBrushStroke = {
+    mode: stickerBrushMode,
+    size: brushSize,
+    points: [{x:x,y:y}]
+  };
+
+  stickerBrushStrokes.push(stickerActiveBrushStroke);
+  canvas.setPointerCapture(e.pointerId);
+  return;
+ }
 
     stickerDraggingDecorationIndex = -1;
 
