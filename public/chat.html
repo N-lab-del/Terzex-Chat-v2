@@ -1795,12 +1795,13 @@ async function saveTerzexProfile() {
 
     // Only public profile/search fields are written here.
     await db.collection("public_profiles").doc(currentUser.uid).set({
-      uid: currentUser.uid,
-      displayName: name,
-      username: username,
-      usernameLower: usernameLower,
-      photoURL: terzexProfilePhotoURL || ""
-    }, {merge:true});
+  uid: currentUser.uid,
+  displayName: name,
+  username: username,
+  usernameLower: usernameLower,
+  photoURL: terzexProfilePhotoURL || "",
+  bio: bio
+}, {merge:true});
 
     terzexProfileData = {
       ...terzexProfileData,
