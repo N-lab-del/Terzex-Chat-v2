@@ -1593,9 +1593,17 @@ function showComposerPanel(which,button){
   document.getElementById("favoriteStickerGrid").style.display =
     which==="favorites" ? "grid" : "none";
 
+  document.getElementById("stickerPacksGrid").style.display =
+    which==="packs" ? "grid" : "none";
+
   if(which==="favorites"){
     renderFavoriteStickerGrid();
   }
+
+  if(which==="packs"){
+    renderStickerPacks();
+  }
+}
 }
  function renderFavoriteStickerGrid(){
   const grid = document.getElementById("favoriteStickerGrid");
