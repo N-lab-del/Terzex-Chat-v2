@@ -1125,7 +1125,119 @@ function toggleEmojiPanel(){
 document.getElementById("emojiPanel").classList.toggle("show");
 }
 
-function showComposerPanel(which,button){
+let stickerSourceImage = null;
+
+function openStickerMaker(){
+  document.getElementById("emojiPanel").classList.remove("show");
+  document.getElementById("stickerMakerOverlay").classList.add("show");
+}
+
+function loadStickerImage(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  if(!file.type.startsWith("image/")){
+    alert("Please choose an image.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(e){
+    const img = new Image();
+
+    img.onload = function(){
+      stickerSourceImage = img;
+
+      const canvas = document.getElementById("stickerCanvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.clearRect(0,0,400,400);
+
+      const scale = Math.max(400/img.width,400/img.height);
+      const width = img.width * scale;
+      const height = img.height * scale;
+
+      ctx.drawImage(
+        img,
+        (400-width)/2,
+        (400-height)/2,
+        width,
+        height
+      );
+    };
+
+    img.src = e.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function drawStickerText(){
+  if(!stickerSourceImage){
+    alert("Choose a photo first.");
+    return;
+  }
+
+  const canvas = document.getElementById("stickerCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const scale = Math.max(
+    400/stickerSourceImage.width,
+    400/stickerSourceImage.height
+  );
+
+  const width = stickerSourceImage.width * scale;
+  const height = stickerSourceImage.height * scale;
+
+  ctx.clearRect(0,0,400,400);
+
+  ctx.drawImage(
+    stickerSourceImage,
+    (400-width)/2,
+    (400-height)/2,
+    width,
+    height
+  );
+
+  const text = document.getElementById("stickerTextInput").value.trim();
+
+  if(text){
+    ctx.font = "bold 32px Arial";
+    ctx.textAlign = "center";
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#000";
+    ctx.fillStyle = "#fff";
+    ctx.strokeText(text,200,350,360);
+    ctx.fillText(text,200,350,360);
+  }
+}
+
+function saveCustomSticker(){
+  const canvas = document.getElementById("stickerCanvas");
+
+  if(!stickerSourceImage){
+    alert("Choose a photo first.");
+    return;
+  }
+
+  const stickers = JSON.parse(
+    localStorage.getItem("terzexCustomStickers") || "[]"
+  );
+
+  stickers.push({
+    image:canvas.toDataURL("image/png"),
+    createdAt:Date.now()
+  });
+
+  localStorage.setItem(
+    "terzexCustomStickers",
+    JSON.stringify(stickers)
+  );
+
+  alert("Sticker saved successfully!");
+}
+ function showComposerPanel(which,button){
 composerMode=which;
 document.querySelectorAll(".panel-tabs button").forEach(b=>b.classList.remove("active"));
 button.classList.add("active");
