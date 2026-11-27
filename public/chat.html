@@ -1235,7 +1235,32 @@ function saveCustomSticker(){
     JSON.stringify(stickers)
   );
 
-  alert("Sticker saved successfully!");
+  renderCustomStickerGrid();
+ alert("Sticker saved successfully!");
+}
+ function renderCustomStickerGrid(){
+  const grid = document.getElementById("stickerGrid");
+
+  const saved = JSON.parse(
+    localStorage.getItem("terzexCustomStickers") || "[]"
+  );
+
+  grid.querySelectorAll(".custom-sticker").forEach(el=>el.remove());
+
+  saved.forEach((sticker,index)=>{
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "custom-sticker";
+    button.style.cssText = "padding:5px;background:#17120b;border:1px solid #66501f;border-radius:10px;";
+
+    const img = document.createElement("img");
+    img.src = sticker.image;
+    img.alt = "My custom sticker";
+    img.style.cssText = "width:65px;height:65px;object-fit:contain;";
+
+    button.appendChild(img);
+    grid.appendChild(button);
+  });
 }
  function showComposerPanel(which,button){
 composerMode=which;
