@@ -440,6 +440,11 @@ const strong=document.createElement("strong"),small=document.createElement("smal
 strong.textContent=name;
 small.textContent=p.username?"@"+p.username:"Terzex member";
 info.append(strong,small);
+ av.style.cursor = "pointer";
+av.onclick = () => openOtherTerzexProfile(item.id);
+
+info.style.cursor = "pointer";
+info.onclick = () => openOtherTerzexProfile(item.id);
 const b=document.createElement("button");
 b.textContent="Message";
 b.onclick=()=>openPrivateChat(item.id,p);
