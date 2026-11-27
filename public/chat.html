@@ -1182,6 +1182,9 @@ let stickerDragging = false;
  let stickerDraggingDecorationIndex = -1;
 let stickerDragReady = false;
  let stickerDecorations = [];
+ let stickerBrushMode = "move";
+let stickerBrushStrokes = [];
+let stickerActiveBrushStroke = null;
 
 function addStickerDecoration(emoji){
   if(!stickerSourceImage){
