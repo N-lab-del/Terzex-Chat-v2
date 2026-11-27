@@ -2421,57 +2421,7 @@ document.getElementById("noticeText").textContent =
 "We are preparing this feature for Terzex Chat.";
 document.getElementById("noticeOverlay").classList.add("show");
 }
-let terzexCameraStream = null;
-let terzexCameraFacing = "environment";
-let terzexCameraCurrentMode = "photo";
 
-async function openTerzexCamera() {
-  const overlay = document.getElementById("terzexCameraOverlay");
-  const video = document.getElementById("terzexCameraVideo");
-  const status = document.getElementById("terzexCameraStatus");
-
-  overlay.classList.add("show");
-  status.textContent = "Opening camera...";
-
-  try {
-    terzexCameraStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: terzexCameraFacing },
-      audio: false
-    });
-
-    video.srcObject = terzexCameraStream;
-    await video.play();
-    status.textContent = "Camera ready";
-  } catch (error) {
-    status.textContent = "Camera permission denied or unavailable.";
-    console.error("Terzex camera error:", error);
-  }
-}
-
-function closeTerzexCamera() {
-  if (terzexCameraStream) {
-    terzexCameraStream.getTracks().forEach(track => track.stop());
-    terzexCameraStream = null;
-  }
-
-  document.getElementById("terzexCameraVideo").srcObject = null;
-  document.getElementById("terzexCameraOverlay").classList.remove("show");
-}
-
-async function switchTerzexCamera() {
-  terzexCameraFacing =
-    terzexCameraFacing === "environment" ? "user" : "environment";
-
-  await openTerzexCamera();
-}
-
-function setCameraMode(mode) {
-  terzexCameraCurrentMode = mode;
-
-  document.getElementById("terzexCameraStatus").textContent =
-    mode === "photo" ? "Photo mode" :
-    mode === "video" ? "Video mode" : "Video Note mode";
-}
  // ===================================
 // TERZEX CAMERA SYSTEM
 // ===================================
