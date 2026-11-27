@@ -1519,6 +1519,32 @@ button.addEventListener("click", function(){
 });
 
 grid.appendChild(button);
+   const deleteButton = document.createElement("button");
+deleteButton.type = "button";
+deleteButton.textContent = "🗑️";
+deleteButton.title = "Delete sticker";
+deleteButton.style.cssText =
+  "display:block;margin:4px auto;background:#211a10;border:1px solid #b58a32;border-radius:8px;padding:5px;cursor:pointer;";
+
+deleteButton.addEventListener("click", function(){
+  const confirmDelete = confirm("Delete this sticker?");
+  if(!confirmDelete) return;
+
+  const latest = JSON.parse(
+    localStorage.getItem("terzexCustomStickers") || "[]"
+  );
+
+  latest.splice(index, 1);
+
+  localStorage.setItem(
+    "terzexCustomStickers",
+    JSON.stringify(latest)
+  );
+
+  renderCustomStickerGrid();
+});
+
+grid.appendChild(deleteButton);
   });
 }
  function showComposerPanel(which,button){
