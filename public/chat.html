@@ -1521,6 +1521,33 @@ button.addEventListener("click", function(){
 });
 
 grid.appendChild(button);
+   const favoriteButton = document.createElement("button");
+favoriteButton.type = "button";
+favoriteButton.textContent = "⭐";
+favoriteButton.title = "Add to Favorites";
+favoriteButton.style.cssText =
+  "display:block;margin:4px auto;background:#211a10;border:1px solid #b58a32;border-radius:8px;padding:5px;cursor:pointer;";
+
+favoriteButton.addEventListener("click", function(){
+  const favorites = JSON.parse(
+    localStorage.getItem("terzexFavoriteStickers") || "[]"
+  );
+
+  const exists = favorites.some(item => item.image === sticker.image);
+
+  if(!exists){
+    favorites.push(sticker);
+    localStorage.setItem(
+      "terzexFavoriteStickers",
+      JSON.stringify(favorites)
+    );
+    alert("Added to Favorites!");
+  } else {
+    alert("This sticker is already in Favorites.");
+  }
+});
+
+grid.appendChild(favoriteButton);
    const deleteButton = document.createElement("button");
 deleteButton.type = "button";
 deleteButton.textContent = "🗑️";
