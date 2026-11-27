@@ -805,7 +805,7 @@ async function deleteSelectedMessage(){
   }
 }
 
- function messageRef(id){.
+ function messageRef(id){
 return db.collection("private_chats").doc(activePrivateChatId).collection("messages").doc(id);
 }
 
