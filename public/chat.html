@@ -687,6 +687,12 @@ av.textContent=privateChatTarget.name.charAt(0).toUpperCase();
 }
 
 old.replaceWith(av);
+ av.style.cursor = "pointer";
+av.onclick = () => openOtherTerzexProfile(otherUid);
+
+const chatName = document.getElementById("privateChatName");
+chatName.style.cursor = "pointer";
+chatName.onclick = () => openOtherTerzexProfile(otherUid);
 document.getElementById("privateChatMessages").innerHTML='<p class="private-chat-empty">Loading conversation...</p>';
 document.getElementById("privateChatOverlay").classList.add("show");
 
