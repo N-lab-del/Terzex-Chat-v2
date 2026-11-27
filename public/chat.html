@@ -1273,8 +1273,26 @@ function setupStickerCanvasDrag(){
   const canvas = document.getElementById("stickerCanvas");
 
   canvas.addEventListener("pointerdown",function(e){
-    const text = document.getElementById("stickerTextInput").value.trim();
-    if(!text) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX-rect.left) * 400/rect.width;
+    const y = (e.clientY-rect.top) * 400/rect.height;
+
+    stickerDraggingDecorationIndex = -1;
+
+    for(let i=stickerDecorations.length-1;i>=0;i--){
+      const item = stickerDecorations[i];
+      const distance = Math.hypot(x-item.x,y-item.y);
+
+      if(distance < 35){
+        stickerDraggingDecorationIndex = i;
+        break;
+      }
+    }
+
+    if(stickerDraggingDecorationIndex === -1){
+      const text = document.getElementById("stickerTextInput").value.trim();
+      if(!text) return;
+    }
 
     stickerDragging = true;
     canvas.setPointerCapture(e.pointerId);
@@ -1285,19 +1303,27 @@ function setupStickerCanvasDrag(){
 
     const rect = canvas.getBoundingClientRect();
 
-    stickerTextX = (e.clientX-rect.left) * 400/rect.width;
-    stickerTextY = (e.clientY-rect.top) * 400/rect.height;
+    const x = (e.clientX-rect.left) * 400/rect.width;
+    const y = (e.clientY-rect.top) * 400/rect.height;
+
+    if(stickerDraggingDecorationIndex !== -1){
+      stickerDecorations[stickerDraggingDecorationIndex].x = x;
+      stickerDecorations[stickerDraggingDecorationIndex].y = y;
+    }else{
+      stickerTextX = x;
+      stickerTextY = y;
+    }
 
     updateStickerEditor();
   });
 
-  canvas.addEventListener("pointerup",function(){
+  function stopStickerDragging(){
     stickerDragging = false;
-  });
+    stickerDraggingDecorationIndex = -1;
+  }
 
-  canvas.addEventListener("pointercancel",function(){
-    stickerDragging = false;
-  });
+  canvas.addEventListener("pointerup",stopStickerDragging);
+  canvas.addEventListener("pointercancel",stopStickerDragging);
 
   stickerDragReady = true;
 }
