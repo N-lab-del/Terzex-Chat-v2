@@ -1154,10 +1154,15 @@ document.getElementById("emojiPanel").classList.toggle("show");
 }
 
 let stickerSourceImage = null;
+let stickerTextX = 200;
+let stickerTextY = 350;
+let stickerDragging = false;
+let stickerDragReady = false;
 
 function openStickerMaker(){
   document.getElementById("emojiPanel").classList.remove("show");
   document.getElementById("stickerMakerOverlay").classList.add("show");
+  setupStickerCanvasDrag();
 }
 
 function loadStickerImage(event){
@@ -1176,23 +1181,11 @@ function loadStickerImage(event){
 
     img.onload = function(){
       stickerSourceImage = img;
+      stickerTextX = 200;
+      stickerTextY = 350;
 
-      const canvas = document.getElementById("stickerCanvas");
-      const ctx = canvas.getContext("2d");
-
-      ctx.clearRect(0,0,400,400);
-
-      const scale = Math.max(400/img.width,400/img.height);
-      const width = img.width * scale;
-      const height = img.height * scale;
-
-      ctx.drawImage(
-        img,
-        (400-width)/2,
-        (400-height)/2,
-        width,
-        height
-      );
+      document.getElementById("stickerZoom").value = 1;
+      updateStickerEditor();
     };
 
     img.src = e.target.result;
@@ -1201,24 +1194,28 @@ function loadStickerImage(event){
   reader.readAsDataURL(file);
 }
 
-function drawStickerText(){
-  if(!stickerSourceImage){
-    alert("Choose a photo first.");
-    return;
-  }
+function updateStickerEditor(){
+  if(!stickerSourceImage) return;
 
   const canvas = document.getElementById("stickerCanvas");
   const ctx = canvas.getContext("2d");
 
+  const zoom = Number(document.getElementById("stickerZoom").value);
+
   const scale = Math.max(
     400/stickerSourceImage.width,
     400/stickerSourceImage.height
-  );
+  ) * zoom;
 
   const width = stickerSourceImage.width * scale;
   const height = stickerSourceImage.height * scale;
 
   ctx.clearRect(0,0,400,400);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0,0,400,400);
+  ctx.clip();
 
   ctx.drawImage(
     stickerSourceImage,
@@ -1231,14 +1228,59 @@ function drawStickerText(){
   const text = document.getElementById("stickerTextInput").value.trim();
 
   if(text){
-    ctx.font = "bold 32px Arial";
+    const size = Number(document.getElementById("stickerTextSize").value);
+    const color = document.getElementById("stickerTextColor").value;
+
+    ctx.font = "bold " + size + "px Arial";
     ctx.textAlign = "center";
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#000";
-    ctx.fillStyle = "#fff";
-    ctx.strokeText(text,200,350,360);
-    ctx.fillText(text,200,350,360);
+    ctx.fillStyle = color;
+
+    ctx.strokeText(text,stickerTextX,stickerTextY,360);
+    ctx.fillText(text,stickerTextX,stickerTextY,360);
   }
+
+  ctx.restore();
+}
+
+function setupStickerCanvasDrag(){
+  if(stickerDragReady) return;
+
+  const canvas = document.getElementById("stickerCanvas");
+
+  canvas.addEventListener("pointerdown",function(e){
+    const text = document.getElementById("stickerTextInput").value.trim();
+    if(!text) return;
+
+    stickerDragging = true;
+    canvas.setPointerCapture(e.pointerId);
+  });
+
+  canvas.addEventListener("pointermove",function(e){
+    if(!stickerDragging) return;
+
+    const rect = canvas.getBoundingClientRect();
+
+    stickerTextX = (e.clientX-rect.left) * 400/rect.width;
+    stickerTextY = (e.clientY-rect.top) * 400/rect.height;
+
+    updateStickerEditor();
+  });
+
+  canvas.addEventListener("pointerup",function(){
+    stickerDragging = false;
+  });
+
+  canvas.addEventListener("pointercancel",function(){
+    stickerDragging = false;
+  });
+
+  stickerDragReady = true;
+}
+
+function drawStickerText(){
+  updateStickerEditor();
 }
 
 function saveCustomSticker(){
