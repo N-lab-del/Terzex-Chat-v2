@@ -301,11 +301,39 @@ to{transform:translateY(-3px);opacity:1}
     </button>
 
     <div style="margin-top:15px;text-align:center">
-      <canvas id="stickerCanvas"
-        width="400" height="400"
-        style="width:100%;max-width:300px;background:#111;border:1px solid #66501f;border-radius:12px">
-      </canvas>
-    </div>
+  <canvas id="stickerCanvas"
+    width="400" height="400"
+    style="width:100%;max-width:300px;background:#111;border:1px solid #66501f;border-radius:12px;touch-action:none">
+  </canvas>
+</div>
+
+<label style="display:block;margin-top:15px">Crop / Zoom</label>
+<input id="stickerZoom" type="range"
+  min="1" max="3" step="0.1" value="1"
+  oninput="updateStickerEditor()">
+
+<input id="stickerTextInput"
+  type="text"
+  placeholder="Add text to your sticker"
+  oninput="updateStickerEditor()"
+  style="width:100%;padding:13px;margin-top:15px;background:#090909;color:white;border:1px solid #66501f;border-radius:10px">
+
+<label style="display:block;margin-top:12px">Text size</label>
+<input id="stickerTextSize" type="range"
+  min="16" max="70" value="32"
+  oninput="updateStickerEditor()">
+
+<label style="display:block;margin-top:12px">Text colour</label>
+<input id="stickerTextColor" type="color"
+  value="#ffffff"
+  oninput="updateStickerEditor()">
+
+<p class="notice">Drag your text around the photo with your finger.</p>
+
+<button class="primary" type="button"
+  onclick="updateStickerEditor()">
+  Update Preview
+</button>
 
     <input id="stickerTextInput"
       type="text"
