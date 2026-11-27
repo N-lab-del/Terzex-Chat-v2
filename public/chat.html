@@ -1595,6 +1595,52 @@ function showComposerPanel(which,button){
     renderFavoriteStickerGrid();
   }
 }
+ function renderFavoriteStickerGrid(){
+  const grid = document.getElementById("favoriteStickerGrid");
+
+  const favorites = JSON.parse(
+    localStorage.getItem("terzexFavoriteStickers") || "[]"
+  );
+
+  grid.innerHTML = "";
+
+  favorites.forEach((sticker,index)=>{
+    const button = document.createElement("button");
+    button.type = "button";
+    button.style.cssText =
+      "padding:5px;background:#17120b;border:1px solid #b58a32;border-radius:10px;";
+
+    const img = document.createElement("img");
+    img.src = sticker.image;
+    img.alt = "Favorite sticker";
+    img.style.cssText =
+      "width:65px;height:65px;object-fit:contain;";
+
+    button.appendChild(img);
+
+    button.addEventListener("click",()=>{
+      sendCustomSticker(sticker.image);
+    });
+
+    grid.appendChild(button);
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.textContent = "❌";
+    removeButton.title = "Remove from Favorites";
+
+    removeButton.addEventListener("click",()=>{
+      favorites.splice(index,1);
+      localStorage.setItem(
+        "terzexFavoriteStickers",
+        JSON.stringify(favorites)
+      );
+      renderFavoriteStickerGrid();
+    });
+
+    grid.appendChild(removeButton);
+  });
+ }
 function insertEmoji(emoji){
 const input=document.getElementById("privateChatInput");
 input.value+=emoji;
