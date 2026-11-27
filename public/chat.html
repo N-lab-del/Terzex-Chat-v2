@@ -1090,11 +1090,20 @@ let attachmentPreviewURL = null;
 async function uploadChatAttachment(event) {
   const file = event.target.files[0];
   event.target.value = "";
+async function uploadChatAttachment(event) {
+  const file = event.target.files[0];
+  event.target.value = "";
 
   if (!file || !activePrivateChatId || !currentUser) return;
 
-  if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-    return alert("Choose an image or video.");
+  const allowed =
+    file.type.startsWith("image/") ||
+    file.type.startsWith("video/") ||
+    file.type.startsWith("audio/") ||
+    /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|txt|zip)$/i.test(file.name);
+
+  if (!allowed) {
+    return alert("This file type is not supported.");
   }
 
   if (file.size > 25 * 1024 * 1024) {
@@ -1114,21 +1123,57 @@ async function uploadChatAttachment(event) {
   if (!panel) {
     panel = document.createElement("div");
     panel.id = "attachmentPreview";
-    panel.style.cssText = "padding:12px;background:#151515;border:1px solid #b58a32;border-radius:12px;margin:10px;";
-
+    panel.style.cssText =
+      "padding:12px;background:#151515;border:1px solid #b58a32;border-radius:12px;margin:10px;";
     document.getElementById("privateChatForm").before(panel);
   }
 
-  panel.innerHTML = `
-    <p style="color:#d6ad55">Preview attachment</p>
-    ${file.type.startsWith("video/")
-      ? `<video src="${attachmentPreviewURL}" controls style="max-width:100%;max-height:220px"></video>`
-      : `<img src="${attachmentPreviewURL}" style="max-width:100%;max-height:220px;border-radius:10px">`
-    }
-    <p style="color:white">${file.name}</p>
-    <button type="button" onclick="cancelChatAttachment()">Cancel</button>
-    <button type="button" onclick="sendChatAttachment()">Send</button>
-  `;
+  panel.innerHTML = "";
+
+  const heading = document.createElement("p");
+  heading.textContent = "Preview attachment";
+  heading.style.color = "#d6ad55";
+  panel.appendChild(heading);
+
+  if (file.type.startsWith("image/")) {
+    const img = document.createElement("img");
+    img.src = attachmentPreviewURL;
+    img.style.cssText = "max-width:100%;max-height:220px;border-radius:10px;";
+    panel.appendChild(img);
+  } else if (file.type.startsWith("video/")) {
+    const video = document.createElement("video");
+    video.src = attachmentPreviewURL;
+    video.controls = true;
+    video.style.cssText = "max-width:100%;max-height:220px;";
+    panel.appendChild(video);
+  } else if (file.type.startsWith("audio/")) {
+    const audio = document.createElement("audio");
+    audio.src = attachmentPreviewURL;
+    audio.controls = true;
+    panel.appendChild(audio);
+  } else {
+    const label = document.createElement("p");
+    label.textContent = "📁 " + file.name;
+    label.style.color = "white";
+    panel.appendChild(label);
+  }
+
+  const name = document.createElement("p");
+  name.textContent = file.name;
+  name.style.color = "white";
+  panel.appendChild(name);
+
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.textContent = "Cancel";
+  cancel.onclick = cancelChatAttachment;
+  panel.appendChild(cancel);
+
+  const send = document.createElement("button");
+  send.type = "button";
+  send.textContent = "Send";
+  send.onclick = sendChatAttachment;
+  panel.appendChild(send);
 }
 
 function cancelChatAttachment() {
@@ -1140,6 +1185,78 @@ function cancelChatAttachment() {
   }
 
   document.getElementById("attachmentPreview")?.remove();
+}
+
+async function sendChatAttachment() {
+  const file = pendingChatAttachment;
+
+  if (!file || !activePrivateChatId || !currentUser) return;
+
+  const btn = document.getElementById("privateChatSend");
+  btn.disabled = true;
+  btn.textContent = "Uploading";
+
+  try {
+    let resourceType = "raw";
+
+    if (file.type.startsWith("image/")) {
+      resourceType = "image";
+    } else if (
+      file.type.startsWith("video/") ||
+      file.type.startsWith("audio/")
+    ) {
+      resourceType = "video";
+    }
+
+    const endpoint =
+      "https://api.cloudinary.com/v1_1/aqdwrxha/" +
+      resourceType + "/upload";
+
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", "terzex_upload");
+    form.append(
+      "folder",
+      "terzex_chat/" + activePrivateChatId + "/" + currentUser.uid
+    );
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      body: form
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.secure_url) {
+      throw new Error(
+        result.error?.message || "Cloudinary upload failed."
+      );
+    }
+
+    await messageCollection().add({
+      text: "",
+      mediaURL: result.secure_url,
+      mediaPath: result.public_id || "",
+      mediaType: file.type || "application/octet-stream",
+      mediaName: file.name,
+      mediaResourceType: resourceType,
+      senderId: currentUser.uid,
+      senderName:
+        currentUser.displayName ||
+        currentUser.email ||
+        "Terzex User",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    cancelChatAttachment();
+
+  } catch (e) {
+    console.error(e);
+    alert("Upload failed: " + (e.message || "Check your connection."));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Send";
+  }
 }
 
 async function sendChatAttachment() {
