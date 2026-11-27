@@ -1663,6 +1663,70 @@ function showComposerPanel(which,button){
     grid.appendChild(removeButton);
   });
 }
+ function renderStickerPacks(){
+  const grid = document.getElementById("stickerPacksGrid");
+
+  const packs = JSON.parse(
+    localStorage.getItem("terzexStickerPacks") || "[]"
+  );
+
+  grid.innerHTML = "";
+
+  const createButton = document.createElement("button");
+  createButton.type = "button";
+  createButton.textContent = "＋ Create New Pack";
+  createButton.style.cssText =
+    "grid-column:1/-1;background:#2b2112;color:#f5d27a;border:1px solid #b58a32;padding:14px;border-radius:10px;font-size:15px;";
+
+  createButton.onclick = createStickerPack;
+  grid.appendChild(createButton);
+
+  packs.forEach((pack,index)=>{
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent =
+      "📦 " + pack.name + "\n" +
+      pack.stickers.length + " stickers";
+
+    button.style.cssText =
+      "white-space:pre-line;background:#17120b;color:#f5d27a;border:1px solid #b58a32;border-radius:10px;padding:14px;";
+
+    button.onclick = ()=>{
+      alert(
+        pack.name + "\n" +
+        pack.stickers.length + " stickers in this pack."
+      );
+    };
+
+    grid.appendChild(button);
+  });
+}
+
+function createStickerPack(){
+  const name = prompt("Enter a name for your sticker pack:");
+
+  if(!name || !name.trim()) return;
+
+  const packs = JSON.parse(
+    localStorage.getItem("terzexStickerPacks") || "[]"
+  );
+
+  packs.push({
+    id: Date.now().toString(),
+    name: name.trim(),
+    stickers: [],
+    createdAt: Date.now()
+  });
+
+  localStorage.setItem(
+    "terzexStickerPacks",
+    JSON.stringify(packs)
+  );
+
+  renderStickerPacks();
+
+  alert("Sticker pack created successfully!");
+ }
 function insertEmoji(emoji){
 const input=document.getElementById("privateChatInput");
 input.value+=emoji;
