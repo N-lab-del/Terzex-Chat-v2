@@ -1769,7 +1769,26 @@ function openStickerPack(packId){
   title.textContent = pack.name + " (" + pack.stickers.length + ")";
   title.style.cssText = "grid-column:1/-1;color:#f5d27a;";
   grid.appendChild(title);
+const deletePackButton = document.createElement("button");
+deletePackButton.type = "button";
+deletePackButton.textContent = "🗑 Delete This Pack";
+deletePackButton.style.cssText =
+  "grid-column:1/-1;padding:12px;background:#301414;color:#ff9999;border:1px solid #aa4444;border-radius:10px;";
 
+deletePackButton.onclick = ()=>{
+  if(!confirm("Delete the pack " + pack.name + "?")) return;
+
+  const updatedPacks = packs.filter(p => p.id !== packId);
+
+  localStorage.setItem(
+    "terzexStickerPacks",
+    JSON.stringify(updatedPacks)
+  );
+
+  renderStickerPacks();
+};
+
+grid.appendChild(deletePackButton);
   pack.stickers.forEach(sticker=>{
     const button = document.createElement("button");
     button.type = "button";
