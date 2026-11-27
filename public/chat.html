@@ -1745,7 +1745,50 @@ function showComposerPanel(which,button){
     grid.appendChild(button);
   });
 }
+function openStickerPack(packId){
+  const packs = JSON.parse(
+    localStorage.getItem("terzexStickerPacks") || "[]"
+  );
 
+  const pack = packs.find(p => p.id === packId);
+
+  if(!pack) return;
+
+  const grid = document.getElementById("stickerPacksGrid");
+  grid.innerHTML = "";
+
+  const backButton = document.createElement("button");
+  backButton.textContent = "← Back to Packs";
+  backButton.style.cssText =
+    "grid-column:1/-1;padding:12px;background:#2b2112;color:#f5d27a;border:1px solid #b58a32;border-radius:10px;";
+
+  backButton.onclick = renderStickerPacks;
+  grid.appendChild(backButton);
+
+  const title = document.createElement("h3");
+  title.textContent = pack.name + " (" + pack.stickers.length + ")";
+  title.style.cssText = "grid-column:1/-1;color:#f5d27a;";
+  grid.appendChild(title);
+
+  pack.stickers.forEach(sticker=>{
+    const button = document.createElement("button");
+    button.type = "button";
+    button.style.cssText =
+      "background:#17120b;border:1px solid #b58a32;border-radius:10px;padding:8px;";
+
+    const img = document.createElement("img");
+    img.src = sticker.image;
+    img.style.cssText = "width:75px;height:75px;object-fit:contain;";
+
+    button.appendChild(img);
+
+    button.onclick = ()=>{
+      sendCustomSticker(sticker.image);
+    };
+
+    grid.appendChild(button);
+  });
+}
 function createStickerPack(){
   const name = prompt("Enter a name for your sticker pack:");
 
