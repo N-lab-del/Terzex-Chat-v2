@@ -1258,8 +1258,12 @@ function updateStickerEditor(){
     ctx.font = "bold " + size + "px Arial";
     ctx.textAlign = "center";
     ctx.lineWidth = 5;
-    ctx.strokeStyle = "#000";
-    ctx.fillStyle = color;
+    ctx.save();
+ctx.translate(stickerTextX,stickerTextY);
+ctx.rotate(stickerTextRotation * Math.PI / 180);
+ctx.strokeText(text,0,0,360);
+ctx.fillText(text,0,0,360);
+ctx.restore();
 
     ctx.strokeText(text,stickerTextX,stickerTextY,360);
     ctx.fillText(text,stickerTextX,stickerTextY,360);
