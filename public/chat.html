@@ -1103,9 +1103,6 @@ let attachmentPreviewURL = null;
 async function uploadChatAttachment(event) {
   const file = event.target.files[0];
   event.target.value = "";
-async function uploadChatAttachment(event) {
-  const file = event.target.files[0];
-  event.target.value = "";
 
   if (!file || !activePrivateChatId || !currentUser) return;
 
