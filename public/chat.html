@@ -2775,6 +2775,161 @@ async function toggleCameraFlash() {
     alert("Could not control the camera flash.");
   }
 }
+ // ===================================
+// TERZEX PUBLIC PROFILE VIEWER
+// ===================================
+
+function openOtherTerzexProfile(uid) {
+  if (!uid || !currentUser) return;
+
+  if (uid === currentUser.uid) {
+    openTerzexProfile();
+    return;
+  }
+
+  let overlay = document.getElementById("otherTerzexProfileOverlay");
+
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "otherTerzexProfileOverlay";
+    overlay.className = "overlay";
+
+    overlay.innerHTML = `
+      <div class="modal">
+        <div class="modal-head">
+          <h2 style="color:gold">Terzex Profile</h2>
+          <button class="close"
+            onclick="closeOtherTerzexProfile()">✕</button>
+        </div>
+        <div id="otherTerzexProfileContent">
+          <p class="notice">Loading profile...</p>
+        </div>
+      </div>
+    `;
+
+    overlay.onclick = function(event) {
+      if (event.target === overlay) {
+        closeOtherTerzexProfile();
+      }
+    };
+
+    document.body.appendChild(overlay);
+  }
+
+  overlay.classList.add("show");
+
+  loadOtherTerzexProfile(uid);
+}
+
+async function loadOtherTerzexProfile(uid) {
+  const content = document.getElementById(
+    "otherTerzexProfileContent"
+  );
+
+  content.innerHTML =
+    '<p class="notice">Loading profile...</p>';
+
+  try {
+    const snap = await db.collection("public_profiles")
+      .doc(uid).get();
+
+    if (!snap.exists) {
+      content.innerHTML =
+        '<p class="notice">This profile is unavailable.</p>';
+      return;
+    }
+
+    const profile = snap.data();
+
+    const name = profile.displayName || "Terzex User";
+    const username = profile.username || "";
+    const photo = profile.photoURL || "";
+    const bio = profile.bio || "No bio added yet.";
+
+    content.innerHTML = `
+      <div style="text-align:center;padding:15px 5px;color:white;">
+
+        <div style="
+          width:115px;height:115px;margin:5px auto 15px;
+          border-radius:50%;overflow:hidden;
+          border:3px solid #d4af37;
+          background:#211a10;
+          display:grid;place-items:center;
+          font-size:42px;color:gold;">
+          ${
+            photo
+              ? `<img src="${escapeTerzexValue(photo)}"
+                  alt="Profile picture"
+                  style="width:100%;height:100%;object-fit:cover;">`
+              : escapeTerzexValue(name.charAt(0).toUpperCase())
+          }
+        </div>
+
+        <h2 style="color:white;margin:8px 0;">
+          ${escapeTerzexValue(name)}
+        </h2>
+
+        <p style="color:gold;">
+          ${username ? "@" + escapeTerzexValue(username) : "Terzex member"}
+        </p>
+
+        <div class="tx-profile-info" style="text-align:left;">
+          <small>ABOUT</small>
+          <strong>${escapeTerzexValue(bio)}</strong>
+        </div>
+
+        <button class="primary"
+          style="width:100%;margin-top:12px;"
+          onclick="messageOtherTerzexUser('${uid}')">
+          Send Message
+        </button>
+
+        <button class="tx-profile-secondary"
+          onclick="callOtherTerzexUser('${uid}')">
+          Voice / Video Call
+        </button>
+
+      </div>
+    `;
+
+  } catch (error) {
+    console.error("Public profile error:", error);
+
+    content.innerHTML =
+      '<p class="notice">Could not load this profile. Please try again.</p>';
+  }
+}
+
+function closeOtherTerzexProfile() {
+  const overlay = document.getElementById(
+    "otherTerzexProfileOverlay"
+  );
+
+  if (overlay) overlay.classList.remove("show");
+}
+
+function messageOtherTerzexUser(uid) {
+  closeOtherTerzexProfile();
+
+  db.collection("public_profiles").doc(uid).get()
+    .then(snap => {
+      if (snap.exists) {
+        openPrivateChat(uid, snap.data());
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Could not open this conversation.");
+    });
+}
+
+function callOtherTerzexUser(uid) {
+  messageOtherTerzexUser(uid);
+
+  setTimeout(() => {
+    openCallChoices();
+  }, 700);
+}
 </script>
 </body>
 </html>
