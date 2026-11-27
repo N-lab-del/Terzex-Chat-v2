@@ -211,7 +211,39 @@ to{transform:translateY(-3px);opacity:1}
 <div class="overlay" id="noticeOverlay" onclick="outsideClose(event,'noticeOverlay')"><div class="modal"><div class="modal-head"><h2 id="noticeTitle">Coming Soon</h2><button class="close" onclick="closeModal('noticeOverlay')">✕</button></div><div class="empty-icon">✧</div><p class="notice" id="noticeText">This feature is coming soon to Terzex Chat.</p><button class="primary" onclick="closeModal('noticeOverlay')">Okay</button></div></div>
 <div class="message-actions" id="messageActions"><div class="quick-reactions"><button onclick="reactToSelected('❤️')">❤️</button><button onclick="reactToSelected('😂')">😂</button><button onclick="reactToSelected('😮')">😮</button><button onclick="reactToSelected('😢')">😢</button><button onclick="reactToSelected('🙏')">🙏</button><button onclick="reactToSelected('👍')">👍</button></div><button onclick="replyToSelected()">↩ Reply</button><button class="action" onclick="editSelectedMessage()">✎ Edit message</button><button class="action" onclick="copySelectedMessage()">▣ Copy message</button><button class="action danger" onclick="deleteSelectedMessage()">⌫ Delete message</button></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<div id="terzexCameraOverlay" class="overlay">
+  <div class="modal terzex-camera-modal">
+
+    <div class="modal-head">
+      <h2>Terzex Camera</h2>
+      <button class="close" onclick="closeTerzexCamera()">✕</button>
+    </div>
+
+    <div class="terzex-camera-preview">
+      <video id="terzexCameraVideo" autoplay playsinline></video>
+      <canvas id="terzexCameraCanvas" hidden></canvas>
+      <img id="terzexCameraPhoto" hidden alt="Camera preview">
+    </div>
+
+    <div class="terzex-camera-modes">
+      <button type="button" onclick="setCameraMode('photo')">PHOTO</button>
+      <button type="button" onclick="setCameraMode('video')">VIDEO</button>
+      <button type="button" onclick="setCameraMode('video-note')">VIDEO NOTE</button>
+    </div>
+
+    <div class="terzex-camera-controls">
+      <button type="button" onclick="toggleCameraFlash()">⚡</button>
+      <button type="button" onclick="openCameraGallery()">▧</button>
+      <button type="button" id="terzexCameraCapture"
+        onclick="captureCameraMedia()">●</button>
+      <button type="button" onclick="switchTerzexCamera()">🔄</button>
+    </div>
+
+    <p id="terzexCameraStatus">Ready</p>
+
+  </div>
+</div>
+ <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
