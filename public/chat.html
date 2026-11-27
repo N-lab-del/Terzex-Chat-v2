@@ -804,59 +804,7 @@ async function deleteSelectedMessage(){
     alert(error.message || "Could not delete this message.");
   }
 }
- async function deleteSelectedMessage(){
-  hideMessageActions();
 
-  if(!selectedMessageData || !selectedMessageId || !activePrivateChatId || !currentUser){
-    return alert("Please select a message first.");
-  }
-
-  const choice = prompt(
-    "Choose deletion option:\n1 = Delete for me\n2 = Delete for everyone"
-  );
-
-  if(choice !== "1" && choice !== "2") return;
-
-  const action = choice === "1" ? "forMe" : "forEveryone";
-
-  if(action === "forEveryone" && selectedMessageData.senderId !== currentUser.uid){
-    return alert("You can only delete your own message for everyone.");
-  }
-
-  if(!confirm(action === "forMe"
-    ? "Delete this message for you?"
-    : "Delete this message for everyone?"
-  )) return;
-
-  try{
-    const token = await currentUser.getIdToken();
-
-    const response = await fetch("/api/messages/delete", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({
-        chatId: activePrivateChatId,
-        messageId: selectedMessageId,
-        action: action
-      })
-    });
-
-    const result = await response.json();
-
-    if(!response.ok || !result.success){
-      throw new Error(result.message || "Message deletion failed.");
-    }
-
-    showNotice("Message deleted successfully.");
-
-  }catch(error){
-    console.error("Message deletion error:", error);
-    alert(error.message || "Could not delete this message.");
-  }
- }
  function messageRef(id){.
 return db.collection("private_chats").doc(activePrivateChatId).collection("messages").doc(id);
 }
