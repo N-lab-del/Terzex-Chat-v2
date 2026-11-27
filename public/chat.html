@@ -2199,7 +2199,44 @@ privateTypingInput.addEventListener("blur",stopPrivateTyping);
 
 document.getElementById("emojiGrid").innerHTML=emojiList.map(x=>`<button type="button" onclick="insertEmoji('${x}')">${x}</button>`).join("");
 
-document.getElementById("stickerGrid").innerHTML=stickers.map(x=>`<button type="button" onclick="sendSticker('${x}')">${x}</button>`).join("");
+ const builtInStickerGrid = document.getElementById("stickerGrid");
+builtInStickerGrid.innerHTML = "";
+
+stickers.forEach(sticker => {
+  const sendButton = document.createElement("button");
+  sendButton.type = "button";
+  sendButton.textContent = sticker;
+  sendButton.onclick = () => sendSticker(sticker);
+  builtInStickerGrid.appendChild(sendButton);
+
+  const favoriteButton = document.createElement("button");
+  favoriteButton.type = "button";
+  favoriteButton.textContent = "⭐";
+  favoriteButton.title = "Add to Favorites";
+
+  favoriteButton.onclick = () => {
+    const favorites = JSON.parse(
+      localStorage.getItem("terzexFavoriteStickers") || "[]"
+    );
+
+    const exists = favorites.some(item => item.builtInSticker === sticker);
+
+    if (!exists) {
+      favorites.push({ builtInSticker: sticker });
+
+      localStorage.setItem(
+        "terzexFavoriteStickers",
+        JSON.stringify(favorites)
+      );
+
+      alert("Built-in sticker added to Favorites!");
+    } else {
+      alert("Already in Favorites!");
+    }
+  };
+
+  builtInStickerGrid.appendChild(favoriteButton);
+});
  renderCustomStickerGrid();
  /* ==========================================
    TERZEX CHAT — PROFILE & ACCOUNT SYSTEM
