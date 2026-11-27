@@ -159,10 +159,11 @@ app.post("/api/messages/delete", requireAuth, async (req, res) => {
           });
         }
 
-        const resourceType = message.mediaType?.startsWith("video/")
-          ? "video"
-          : "image";
-
+        const resourceType =
+  message.mediaType?.startsWith("audio/") ||
+  message.mediaType?.startsWith("video/")
+    ? "video"
+    : "image";
         const timestamp = Math.floor(Date.now() / 1000);
 
         const signature = crypto
