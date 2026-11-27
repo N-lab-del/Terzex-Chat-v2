@@ -232,11 +232,12 @@ to{transform:translateY(-3px);opacity:1}
 <div class="private-chat-head"><div id="privateChatAvatar" class="user-initial">T</div><div class="private-chat-person"><strong id="privateChatName">Terzex User</strong><small id="privateChatUsername">Private conversation</small><small id="privateChatTyping" class="typing-indicator" aria-live="polite">Typing…</small></div><button class="head-action" onclick="openCallChoices()">Calls ▾</button><button class="head-action" onclick="openChatOptions()">⋮</button><button class="close" onclick="closePrivateChat()">✕</button></div>
 <div id="privateChatMessages" class="private-chat-messages"><p class="private-chat-empty">Loading conversation...</p></div><div class="chat-hint">Tap or hold a message for reactions and message options.</div>
 <div class="chat-panel" id="emojiPanel">
-  <div class="panel-tabs">
-    <button class="active" onclick="showComposerPanel('emoji',this)">Emojis</button>
-    <button onclick="showComposerPanel('stickers',this)">Stickers</button>
-    <button type="button" onclick="openStickerMaker()">＋ Make Sticker</button>
-  </div>
+<div class="panel-tabs">
+  <button class="active" onclick="showComposerPanel('emoji',this)">Emojis</button>
+  <button onclick="showComposerPanel('stickers',this)">Stickers</button>
+  <button onclick="showComposerPanel('favorites',this)">⭐ Favorites</button>
+  <button type="button" onclick="openStickerMaker()">＋ Make Sticker</button>
+</div>
   <div id="emojiGrid" class="emoji-grid"></div>
   <div id="stickerGrid" class="sticker-grid" style="display:none"></div>
 </div>
