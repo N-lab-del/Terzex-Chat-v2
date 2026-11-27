@@ -1738,12 +1738,9 @@ function showComposerPanel(which,button){
     button.style.cssText =
       "white-space:pre-line;background:#17120b;color:#f5d27a;border:1px solid #b58a32;border-radius:10px;padding:14px;";
 
-    button.onclick = ()=>{
-      alert(
-        pack.name + "\n" +
-        pack.stickers.length + " stickers in this pack."
-      );
-    };
+ button.onclick = ()=>{
+  openStickerPack(pack.id);
+};
 
     grid.appendChild(button);
   });
