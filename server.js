@@ -144,18 +144,32 @@ app.post("/api/messages/delete", requireAuth, async (req, res) => {
         });
       }
 
-      if (message.mediaPath) {
+            if (message.mediaPath) {
         const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
         const apiKey = process.env.CLOUDINARY_API_KEY;
         const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-        const expectedPrefix = `terzex_chat/${chatId}/${uid}/`;
-
-        if (!cloudName || !apiKey || !apiSecret ||
-            !message.mediaPath.startsWith(expectedPrefix)) {
+        if (!cloudName || !apiKey || !apiSecret) {
           return res.status(500).json({
             success: false,
-            message: "Media deletion could not be verified."
+            message: "Cloudinary server settings are missing."
+          });
+        }
+
+        message.mediaPath = String(message.mediaPath).replace(/^\/+/, "");
+
+        const expectedPrefix = `terzex_chat/${chatId}/${uid}/`;
+
+        if (!message.mediaPath.startsWith(expectedPrefix)) {
+          console.error("Media path verification failed:", {
+            chatId,
+            uid,
+            mediaPath: message.mediaPath
+          });
+
+          return res.status(403).json({
+            success: false,
+            message: "Media path does not belong to this chat."
           });
         }
 
