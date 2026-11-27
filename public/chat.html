@@ -905,51 +905,108 @@ createdAt:firebase.firestore.FieldValue.serverTimestamp()
 document.getElementById("emojiPanel").classList.remove("show");
 }
 
-async function uploadChatAttachment(event){
-  const file=event.target.files[0];
-  event.target.value="";
-  if(!file||!activePrivateChatId||!currentUser)return;
-  if(!file.type.startsWith("image/")&&!file.type.startsWith("video/"))
+let pendingChatAttachment = null;
+let attachmentPreviewURL = null;
+
+async function uploadChatAttachment(event) {
+  const file = event.target.files[0];
+  event.target.value = "";
+
+  if (!file || !activePrivateChatId || !currentUser) return;
+
+  if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
     return alert("Choose an image or video.");
-  if(file.size>25*1024*1024)
+  }
+
+  if (file.size > 25 * 1024 * 1024) {
     return alert("Please choose a file smaller than 25 MB.");
+  }
 
-  const btn=document.getElementById("privateChatSend");
-  btn.disabled=true;
-  btn.textContent="Uploading";
+  pendingChatAttachment = file;
 
-  try{
-    const resourceType=file.type.startsWith("video/")?"video":"image";
-    const endpoint="https://api.cloudinary.com/v1_1/aqdwrxha/"+resourceType+"/upload";
+  if (attachmentPreviewURL) {
+    URL.revokeObjectURL(attachmentPreviewURL);
+  }
 
-    const form=new FormData();
-    form.append("file",file);
-    form.append("upload_preset","terzex_upload");
-    form.append("folder","terzex_chat/"+activePrivateChatId+"/"+currentUser.uid);
+  attachmentPreviewURL = URL.createObjectURL(file);
 
-    const response=await fetch(endpoint,{method:"POST",body:form});
-    const result=await response.json();
+  let panel = document.getElementById("attachmentPreview");
 
-    if(!response.ok||!result.secure_url)
-      throw new Error(result.error?.message||"Cloudinary upload failed.");
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "attachmentPreview";
+    panel.style.cssText = "padding:12px;background:#151515;border:1px solid #b58a32;border-radius:12px;margin:10px;";
+
+    document.getElementById("privateChatForm").before(panel);
+  }
+
+  panel.innerHTML = `
+    <p style="color:#d6ad55">Preview attachment</p>
+    ${file.type.startsWith("video/")
+      ? `<video src="${attachmentPreviewURL}" controls style="max-width:100%;max-height:220px"></video>`
+      : `<img src="${attachmentPreviewURL}" style="max-width:100%;max-height:220px;border-radius:10px">`
+    }
+    <p style="color:white">${file.name}</p>
+    <button type="button" onclick="cancelChatAttachment()">Cancel</button>
+    <button type="button" onclick="sendChatAttachment()">Send</button>
+  `;
+}
+
+function cancelChatAttachment() {
+  pendingChatAttachment = null;
+
+  if (attachmentPreviewURL) {
+    URL.revokeObjectURL(attachmentPreviewURL);
+    attachmentPreviewURL = null;
+  }
+
+  document.getElementById("attachmentPreview")?.remove();
+}
+
+async function sendChatAttachment() {
+  const file = pendingChatAttachment;
+
+  if (!file || !activePrivateChatId || !currentUser) return;
+
+  const btn = document.getElementById("privateChatSend");
+  btn.disabled = true;
+  btn.textContent = "Uploading";
+
+  try {
+    const resourceType = file.type.startsWith("video/") ? "video" : "image";
+    const endpoint = "https://api.cloudinary.com/v1_1/aqdwrxha/" + resourceType + "/upload";
+
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", "terzex_upload");
+    form.append("folder", "terzex_chat/" + activePrivateChatId + "/" + currentUser.uid);
+
+    const response = await fetch(endpoint, { method: "POST", body: form });
+    const result = await response.json();
+
+    if (!response.ok || !result.secure_url) {
+      throw new Error(result.error?.message || "Cloudinary upload failed.");
+    }
 
     await messageCollection().add({
-      text:"",
-      mediaURL:result.secure_url,
-      mediaPath:result.public_id||"",
-      mediaType:file.type,
-      mediaName:file.name,
-      senderId:currentUser.uid,
-      senderName:currentUser.displayName||currentUser.email||"Terzex User",
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      text: "",
+      mediaURL: result.secure_url,
+      mediaPath: result.public_id || "",
+      mediaType: file.type,
+      mediaName: file.name,
+      senderId: currentUser.uid,
+      senderName: currentUser.displayName || currentUser.email || "Terzex User",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-  }catch(e){
+    cancelChatAttachment();
+
+  } catch (e) {
     console.error(e);
-    alert("Upload failed: "+(e.message||"Check your Cloudinary settings and internet connection."));
-  }finally{
-    btn.disabled=false;
-    btn.textContent="Send";
+    alert("Upload failed: " + (e.message || "Check your connection."));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Send";
   }
 }
 
