@@ -1780,6 +1780,7 @@ privateTypingInput.addEventListener("blur",stopPrivateTyping);
 document.getElementById("emojiGrid").innerHTML=emojiList.map(x=>`<button type="button" onclick="insertEmoji('${x}')">${x}</button>`).join("");
 
 document.getElementById("stickerGrid").innerHTML=stickers.map(x=>`<button type="button" onclick="sendSticker('${x}')">${x}</button>`).join("");
+ renderCustomStickerGrid();
  /* ==========================================
    TERZEX CHAT — PROFILE & ACCOUNT SYSTEM
    ========================================== */
