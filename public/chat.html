@@ -1278,6 +1278,35 @@ function updateStickerEditor(){
     width,
     height
   );
+ stickerBrushStrokes.forEach(function(stroke){
+  if(stroke.mode !== "erase" || !stroke.points.length) return;
+
+  ctx.save();
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.lineWidth = stroke.size;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+
+  ctx.moveTo(stroke.points[0].x,stroke.points[0].y);
+
+  stroke.points.forEach(function(point){
+    ctx.lineTo(point.x,point.y);
+  });
+
+  if(stroke.points.length === 1){
+    ctx.arc(
+      stroke.points[0].x,
+      stroke.points[0].y,
+      stroke.size/2,
+      0,
+      Math.PI*2
+    );
+  }
+
+  ctx.stroke();
+  ctx.restore();
+});
 
   const text = document.getElementById("stickerTextInput").value.trim();
 
