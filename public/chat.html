@@ -1610,17 +1610,27 @@ function showComposerPanel(which,button){
     button.style.cssText =
       "padding:5px;background:#17120b;border:1px solid #b58a32;border-radius:10px;";
 
-    const img = document.createElement("img");
-    img.src = sticker.image;
-    img.alt = "Favorite sticker";
-    img.style.cssText =
-      "width:65px;height:65px;object-fit:contain;";
+    if(sticker.builtInSticker){
+      button.textContent = sticker.builtInSticker;
+      button.style.fontSize = "35px";
 
-    button.appendChild(img);
+      button.addEventListener("click",()=>{
+        sendSticker(sticker.builtInSticker);
+      });
 
-    button.addEventListener("click",()=>{
-      sendCustomSticker(sticker.image);
-    });
+    } else if(sticker.image){
+      const img = document.createElement("img");
+      img.src = sticker.image;
+      img.alt = "Favorite sticker";
+      img.style.cssText =
+        "width:65px;height:65px;object-fit:contain;";
+
+      button.appendChild(img);
+
+      button.addEventListener("click",()=>{
+        sendCustomSticker(sticker.image);
+      });
+    }
 
     grid.appendChild(button);
 
@@ -1631,16 +1641,18 @@ function showComposerPanel(which,button){
 
     removeButton.addEventListener("click",()=>{
       favorites.splice(index,1);
+
       localStorage.setItem(
         "terzexFavoriteStickers",
         JSON.stringify(favorites)
       );
+
       renderFavoriteStickerGrid();
     });
 
     grid.appendChild(removeButton);
   });
- }
+}
 function insertEmoji(emoji){
 const input=document.getElementById("privateChatInput");
 input.value+=emoji;
