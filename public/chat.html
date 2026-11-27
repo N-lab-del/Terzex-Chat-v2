@@ -1359,7 +1359,18 @@ if(
   });
 
   canvas.addEventListener("pointermove",function(e){
-    if(!stickerDragging) return;
+    if(stickerActiveBrushStroke){
+  const rect = canvas.getBoundingClientRect();
+
+  const x = (e.clientX-rect.left) * 400/rect.width;
+  const y = (e.clientY-rect.top) * 400/rect.height;
+
+  stickerActiveBrushStroke.points.push({x:x,y:y});
+  updateStickerEditor();
+  return;
+}
+
+if(!stickerDragging) return;
 
     const rect = canvas.getBoundingClientRect();
 
