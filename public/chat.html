@@ -1789,6 +1789,17 @@ deletePackButton.onclick = ()=>{
 };
 
 grid.appendChild(deletePackButton);
+ const sharePackButton = document.createElement("button");
+sharePackButton.type = "button";
+sharePackButton.textContent = "🌍 Share This Pack";
+sharePackButton.style.cssText =
+  "grid-column:1/-1;padding:12px;background:#172719;color:#a8f0b0;border:1px solid #438b50;border-radius:10px;";
+
+sharePackButton.onclick = ()=>{
+  shareStickerPack(packId);
+};
+
+grid.appendChild(sharePackButton);
   pack.stickers.forEach(sticker=>{
     const button = document.createElement("button");
     button.type = "button";
