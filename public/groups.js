@@ -670,13 +670,91 @@
       });
   }
 
-  function renderUnifiedGroupList() {
+    function renderUnifiedGroupList() {
     const list = $("conversationList");
     if (!list) return;
 
-    if (typeof originalConversationRenderer === "function") {
-      originalConversationRenderer();
+    // Read the active filter directly from the filter buttons.
+    const activeFilter = document
+      .querySelector("#filters .filter.active")
+      ?.textContent.trim() || "All";
+
+    // Remove old group rows before rendering again.
+    list.querySelectorAll("[data-group-row]").forEach(row => {
+      row.remove();
+    });
+
+    // Groups appear in All and Groups filters only.
+    if (activeFilter !== "All" && activeFilter !== "Groups") {
+      return;
     }
+
+    const rows = Object.values(groupRows);
+    rows.sort((a, b) => b.time - a.time);
+
+    // Groups filter: show groups only.
+    if (activeFilter === "Groups") {
+      list.innerHTML = "";
+
+      if (!rows.length) {
+        list.innerHTML =
+          '<div class="tg-empty">Your groups will appear here.</div>';
+        return;
+      }
+    }
+
+    // All filter: keep private chats and add groups.
+    rows.forEach(row => {
+      const item = document.createElement("div");
+      item.className = "conversation-row";
+      item.dataset.groupRow = row.id;
+      item.onclick = () => window.openTerzexGroup(row.id);
+
+      const avatar = document.createElement("div");
+      avatar.className = "conversation-avatar";
+
+      if (row.photoURL) {
+        const image = document.createElement("img");
+        image.src = row.photoURL;
+        image.alt = "Group photo";
+        image.onerror = () => {
+          avatar.textContent = "♧";
+        };
+        avatar.appendChild(image);
+      } else {
+        avatar.textContent = "♧";
+      }
+
+      const main = document.createElement("div");
+      main.className = "conversation-main";
+
+      const top = document.createElement("div");
+      top.className = "conversation-top";
+
+      const title = document.createElement("strong");
+      title.textContent = row.name;
+
+      const time = document.createElement("span");
+      time.className = "conversation-time";
+      time.textContent = row.time
+        ? new Date(row.time).toLocaleDateString([], {
+            month: "short",
+            day: "numeric"
+          })
+        : "";
+
+      top.append(title, time);
+
+      const preview = document.createElement("div");
+      preview.className = "conversation-preview";
+      preview.textContent = "♧ " + (row.preview || "Group created");
+
+      main.append(top, preview);
+      item.append(avatar, main);
+
+      list.appendChild(item);
+    });
+  }
 
     list.querySelectorAll("[data-group-row]").forEach(row => {
       row.remove();
