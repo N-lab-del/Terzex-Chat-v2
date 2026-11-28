@@ -1727,6 +1727,15 @@ function showComposerPanel(which,button){
 
   createButton.onclick = createStickerPack;
   grid.appendChild(createButton);
+  const browseButton = document.createElement("button");
+browseButton.type = "button";
+browseButton.textContent = "🌍 Browse Shared Sticker Packs";
+browseButton.style.cssText =
+  "grid-column:1/-1;background:#172719;color:#a8f0b0;border:1px solid #438b50;padding:14px;border-radius:10px;font-size:15px;";
+
+browseButton.onclick = browseSharedStickerPacks;
+
+grid.appendChild(browseButton);
 
   packs.forEach((pack,index)=>{
     const button = document.createElement("button");
