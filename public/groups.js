@@ -1,12 +1,12 @@
-/* =====================================================
-   TERZEX CHAT — GROUPS
-   Firebase-backed group conversations
-   ===================================================== */
+/* =========================================================
+   TERZEX CHAT — COMPLETE GROUP SYSTEM
+   Firebase Firestore + Cloudinary
+   ========================================================= */
 
 (() => {
   "use strict";
 
-  const GROUPS = "groups";
+  const COLLECTION = "groups";
   const MAX_MEMBERS = 100;
   const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
@@ -14,13 +14,17 @@
   let groupMessagesUnsubscribe = null;
   let activeGroupId = null;
   let activeGroupData = null;
-  let selectedGroupMembers = new Map();
-  let groupSearchTimer = null;
+  let selectedMembers = new Map();
+  let searchTimer = null;
+  let originalConversationRenderer = null;
 
   const groupRows = {};
-  const groupMessageRows = {};
 
   const $ = id => document.getElementById(id);
+
+  function alertUser(message) {
+    window.alert(message);
+  }
 
   function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -32,20 +36,19 @@
     })[char]);
   }
 
-  function notify(message) {
-    alert(message);
+  function timestamp() {
+    return firebase.firestore.FieldValue.serverTimestamp();
   }
 
-  function isGroupAdmin(group) {
-    return !!(
-      currentUser &&
-      group &&
-      Array.isArray(group.admins) &&
-      group.admins.includes(currentUser.uid)
-    );
+  function groupsRef() {
+    return db.collection(COLLECTION);
   }
 
-  function isGroupMember(group) {
+  function messagesRef(groupId = activeGroupId) {
+    return groupsRef().doc(groupId).collection("messages");
+  }
+
+  function isMember(group) {
     return !!(
       currentUser &&
       group &&
@@ -54,15 +57,16 @@
     );
   }
 
-  function groupCollection() {
-    return db.collection(GROUPS);
+  function isAdmin(group) {
+    return !!(
+      currentUser &&
+      group &&
+      Array.isArray(group.admins) &&
+      group.admins.includes(currentUser.uid)
+    );
   }
 
-  function messageCollection(groupId = activeGroupId) {
-    return groupCollection().doc(groupId).collection("messages");
-  }
-
-  function ensureGroupStyles() {
+  function ensureStyles() {
     if ($("terzexGroupStyles")) return;
 
     const style = document.createElement("style");
@@ -70,90 +74,237 @@
 
     style.textContent = `
       .tg-overlay {
-        position:fixed;inset:0;z-index:10020;
-        background:rgba(0,0,0,.88);
-        display:none;align-items:center;justify-content:center;
+        position:fixed;
+        inset:0;
+        z-index:10020;
+        display:none;
+        align-items:center;
+        justify-content:center;
         padding:12px;
+        background:rgba(0,0,0,.88);
       }
-      .tg-overlay.show {display:flex}
+
+      .tg-overlay.show {
+        display:flex;
+      }
+
       .tg-panel {
-        width:min(100%,520px);max-height:92vh;
-        overflow:auto;background:#101010;color:#fff;
-        border:1px solid #b58a32;border-radius:18px;
-        padding:18px;box-shadow:0 0 28px #b58a3240;
+        width:min(100%,540px);
+        max-height:92vh;
+        overflow:auto;
+        padding:18px;
+        color:#fff;
+        background:#101010;
+        border:1px solid #b58a32;
+        border-radius:18px;
+        box-shadow:0 0 28px #b58a3240;
       }
+
       .tg-head {
-        display:flex;align-items:center;justify-content:space-between;
-        gap:10px;margin-bottom:16px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        margin-bottom:16px;
       }
-      .tg-head h2,.tg-gold {color:#e5bd62}
-      .tg-close,.tg-button {
-        border:1px solid #b58a32;background:#171717;
-        color:#f5d27a;border-radius:10px;padding:10px 14px;
+
+      .tg-head h2,
+      .tg-gold {
+        color:#e5bd62;
+      }
+
+      .tg-button,
+      .tg-close {
+        padding:10px 14px;
+        color:#f5d27a;
+        background:#171717;
+        border:1px solid #b58a32;
+        border-radius:10px;
         cursor:pointer;
       }
+
       .tg-button.primary {
-        background:#b58a32;color:#080808;font-weight:bold;
+        color:#080808;
+        background:#b58a32;
+        font-weight:bold;
       }
+
+      .tg-button:disabled {
+        opacity:.5;
+        cursor:not-allowed;
+      }
+
       .tg-input {
-        width:100%;box-sizing:border-box;padding:12px;
-        margin:7px 0 12px;border:1px solid #55431f;
-        border-radius:10px;background:#191919;color:white;
+        box-sizing:border-box;
+        width:100%;
+        margin:7px 0 12px;
+        padding:12px;
+        color:white;
+        background:#191919;
+        border:1px solid #55431f;
+        border-radius:10px;
       }
-      .tg-user,.tg-member,.tg-message {
-        display:flex;align-items:center;gap:10px;
-        padding:10px;border-bottom:1px solid #292929;
+
+      .tg-user,
+      .tg-member {
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:10px;
+        border-bottom:1px solid #292929;
       }
+
       .tg-avatar {
-        width:42px;height:42px;border-radius:50%;
-        background:#302514;border:1px solid #b58a32;
-        display:flex;align-items:center;justify-content:center;
-        color:#f5d27a;overflow:hidden;flex-shrink:0;
+        display:flex;
+        flex-shrink:0;
+        align-items:center;
+        justify-content:center;
+        width:42px;
+        height:42px;
+        overflow:hidden;
+        color:#f5d27a;
+        background:#302514;
+        border:1px solid #b58a32;
+        border-radius:50%;
       }
-      .tg-avatar img {width:100%;height:100%;object-fit:cover}
-      .tg-user-info {flex:1;min-width:0}
-      .tg-user-info small {display:block;color:#aaa}
+
+      .tg-avatar img {
+        width:100%;
+        height:100%;
+        object-fit:cover;
+      }
+
+      .tg-user-info {
+        flex:1;
+        min-width:0;
+      }
+
+      .tg-user-info small {
+        display:block;
+        color:#aaa;
+      }
+
       .tg-chat {
-        height:min(75vh,700px);display:flex;flex-direction:column;
+        display:flex;
+        flex-direction:column;
+        height:min(75vh,700px);
       }
+
       .tg-chat-head {
-        display:flex;align-items:center;gap:10px;
-        padding-bottom:12px;border-bottom:1px solid #4b3919;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding-bottom:12px;
+        border-bottom:1px solid #4b3919;
       }
-      .tg-chat-head .tg-user-info {flex:1}
+
+      .tg-chat-head .tg-user-info {
+        flex:1;
+      }
+
       .tg-chat-messages {
-        flex:1;overflow:auto;padding:12px 0;
-        display:flex;flex-direction:column;gap:9px;
+        display:flex;
+        flex:1;
+        flex-direction:column;
+        gap:9px;
+        overflow:auto;
+        padding:12px 0;
       }
+
       .tg-bubble {
-        max-width:85%;padding:10px 12px;
-        border-radius:13px;background:#222;
-        overflow-wrap:anywhere;align-self:flex-start;
+        align-self:flex-start;
+        max-width:85%;
+        padding:10px 12px;
+        overflow-wrap:anywhere;
+        background:#222;
+        border-radius:13px;
       }
+
       .tg-bubble.mine {
-        background:#493719;align-self:flex-end;
+        align-self:flex-end;
+        background:#493719;
       }
-      .tg-bubble small {display:block;color:#d6b66b;margin-top:5px}
+
+      .tg-bubble small {
+        display:block;
+        margin-top:5px;
+        color:#d6b66b;
+      }
+
       .tg-composer {
-        display:flex;gap:7px;border-top:1px solid #4b3919;
+        display:flex;
+        gap:7px;
         padding-top:12px;
+        border-top:1px solid #4b3919;
       }
-      .tg-composer input {
-        flex:1;min-width:0;background:#1c1c1c;color:white;
-        border:1px solid #55431f;border-radius:20px;padding:12px;
+
+      .tg-composer input[type="text"] {
+        flex:1;
+        min-width:0;
+        padding:12px;
+        color:white;
+        background:#1c1c1c;
+        border:1px solid #55431f;
+        border-radius:20px;
       }
-      .tg-empty {text-align:center;color:#aaa;padding:24px}
-      .tg-actions {display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-      .tg-check {accent-color:#d6ad55;width:18px;height:18px}
-      .tg-list {max-height:280px;overflow:auto}
-      .tg-media {max-width:100%;max-height:240px;border-radius:10px}
-      .tg-member-name {cursor:pointer;color:#f5d27a}
+
+      .tg-empty {
+        padding:24px;
+        color:#aaa;
+        text-align:center;
+      }
+
+      .tg-list {
+        max-height:280px;
+        overflow:auto;
+      }
+
+      .tg-media {
+        display:block;
+        max-width:100%;
+        max-height:260px;
+        margin-top:8px;
+        border-radius:10px;
+      }
+
+      .tg-member-name {
+        color:#f5d27a;
+        cursor:pointer;
+      }
+
+      .tg-actions {
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        margin:12px 0;
+      }
+
+      .tg-check {
+        width:18px;
+        height:18px;
+        accent-color:#d6ad55;
+      }
+
+      .tg-system {
+        align-self:center;
+        max-width:90%;
+        padding:7px 12px;
+        color:#d6b66b;
+        background:#191919;
+        border-radius:12px;
+        font-size:12px;
+        text-align:center;
+      }
+
+      [data-group-row] {
+        cursor:pointer;
+      }
     `;
 
     document.head.appendChild(style);
   }
 
-  function ensureGroupOverlays() {
+  function ensureOverlays() {
     if ($("groupCreateOverlay")) return;
 
     document.body.insertAdjacentHTML("beforeend", `
@@ -170,9 +321,9 @@
 
           <label>Group photo URL (optional)</label>
           <input class="tg-input" id="groupPhotoInput"
-            placeholder="Paste a group photo URL">
+            placeholder="Paste group photo URL">
 
-          <label>Find Terzex members</label>
+          <label>Search Terzex members</label>
           <input class="tg-input" id="groupMemberSearch"
             placeholder="Search by username">
 
@@ -185,20 +336,30 @@
           </p>
 
           <button class="tg-button primary"
-            onclick="createTerzexGroup()">Create Group</button>
+            id="createGroupButton"
+            onclick="createTerzexGroup()">
+            Create Group
+          </button>
         </div>
       </div>
 
       <div class="tg-overlay" id="groupChatOverlay">
         <div class="tg-panel tg-chat">
           <div class="tg-chat-head">
-            <button class="tg-close" onclick="closeTerzexGroup()">←</button>
+            <button class="tg-close"
+              onclick="closeTerzexGroup()">←</button>
+
             <div class="tg-avatar" id="groupChatAvatar">♧</div>
+
             <div class="tg-user-info">
-              <strong id="groupChatName" class="tg-gold">Group</strong>
+              <strong id="groupChatName" class="tg-gold">
+                Group
+              </strong>
               <small id="groupChatMembers"></small>
             </div>
-            <button class="tg-close" onclick="openTerzexGroupSettings()">⋮</button>
+
+            <button class="tg-close"
+              onclick="openTerzexGroupSettings()">⋮</button>
           </div>
 
           <div id="groupMessages" class="tg-chat-messages">
@@ -206,14 +367,23 @@
           </div>
 
           <div class="tg-composer">
-            <input id="groupMessageInput"
-              placeholder="Write a group message..."
+            <input type="text"
+              id="groupMessageInput"
               maxlength="2000"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();sendTerzexGroupMessage()}">
+              placeholder="Write a group message..."
+              onkeydown="
+                if(event.key==='Enter'){
+                  event.preventDefault();
+                  sendTerzexGroupMessage();
+                }
+              ">
 
             <label class="tg-button" for="groupMediaInput">＋</label>
-            <input id="groupMediaInput" type="file"
-              hidden accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
+
+            <input id="groupMediaInput"
+              type="file"
+              hidden
+              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
               onchange="sendTerzexGroupMedia(event)">
 
             <button class="tg-button primary"
@@ -234,23 +404,35 @@
       </div>
     `);
 
-    $("groupMemberSearch").addEventListener("input", searchGroupMembers);
+    $("groupMemberSearch").addEventListener(
+      "input",
+      searchGroupMembers
+    );
   }
 
+  /* =====================================================
+     CREATE GROUP
+     ===================================================== */
+
   window.openGroupCreator = function() {
-    if (!currentUser) return notify("Please wait for your account to load.");
+    if (!currentUser) {
+      return alertUser("Please wait for your account to load.");
+    }
 
-    ensureGroupStyles();
-    ensureGroupOverlays();
+    ensureStyles();
+    ensureOverlays();
 
-    selectedGroupMembers.clear();
+    selectedMembers.clear();
+
     $("groupNameInput").value = "";
     $("groupPhotoInput").value = "";
     $("groupMemberSearch").value = "";
+
     $("groupMemberResults").innerHTML =
       '<p class="tg-empty">Search for members to add.</p>';
 
     updateSelectedCount();
+
     $("groupCreateOverlay").classList.add("show");
   };
 
@@ -259,7 +441,8 @@
   };
 
   function updateSelectedCount() {
-    const count = selectedGroupMembers.size;
+    const count = selectedMembers.size;
+
     if ($("groupSelectedCount")) {
       $("groupSelectedCount").textContent =
         count + " member" + (count === 1 ? "" : "s") + " selected";
@@ -267,13 +450,17 @@
   }
 
   async function searchGroupMembers() {
-    clearTimeout(groupSearchTimer);
+    clearTimeout(searchTimer);
 
-    groupSearchTimer = setTimeout(async () => {
-      const term = $("groupMemberSearch").value.trim()
-        .replace(/^@/, "").toLowerCase();
-
+    searchTimer = setTimeout(async () => {
+      const input = $("groupMemberSearch");
       const results = $("groupMemberResults");
+
+      if (!input || !results) return;
+
+      const term = input.value.trim()
+        .replace(/^@/, "")
+        .toLowerCase();
 
       if (term.length < 2) {
         results.innerHTML =
@@ -289,7 +476,7 @@
           .orderBy("usernameLower")
           .startAt(term)
           .endAt(term + "\uf8ff")
-          .limit(20)
+          .limit(25)
           .get();
 
         results.innerHTML = "";
@@ -304,9 +491,8 @@
           const profile = doc.data();
           const uid = doc.id;
 
-          if (uid === currentUser.uid) return;
+          if (!uid || uid === currentUser.uid) return;
 
-          const selected = selectedGroupMembers.has(uid);
           const row = document.createElement("div");
           row.className = "tg-user";
 
@@ -314,9 +500,10 @@
           avatar.className = "tg-avatar";
 
           if (profile.photoURL) {
-            const img = document.createElement("img");
-            img.src = profile.photoURL;
-            avatar.appendChild(img);
+            const image = document.createElement("img");
+            image.src = profile.photoURL;
+            image.alt = "";
+            avatar.appendChild(image);
           } else {
             avatar.textContent =
               (profile.displayName || profile.username || "T")
@@ -325,30 +512,35 @@
 
           const info = document.createElement("div");
           info.className = "tg-user-info";
-          info.innerHTML =
-            "<strong>" +
-            escapeHTML(profile.displayName || profile.username) +
-            "</strong><small>@" +
-            escapeHTML(profile.username || "") +
-            "</small>";
+
+          const displayName = document.createElement("strong");
+          displayName.textContent =
+            profile.displayName || profile.username || "Terzex User";
+
+          const username = document.createElement("small");
+          username.textContent = "@" + (profile.username || "");
+
+          info.append(displayName, username);
 
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
           checkbox.className = "tg-check";
-          checkbox.checked = selected;
+          checkbox.checked = selectedMembers.has(uid);
 
-          checkbox.onchange = () => {
+          checkbox.addEventListener("change", () => {
             if (checkbox.checked) {
-              if (selectedGroupMembers.size >= MAX_MEMBERS - 1) {
+              if (selectedMembers.size >= MAX_MEMBERS - 1) {
                 checkbox.checked = false;
-                return notify("A group can have up to 100 members.");
+                return alertUser("A group can have up to 100 members.");
               }
-              selectedGroupMembers.set(uid, profile);
+
+              selectedMembers.set(uid, profile);
             } else {
-              selectedGroupMembers.delete(uid);
+              selectedMembers.delete(uid);
             }
+
             updateSelectedCount();
-          };
+          });
 
           row.append(avatar, info, checkbox);
           results.appendChild(row);
@@ -356,8 +548,9 @@
 
       } catch (error) {
         console.error("Group member search:", error);
+
         results.innerHTML =
-          '<p class="tg-empty">Could not search members. Check your connection.</p>';
+          '<p class="tg-empty">Could not search members. Check your connection and Firestore permissions.</p>';
       }
     }, 300);
   }
@@ -367,68 +560,89 @@
 
     const name = $("groupNameInput").value.trim();
     const photoURL = $("groupPhotoInput").value.trim();
+    const button = $("createGroupButton");
 
-    if (name.length < 2) {
-      return notify("Please enter a group name.");
+    if (name.length < 2 || name.length > 60) {
+      return alertUser("Group name must be between 2 and 60 characters.");
     }
 
-    if (selectedGroupMembers.size < 1) {
-      return notify("Select at least one other member.");
+    if (selectedMembers.size < 1) {
+      return alertUser("Select at least one other member.");
     }
 
     const members = [
       currentUser.uid,
-      ...selectedGroupMembers.keys()
+      ...selectedMembers.keys()
     ];
 
     if (members.length > MAX_MEMBERS) {
-      return notify("A group can have up to 100 members.");
+      return alertUser("A group can have up to 100 members.");
     }
 
-    try {
-      const ref = groupCollection().doc();
+    if (button) button.disabled = true;
 
-      await ref.set({
+    try {
+      const groupRef = groupsRef().doc();
+
+      await groupRef.set({
         name,
         photoURL,
         createdBy: currentUser.uid,
         admins: [currentUser.uid],
         members,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: timestamp(),
+        updatedAt: timestamp(),
         lastMessage: "Group created",
-        lastMessageAt: firebase.firestore.FieldValue.serverTimestamp()
+        lastMessageAt: timestamp()
       });
 
-      await ref.collection("messages").add({
+      await groupRef.collection("messages").add({
         senderId: currentUser.uid,
-        senderName: currentUser.displayName || "Terzex User",
+        senderName:
+          currentUser.displayName ||
+          currentUser.email ||
+          "Terzex User",
         text: "Group created",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        type: "system"
+        type: "system",
+        createdAt: timestamp()
       });
 
+      selectedMembers.clear();
       closeGroupCreator();
-      openTerzexGroup(ref.id);
+
+      await window.openTerzexGroup(groupRef.id);
 
     } catch (error) {
       console.error("Create group:", error);
-      notify("Could not create the group. Check your Firestore rules.");
+
+      alertUser(
+        "Could not create the group. Check your Firestore group rules."
+      );
+    } finally {
+      if (button) button.disabled = false;
     }
   };
+
+  /* =====================================================
+     GROUP LIST — MAIN CHATS PAGE
+     ===================================================== */
 
   function startGroupListener() {
     if (!currentUser) return;
 
-    if (groupListUnsubscribe) groupListUnsubscribe();
+    if (groupListUnsubscribe) {
+      groupListUnsubscribe();
+      groupListUnsubscribe = null;
+    }
 
-    groupListUnsubscribe = groupCollection()
+    groupListUnsubscribe = groupsRef()
       .where("members", "array-contains", currentUser.uid)
       .onSnapshot(snapshot => {
         const found = new Set();
 
         snapshot.forEach(doc => {
           found.add(doc.id);
+
           const data = doc.data();
 
           groupRows[doc.id] = {
@@ -444,12 +658,15 @@
         });
 
         Object.keys(groupRows).forEach(id => {
-          if (!found.has(id)) delete groupRows[id];
+          if (!found.has(id)) {
+            delete groupRows[id];
+          }
         });
 
         renderUnifiedGroupList();
+
       }, error => {
-        console.error("Group list:", error);
+        console.error("Group list listener:", error);
       });
   }
 
@@ -457,22 +674,23 @@
     const list = $("conversationList");
     if (!list) return;
 
-    if (typeof window.__terzexOriginalRenderConversationList === "function") {
-      window.__terzexOriginalRenderConversationList();
+    if (typeof originalConversationRenderer === "function") {
+      originalConversationRenderer();
     }
 
-    let existing = list.querySelectorAll("[data-group-row]");
-    existing.forEach(row => row.remove());
+    list.querySelectorAll("[data-group-row]").forEach(row => {
+      row.remove();
+    });
 
     let rows = Object.values(groupRows);
 
-    if (activeConversationFilter === "Groups") {
+    if (window.activeConversationFilter === "Groups") {
       list.innerHTML = "";
     }
 
     rows.sort((a, b) => b.time - a.time);
 
-    if (activeConversationFilter === "Groups" && !rows.length) {
+    if (window.activeConversationFilter === "Groups" && !rows.length) {
       list.innerHTML =
         '<div class="tg-empty">Your groups will appear here.</div>';
       return;
@@ -482,16 +700,19 @@
       const item = document.createElement("div");
       item.className = "conversation-row";
       item.dataset.groupRow = row.id;
-      item.onclick = () => openTerzexGroup(row.id);
+      item.onclick = () => window.openTerzexGroup(row.id);
 
       const avatar = document.createElement("div");
       avatar.className = "conversation-avatar";
 
       if (row.photoURL) {
-        const img = document.createElement("img");
-        img.src = row.photoURL;
-        img.alt = "";
-        avatar.appendChild(img);
+        const image = document.createElement("img");
+        image.src = row.photoURL;
+        image.alt = "";
+        image.onerror = () => {
+          avatar.textContent = "♧";
+        };
+        avatar.appendChild(image);
       } else {
         avatar.textContent = "♧";
       }
@@ -507,6 +728,7 @@
 
       const time = document.createElement("span");
       time.className = "conversation-time";
+
       time.textContent = row.time
         ? new Date(row.time).toLocaleDateString([], {
             month: "short",
@@ -527,54 +749,80 @@
     });
   }
 
-  window.openTerzexGroup = async function(groupId) {
-    if (!currentUser) return;
+  /* =====================================================
+     OPEN GROUP
+     ===================================================== */
 
-    ensureGroupStyles();
-    ensureGroupOverlays();
+  window.openTerzexGroup = async function(groupId) {
+    if (!currentUser || !groupId) return;
+
+    ensureStyles();
+    ensureOverlays();
 
     try {
-      const snap = await groupCollection().doc(groupId).get();
+      const snapshot = await groupsRef().doc(groupId).get();
 
-      if (!snap.exists) return notify("This group no longer exists.");
+      if (!snapshot.exists) {
+        return alertUser("This group no longer exists.");
+      }
 
-      const group = snap.data();
+      const group = snapshot.data();
 
-      if (!isGroupMember(group)) {
-        return notify("You are not a member of this group.");
+      if (!isMember(group)) {
+        return alertUser("You are not a member of this group.");
       }
 
       activeGroupId = groupId;
       activeGroupData = group;
 
-      $("groupChatName").textContent = group.name || "Terzex Group";
+      $("groupChatName").textContent =
+        group.name || "Terzex Group";
+
       $("groupChatMembers").textContent =
         (group.members || []).length + " members";
 
-      $("groupChatAvatar").innerHTML = group.photoURL
-        ? '<img src="' + escapeHTML(group.photoURL) + '" alt="">'
-        : "♧";
+      $("groupChatAvatar").innerHTML = "";
+
+      if (group.photoURL) {
+        const image = document.createElement("img");
+        image.src = group.photoURL;
+        image.alt = "";
+        $("groupChatAvatar").appendChild(image);
+      } else {
+        $("groupChatAvatar").textContent = "♧";
+      }
+
+      $("groupMessages").innerHTML =
+        '<p class="tg-empty">Loading messages...</p>';
 
       $("groupChatOverlay").classList.add("show");
 
-      if (groupMessagesUnsubscribe) groupMessagesUnsubscribe();
+      if (groupMessagesUnsubscribe) {
+        groupMessagesUnsubscribe();
+        groupMessagesUnsubscribe = null;
+      }
 
-      groupMessagesUnsubscribe = messageCollection(groupId)
+      groupMessagesUnsubscribe = messagesRef(groupId)
         .orderBy("createdAt", "asc")
         .limit(150)
-        .onSnapshot(messages => {
-          renderGroupMessages(messages);
+        .onSnapshot(snapshot => {
+          renderGroupMessages(snapshot);
         }, error => {
           console.error("Group messages:", error);
+
           $("groupMessages").innerHTML =
             '<p class="tg-empty">Could not load group messages.</p>';
         });
 
     } catch (error) {
       console.error("Open group:", error);
-      notify("Could not open this group.");
+      alertUser("Could not open this group.");
     }
   };
+
+  /* =====================================================
+     GROUP MESSAGE DISPLAY
+     ===================================================== */
 
   function renderGroupMessages(snapshot) {
     const box = $("groupMessages");
@@ -591,47 +839,67 @@
     snapshot.forEach(doc => {
       const data = doc.data();
 
+      if (data.type === "system") {
+        const system = document.createElement("div");
+        system.className = "tg-system";
+        system.textContent = data.text || "Group update";
+        box.appendChild(system);
+        return;
+      }
+
       const bubble = document.createElement("div");
-      bubble.className = "tg-bubble" +
+
+      bubble.className =
+        "tg-bubble" +
         (data.senderId === currentUser.uid ? " mine" : "");
 
       const sender = document.createElement("strong");
       sender.className = "tg-member-name";
       sender.textContent = data.senderName || "Terzex member";
-      sender.onclick = () => openOtherTerzexProfile(data.senderId);
+
+      sender.onclick = () => {
+        if (data.senderId && typeof openOtherTerzexProfile === "function") {
+          openOtherTerzexProfile(data.senderId);
+        }
+      };
 
       bubble.appendChild(sender);
 
       if (data.text) {
-        const text = document.createElement("div");
-        text.textContent = data.text;
-        bubble.appendChild(text);
+        const messageText = document.createElement("div");
+        messageText.textContent = data.text;
+        bubble.appendChild(messageText);
       }
 
       if (data.mediaURL) {
         const type = data.mediaType || "";
 
         if (type.startsWith("image/")) {
-          const img = document.createElement("img");
-          img.src = data.mediaURL;
-          img.className = "tg-media";
-          bubble.appendChild(img);
+          const image = document.createElement("img");
+          image.src = data.mediaURL;
+          image.alt = data.mediaName || "Group image";
+          image.className = "tg-media";
+          bubble.appendChild(image);
+
         } else if (type.startsWith("video/")) {
           const video = document.createElement("video");
           video.src = data.mediaURL;
           video.controls = true;
           video.className = "tg-media";
           bubble.appendChild(video);
+
         } else if (type.startsWith("audio/")) {
           const audio = document.createElement("audio");
           audio.src = data.mediaURL;
           audio.controls = true;
+          audio.className = "tg-media";
           bubble.appendChild(audio);
+
         } else {
           const link = document.createElement("a");
           link.href = data.mediaURL;
           link.target = "_blank";
-          link.rel = "noopener";
+          link.rel = "noopener noreferrer";
           link.textContent = data.mediaName || "Download attachment";
           link.style.color = "#f5d27a";
           bubble.appendChild(link);
@@ -639,59 +907,82 @@
       }
 
       const time = document.createElement("small");
+
       time.textContent = data.createdAt?.toDate
         ? data.createdAt.toDate().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit"
           })
         : "Sending...";
-      bubble.appendChild(time);
 
+      bubble.appendChild(time);
       box.appendChild(bubble);
     });
 
     box.scrollTop = box.scrollHeight;
   }
 
+  /* =====================================================
+     SEND GROUP TEXT
+     ===================================================== */
+
   window.sendTerzexGroupMessage = async function() {
     const input = $("groupMessageInput");
+
+    if (!input || !activeGroupId || !currentUser) return;
+
     const text = input.value.trim();
 
-    if (!text || !activeGroupId || !currentUser) return;
+    if (!text) return;
+
+    if (!activeGroupData || !isMember(activeGroupData)) {
+      return alertUser("You are no longer a member of this group.");
+    }
 
     input.disabled = true;
 
     try {
-      await messageCollection().add({
+      await messagesRef().add({
         senderId: currentUser.uid,
-        senderName: currentUser.displayName ||
-          currentUser.email || "Terzex User",
+        senderName:
+          currentUser.displayName ||
+          currentUser.email ||
+          "Terzex User",
         text,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: timestamp()
       });
 
-      await groupCollection().doc(activeGroupId).update({
+      await groupsRef().doc(activeGroupId).update({
         lastMessage: text,
-        lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        lastMessageAt: timestamp(),
+        updatedAt: timestamp()
       });
 
       input.value = "";
 
     } catch (error) {
       console.error("Group message:", error);
-      notify("Message not sent. Check your group permissions.");
+      alertUser("Message not sent. Check your group permissions.");
     } finally {
       input.disabled = false;
       input.focus();
     }
   };
 
+  /* =====================================================
+     SEND GROUP MEDIA
+     ===================================================== */
+
   window.sendTerzexGroupMedia = async function(event) {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
+
     event.target.value = "";
 
     if (!file || !activeGroupId || !currentUser) return;
+
+    if (!activeGroupData || !isMember(activeGroupData)) {
+      return alertUser("You are no longer a member of this group.");
+    }
 
     const allowed =
       file.type.startsWith("image/") ||
@@ -699,10 +990,12 @@
       file.type.startsWith("audio/") ||
       /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|txt|zip)$/i.test(file.name);
 
-    if (!allowed) return notify("This file type is not supported.");
+    if (!allowed) {
+      return alertUser("This file type is not supported.");
+    }
 
     if (file.size > MAX_FILE_SIZE) {
-      return notify("Choose a file smaller than 25 MB.");
+      return alertUser("Choose a file smaller than 25 MB.");
     }
 
     try {
@@ -719,14 +1012,20 @@
 
       const endpoint =
         "https://api.cloudinary.com/v1_1/aqdwrxha/" +
-        resourceType + "/upload";
+        resourceType +
+        "/upload";
 
       const form = new FormData();
+
       form.append("file", file);
       form.append("upload_preset", "terzex_upload");
+
       form.append(
         "folder",
-        "terzex_chat/groups/" + activeGroupId + "/" + currentUser.uid
+        "terzex_chat/groups/" +
+        activeGroupId +
+        "/" +
+        currentUser.uid
       );
 
       const response = await fetch(endpoint, {
@@ -737,32 +1036,44 @@
       const result = await response.json();
 
       if (!response.ok || !result.secure_url) {
-        throw new Error(result.error?.message || "Upload failed.");
+        throw new Error(
+          result.error?.message || "Cloudinary upload failed."
+        );
       }
 
-      await messageCollection().add({
+      await messagesRef().add({
         senderId: currentUser.uid,
-        senderName: currentUser.displayName ||
-          currentUser.email || "Terzex User",
+        senderName:
+          currentUser.displayName ||
+          currentUser.email ||
+          "Terzex User",
         text: "",
         mediaURL: result.secure_url,
         mediaPath: result.public_id || "",
         mediaType: file.type || "application/octet-stream",
         mediaName: file.name,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: timestamp()
       });
 
-      await groupCollection().doc(activeGroupId).update({
+      await groupsRef().doc(activeGroupId).update({
         lastMessage: "Attachment: " + file.name,
-        lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        lastMessageAt: timestamp(),
+        updatedAt: timestamp()
       });
 
     } catch (error) {
       console.error("Group media upload:", error);
-      notify("Upload failed: " + (error.message || "Check your connection."));
+
+      alertUser(
+        "Upload failed: " +
+        (error.message || "Check your connection.")
+      );
     }
   };
+
+  /* =====================================================
+     CLOSE GROUP
+     ===================================================== */
 
   window.closeTerzexGroup = function() {
     if (groupMessagesUnsubscribe) {
@@ -772,87 +1083,169 @@
 
     activeGroupId = null;
     activeGroupData = null;
+
     $("groupChatOverlay")?.classList.remove("show");
   };
 
+  /* =====================================================
+     GROUP SETTINGS AND MEMBER PROFILES
+     ===================================================== */
+
   window.openTerzexGroupSettings = function() {
-    if (!activeGroupData || !activeGroupId) return;
+    if (!activeGroupId || !activeGroupData) return;
 
     const group = activeGroupData;
-    const admin = isGroupAdmin(group);
+    const admin = isAdmin(group);
     const content = $("groupSettingsContent");
 
     content.innerHTML = `
       <h3 class="tg-gold">${escapeHTML(group.name)}</h3>
+
       <p>${(group.members || []).length} members</p>
 
       ${admin ? `
         <label>Change group name</label>
-        <input class="tg-input" id="editGroupName"
-          maxlength="60" value="${escapeHTML(group.name)}">
+        <input class="tg-input"
+          id="editGroupName"
+          maxlength="60"
+          value="${escapeHTML(group.name)}">
 
         <label>Change group photo URL</label>
-        <input class="tg-input" id="editGroupPhoto"
+        <input class="tg-input"
+          id="editGroupPhoto"
           value="${escapeHTML(group.photoURL || "")}">
 
         <button class="tg-button primary"
-          onclick="saveTerzexGroupDetails()">Save Changes</button>
+          onclick="saveTerzexGroupDetails()">
+          Save Changes
+        </button>
       ` : ""}
 
-      <h3 class="tg-gold">Members</h3>
+      <h3 class="tg-gold">Group Members</h3>
+
       <div id="groupSettingsMembers" class="tg-list"></div>
 
       ${admin ? `
         <div class="tg-actions">
           <button class="tg-button"
-            onclick="addTerzexGroupMember()">＋ Add Member</button>
+            onclick="addTerzexGroupMember()">
+            ＋ Add Member
+          </button>
         </div>
       ` : ""}
 
       <button class="tg-button"
-        onclick="leaveTerzexGroup()">Leave Group</button>
+        onclick="leaveTerzexGroup()">
+        Leave Group
+      </button>
     `;
 
     const memberBox = $("groupSettingsMembers");
 
-    (group.members || []).forEach(uid => {
-      db.collection("public_profiles").doc(uid).get().then(profileSnap => {
-        const profile = profileSnap.exists ? profileSnap.data() : {};
+    memberBox.innerHTML =
+      '<p class="tg-empty">Loading members...</p>';
+
+    Promise.all(
+      (group.members || []).map(async uid => {
+        try {
+          const profileSnap = await db
+            .collection("public_profiles")
+            .doc(uid)
+            .get();
+
+          return {
+            uid,
+            profile: profileSnap.exists
+              ? profileSnap.data()
+              : {}
+          };
+        } catch (error) {
+          console.warn("Member profile:", error);
+          return { uid, profile: {} };
+        }
+      })
+    ).then(members => {
+      if (!memberBox.isConnected) return;
+
+      memberBox.innerHTML = "";
+
+      members.forEach(({ uid, profile }) => {
         const row = document.createElement("div");
         row.className = "tg-member";
+
+        const avatar = document.createElement("div");
+        avatar.className = "tg-avatar";
+
+        if (profile.photoURL) {
+          const image = document.createElement("img");
+          image.src = profile.photoURL;
+          image.alt = "";
+          avatar.appendChild(image);
+        } else {
+          avatar.textContent =
+            (profile.displayName || profile.username || "T")
+              .charAt(0).toUpperCase();
+        }
+
+        const info = document.createElement("div");
+        info.className = "tg-user-info";
 
         const name = document.createElement("strong");
         name.className = "tg-member-name";
         name.textContent =
-          profile.displayName || profile.username || "Terzex member";
-        name.onclick = () => openOtherTerzexProfile(uid);
+          profile.displayName ||
+          profile.username ||
+          "Terzex member";
 
-        const message = document.createElement("button");
-        message.className = "tg-button";
-        message.textContent = "Message";
-        message.onclick = () => {
-          closeGroupSettings();
-          closeTerzexGroup();
-          messageOtherTerzexUser(uid);
+        name.onclick = () => {
+          if (typeof openOtherTerzexProfile === "function") {
+            openOtherTerzexProfile(uid);
+          }
         };
 
-        row.append(name);
+        const username = document.createElement("small");
+        username.textContent = profile.username
+          ? "@" + profile.username
+          : "";
+
+        info.append(name, username);
+
+        row.append(avatar, info);
 
         if ((group.admins || []).includes(uid)) {
           const badge = document.createElement("small");
-          badge.textContent = "Admin";
           badge.className = "tg-gold";
+          badge.textContent = "Admin";
           row.appendChild(badge);
         }
 
-        row.appendChild(message);
+        const messageButton = document.createElement("button");
+        messageButton.className = "tg-button";
+        messageButton.textContent = "Message";
+
+        messageButton.onclick = () => {
+          closeGroupSettings();
+          closeTerzexGroup();
+
+          if (typeof messageOtherTerzexUser === "function") {
+            messageOtherTerzexUser(uid);
+          } else if (typeof openPrivateChat === "function") {
+            openPrivateChat(uid, profile);
+          }
+        };
+
+        row.appendChild(messageButton);
 
         if (admin && uid !== currentUser.uid) {
-          const remove = document.createElement("button");
-          remove.className = "tg-button";
-          remove.textContent = "Remove";
-          remove.onclick = () => removeTerzexGroupMember(uid);
-          row.appendChild(remove);
+          const removeButton = document.createElement("button");
+          removeButton.className = "tg-button";
+          removeButton.textContent = "Remove";
+
+          removeButton.onclick = () => {
+            window.removeTerzexGroupMember(uid);
+          };
+
+          row.appendChild(removeButton);
         }
 
         memberBox.appendChild(row);
@@ -866,115 +1259,161 @@
     $("groupSettingsOverlay")?.classList.remove("show");
   };
 
+  /* =====================================================
+     SAVE GROUP DETAILS
+     ===================================================== */
+
   window.saveTerzexGroupDetails = async function() {
-    if (!isGroupAdmin(activeGroupData)) {
-      return notify("Only group admins can change group details.");
+    if (!activeGroupId || !isAdmin(activeGroupData)) {
+      return alertUser("Only group admins can change group details.");
     }
 
     const name = $("editGroupName").value.trim();
     const photoURL = $("editGroupPhoto").value.trim();
 
-    if (name.length < 2) return notify("Enter a valid group name.");
+    if (name.length < 2 || name.length > 60) {
+      return alertUser("Group name must be between 2 and 60 characters.");
+    }
 
     try {
-      await groupCollection().doc(activeGroupId).update({
+      await groupsRef().doc(activeGroupId).update({
         name,
         photoURL,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        updatedAt: timestamp()
       });
 
       activeGroupData.name = name;
       activeGroupData.photoURL = photoURL;
 
       $("groupChatName").textContent = name;
-      $("groupChatAvatar").innerHTML = photoURL
-        ? '<img src="' + escapeHTML(photoURL) + '" alt="">'
-        : "♧";
+      $("groupChatAvatar").innerHTML = "";
 
-      notify("Group details updated.");
-      openTerzexGroupSettings();
+      if (photoURL) {
+        const image = document.createElement("img");
+        image.src = photoURL;
+        image.alt = "";
+        $("groupChatAvatar").appendChild(image);
+      } else {
+        $("groupChatAvatar").textContent = "♧";
+      }
+
+      alertUser("Group details updated.");
+      window.openTerzexGroupSettings();
 
     } catch (error) {
-      console.error(error);
-      notify("Could not update group details.");
+      console.error("Update group details:", error);
+      alertUser("Could not update group details. Check Firestore rules.");
     }
   };
 
-  window.removeTerzexGroupMember = async function(uid) {
-    if (!isGroupAdmin(activeGroupData)) {
-      return notify("Only admins can remove members.");
-    }
-
-    if (!confirm("Remove this member from the group?")) return;
-
-    try {
-      const members = activeGroupData.members.filter(id => id !== uid);
-      const admins = (activeGroupData.admins || []).filter(id => id !== uid);
-
-      await groupCollection().doc(activeGroupId).update({
-        members,
-        admins,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      activeGroupData.members = members;
-      activeGroupData.admins = admins;
-
-      notify("Member removed.");
-      openTerzexGroupSettings();
-
-    } catch (error) {
-      console.error(error);
-      notify("Could not remove this member.");
-    }
-  };
+  /* =====================================================
+     ADD GROUP MEMBER
+     ===================================================== */
 
   window.addTerzexGroupMember = async function() {
-    if (!isGroupAdmin(activeGroupData)) {
-      return notify("Only admins can add members.");
+    if (!activeGroupId || !isAdmin(activeGroupData)) {
+      return alertUser("Only admins can add members.");
     }
 
     const username = prompt("Enter the Terzex username to add:");
+
     if (!username) return;
 
     try {
-      const term = username.trim().replace(/^@/, "").toLowerCase();
+      const term = username.trim()
+        .replace(/^@/, "")
+        .toLowerCase();
 
       const snapshot = await db.collection("public_profiles")
         .where("usernameLower", "==", term)
         .limit(1)
         .get();
 
-      if (snapshot.empty) return notify("Terzex user not found.");
+      if (snapshot.empty) {
+        return alertUser("Terzex user not found.");
+      }
 
-      const doc = snapshot.docs[0];
-      const uid = doc.id;
+      const userDoc = snapshot.docs[0];
+      const uid = userDoc.id;
 
       if (activeGroupData.members.includes(uid)) {
-        return notify("This user is already a group member.");
+        return alertUser("This user is already in the group.");
       }
 
       if (activeGroupData.members.length >= MAX_MEMBERS) {
-        return notify("This group has reached its member limit.");
+        return alertUser("This group has reached its 100-member limit.");
       }
 
-      const members = [...activeGroupData.members, uid];
+      const members = [
+        ...activeGroupData.members,
+        uid
+      ];
 
-      await groupCollection().doc(activeGroupId).update({
+      await groupsRef().doc(activeGroupId).update({
         members,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        updatedAt: timestamp()
       });
 
       activeGroupData.members = members;
 
-      notify("Member added successfully.");
-      openTerzexGroupSettings();
+      alertUser("Member added successfully.");
+      window.openTerzexGroupSettings();
 
     } catch (error) {
-      console.error(error);
-      notify("Could not add this member.");
+      console.error("Add group member:", error);
+      alertUser("Could not add this member. Check Firestore rules.");
     }
   };
+
+  /* =====================================================
+     REMOVE GROUP MEMBER
+     ===================================================== */
+
+  window.removeTerzexGroupMember = async function(uid) {
+    if (!activeGroupId || !isAdmin(activeGroupData)) {
+      return alertUser("Only admins can remove members.");
+    }
+
+    if (uid === currentUser.uid) {
+      return alertUser("Use Leave Group to leave the group.");
+    }
+
+    if (!confirm("Remove this member from the group?")) return;
+
+    try {
+      const members = activeGroupData.members.filter(
+        memberId => memberId !== uid
+      );
+
+      const admins = (activeGroupData.admins || []).filter(
+        adminId => adminId !== uid
+      );
+
+      if (admins.length < 1) {
+        return alertUser("A group must have at least one admin.");
+      }
+
+      await groupsRef().doc(activeGroupId).update({
+        members,
+        admins,
+        updatedAt: timestamp()
+      });
+
+      activeGroupData.members = members;
+      activeGroupData.admins = admins;
+
+      alertUser("Member removed.");
+      window.openTerzexGroupSettings();
+
+    } catch (error) {
+      console.error("Remove group member:", error);
+      alertUser("Could not remove this member. Check Firestore rules.");
+    }
+  };
+
+  /* =====================================================
+     LEAVE GROUP
+     ===================================================== */
 
   window.leaveTerzexGroup = async function() {
     if (!activeGroupId || !activeGroupData) return;
@@ -990,31 +1429,45 @@
         uid => uid !== currentUser.uid
       );
 
-      await groupCollection().doc(activeGroupId).update({
+      if (admins.length < 1) {
+        return alertUser(
+          "You are the only admin. Add another admin before leaving."
+        );
+      }
+
+      await groupsRef().doc(activeGroupId).update({
         members,
         admins,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        updatedAt: timestamp()
       });
 
       closeGroupSettings();
       closeTerzexGroup();
 
+      alertUser("You have left the group.");
+
     } catch (error) {
-      console.error(error);
-      notify("Could not leave this group.");
+      console.error("Leave group:", error);
+      alertUser("Could not leave this group. Check Firestore rules.");
     }
   };
 
-  function initializeGroups() {
-    ensureGroupStyles();
-    ensureGroupOverlays();
+  /* =====================================================
+     INITIALIZE
+     ===================================================== */
 
-    if (typeof window.renderConversationList === "function") {
-      window.__terzexOriginalRenderConversationList =
-        window.renderConversationList;
+  function initializeGroups() {
+    ensureStyles();
+    ensureOverlays();
+
+    if (
+      typeof window.renderConversationList === "function" &&
+      !originalConversationRenderer
+    ) {
+      originalConversationRenderer = window.renderConversationList;
 
       window.renderConversationList = function() {
-        window.__terzexOriginalRenderConversationList();
+        originalConversationRenderer();
         renderUnifiedGroupList();
       };
     }
@@ -1024,7 +1477,10 @@
     );
 
     if (newGroupButton) {
-      newGroupButton.setAttribute("onclick", "closeModal('menuOverlay');openGroupCreator()");
+      newGroupButton.setAttribute(
+        "onclick",
+        "closeModal('menuOverlay');openGroupCreator()"
+      );
     }
 
     startGroupListener();
@@ -1034,9 +1490,19 @@
     if (user) {
       setTimeout(initializeGroups, 500);
     } else {
-      if (groupListUnsubscribe) groupListUnsubscribe();
-      groupListUnsubscribe = null;
-      Object.keys(groupRows).forEach(id => delete groupRows[id]);
+      if (groupListUnsubscribe) {
+        groupListUnsubscribe();
+        groupListUnsubscribe = null;
+      }
+
+      if (groupMessagesUnsubscribe) {
+        groupMessagesUnsubscribe();
+        groupMessagesUnsubscribe = null;
+      }
+
+      Object.keys(groupRows).forEach(id => {
+        delete groupRows[id];
+      });
     }
   });
 
