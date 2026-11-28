@@ -173,11 +173,20 @@ app.post("/api/messages/delete", requireAuth, async (req, res) => {
           });
         }
 
-        const resourceType =
+const resourceType =
   message.mediaType?.startsWith("audio/") ||
   message.mediaType?.startsWith("video/")
     ? "video"
-    : "image";
+    : (
+        message.mediaType === "application/pdf" ||
+        message.mediaType?.includes("word") ||
+        message.mediaType?.includes("spreadsheet") ||
+        message.mediaType?.includes("presentation") ||
+        message.mediaType === "text/plain" ||
+        message.mediaType === "application/zip"
+      )
+      ? "raw"
+      : "image";
         const timestamp = Math.floor(Date.now() / 1000);
 
         const signature = crypto
