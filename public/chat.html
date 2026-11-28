@@ -581,10 +581,10 @@ Object.keys(conversationRows).forEach(k=>delete conversationRows[k]);
 list.innerHTML='<div class="conversation-empty">Loading your conversations...</div>';
 conversationUnsubscribe=db.collection("private_chats").where("participants","array-contains",currentUser.uid).onSnapshot(snapshot=>{
 const found=new Set();
-if(snapshot.empty){
-list.innerHTML='<div class="empty"><div class="empty-icon">✉</div><h3>Your conversations start here</h3><p>Find friends, meet new people and connect with the world through Terzex Chat.</p><button class="primary" onclick="openNewChat()">＋ Start New Chat</button></div>';
-return;
-}
+ if(snapshot.empty){
+    renderConversationList();
+    return;
+ }
 snapshot.forEach(doc=>{
 found.add(doc.id);
 if(!conversationRows[doc.id])watchConversationPreview(doc.id,doc.data());
