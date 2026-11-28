@@ -231,6 +231,22 @@ match /groups/{groupId} {
     allow update, delete: if false;
   }
 }
+// SHARED STICKER PACKS
+match /sticker_packs/{packId} {
+
+  allow read: if signedIn();
+
+  allow create: if signedIn()
+    && request.resource.data.ownerId == request.auth.uid
+    && request.resource.data.name is string
+    && request.resource.data.name.size() > 0
+    && request.resource.data.name.size() <= 40
+    && request.resource.data.stickers is list
+    && request.resource.data.stickers.size() <= 80;
+
+  allow update, delete: if signedIn()
+    && resource.data.ownerId == request.auth.uid;
+}
 
 // CHANNELS
 match /channels/{channelId} {
