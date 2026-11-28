@@ -1754,6 +1754,134 @@ grid.appendChild(browseButton);
     grid.appendChild(button);
   });
 }
+ async function browseSharedStickerPacks(){
+  if(!currentUser){
+    alert("Please sign in first.");
+    return;
+  }
+
+  const grid = document.getElementById("stickerPacksGrid");
+  grid.innerHTML = "";
+
+  const backButton = document.createElement("button");
+  backButton.textContent = "← Back to My Packs";
+  backButton.style.cssText =
+    "grid-column:1/-1;padding:12px;background:#2b2112;color:#f5d27a;border:1px solid #b58a32;border-radius:10px;";
+  backButton.onclick = renderStickerPacks;
+  grid.appendChild(backButton);
+
+  const loading = document.createElement("p");
+  loading.textContent = "Loading shared sticker packs...";
+  loading.style.color = "#f5d27a";
+  grid.appendChild(loading);
+
+  try{
+    const snapshot = await db.collection("sticker_packs")
+      .orderBy("createdAt","desc")
+      .limit(50)
+      .get();
+
+    grid.innerHTML = "";
+    grid.appendChild(backButton);
+
+    if(snapshot.empty){
+      const empty = document.createElement("p");
+      empty.textContent = "No shared sticker packs available yet.";
+      empty.style.color = "#aaa";
+      grid.appendChild(empty);
+      return;
+    }
+
+    snapshot.forEach(doc=>{
+      const pack = doc.data();
+
+      const card = document.createElement("div");
+      card.style.cssText =
+        "grid-column:1/-1;background:#17120b;border:1px solid #806334;border-radius:12px;padding:14px;";
+
+      const title = document.createElement("h3");
+      title.textContent = "📦 " + (pack.name || "Sticker Pack");
+      title.style.color = "#f5d27a";
+
+      const details = document.createElement("p");
+      details.textContent =
+        "By " + (pack.ownerName || "Terzex User") +
+        " • " + (Array.isArray(pack.stickers) ? pack.stickers.length : 0) +
+        " stickers";
+      details.style.cssText = "color:#aaa;font-size:12px;margin:9px 0;";
+
+      const downloadButton = document.createElement("button");
+      downloadButton.textContent = "⬇ Download Pack";
+      downloadButton.style.cssText =
+        "padding:11px;background:#2b2112;color:#f5d27a;border:1px solid #b58a32;border-radius:9px;";
+
+      downloadButton.onclick = ()=>{
+        downloadSharedStickerPack(doc.id,pack);
+      };
+
+      card.appendChild(title);
+      card.appendChild(details);
+      card.appendChild(downloadButton);
+      grid.appendChild(card);
+    });
+
+  }catch(error){
+    console.error("Browse shared packs error:",error);
+    alert("Could not load shared packs: " + error.message);
+  }
+}
+
+function downloadSharedStickerPack(packId,sharedPack){
+  if(!sharedPack || !Array.isArray(sharedPack.stickers)){
+    alert("This sticker pack is invalid.");
+    return;
+  }
+
+  const stickers = sharedPack.stickers.filter(sticker=>{
+    if(!sticker || typeof sticker.image !== "string") return false;
+
+    try{
+      const url = new URL(sticker.image);
+      return url.protocol === "https:" &&
+        url.hostname === "res.cloudinary.com" &&
+        url.pathname.includes("/aqdwrxha/");
+    }catch(error){
+      return false;
+    }
+  });
+
+  if(!stickers.length){
+    alert("This pack has no valid stickers to download.");
+    return;
+  }
+
+  const packs = JSON.parse(
+    localStorage.getItem("terzexStickerPacks") || "[]"
+  );
+
+  if(packs.some(p=>p.sharedPackId === packId)){
+    alert("You already downloaded this pack.");
+    return;
+  }
+
+  packs.push({
+    id:"shared_" + packId,
+    sharedPackId:packId,
+    name:sharedPack.name || "Shared Sticker Pack",
+    ownerName:sharedPack.ownerName || "Terzex User",
+    stickers:stickers.map(s=>({image:s.image})),
+    createdAt:Date.now(),
+    imported:true
+  });
+
+  localStorage.setItem(
+    "terzexStickerPacks",
+    JSON.stringify(packs)
+  );
+
+  renderStickerPacks();
+  alert("Sticker pack downloaded successfully!");
+}
 function openStickerPack(packId){
   const packs = JSON.parse(
     localStorage.getItem("terzexStickerPacks") || "[]"
