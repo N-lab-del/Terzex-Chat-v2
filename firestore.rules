@@ -196,6 +196,13 @@ match /private_chats/{chatId} {
             .affectedKeys().hasOnly(["reactions"])
           && request.resource.data.reactions is map
         )
+||
+(
+  request.resource.data.diff(resource.data)
+    .affectedKeys().hasOnly(["hiddenFor"])
+  && request.resource.data.hiddenFor is list
+  && request.auth.uid in request.resource.data.hiddenFor
+)
       );
 
     // DELETE YOUR OWN MESSAGES
