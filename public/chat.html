@@ -1819,6 +1819,78 @@ grid.appendChild(sharePackButton);
     grid.appendChild(button);
   });
 }
+ async function shareStickerPack(packId){
+  if(!currentUser){
+    alert("Please sign in first.");
+    return;
+  }
+
+  const packs = JSON.parse(
+    localStorage.getItem("terzexStickerPacks") || "[]"
+  );
+
+  const pack = packs.find(p => p.id === packId);
+
+  if(!pack || !pack.stickers.length){
+    alert("This pack has no stickers to share.");
+    return;
+  }
+
+  if(pack.stickers.length > 80){
+    alert("A pack can contain a maximum of 80 stickers.");
+    return;
+  }
+
+  const button = document.querySelector(
+    "#stickerPacksGrid button"
+  );
+
+  try{
+    const uploadedStickers = [];
+
+    for(const sticker of pack.stickers){
+      const formData = new FormData();
+
+      formData.append("file", sticker.image);
+      formData.append("upload_preset", "terzex_upload");
+      formData.append("folder", "terzex_shared_stickers");
+
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/aqdwrxha/image/upload",
+        {
+          method:"POST",
+          body:formData
+        }
+      );
+
+      const result = await response.json();
+
+      if(!response.ok){
+        throw new Error(
+          result.error?.message || "Sticker upload failed."
+        );
+      }
+
+      uploadedStickers.push({
+        image:result.secure_url
+      });
+    }
+
+    await db.collection("sticker_packs").add({
+      name:pack.name,
+      ownerId:currentUser.uid,
+      ownerName:currentUser.displayName || "Terzex User",
+      stickers:uploadedStickers,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("Sticker pack shared successfully!");
+
+  }catch(error){
+    console.error("Share sticker pack error:",error);
+    alert("Could not share pack: " + error.message);
+  }
+}
 function createStickerPack(){
   const name = prompt("Enter a name for your sticker pack:");
 
