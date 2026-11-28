@@ -756,77 +756,7 @@
     });
   }
 
-    list.querySelectorAll("[data-group-row]").forEach(row => {
-      row.remove();
-    });
-
-    let rows = Object.values(groupRows);
-
-    if (window.activeConversationFilter === "Groups") {
-      list.innerHTML = "";
-    }
-
-    rows.sort((a, b) => b.time - a.time);
-
-    if (window.activeConversationFilter === "Groups" && !rows.length) {
-      list.innerHTML =
-        '<div class="tg-empty">Your groups will appear here.</div>';
-      return;
-    }
-
-    rows.forEach(row => {
-      const item = document.createElement("div");
-      item.className = "conversation-row";
-      item.dataset.groupRow = row.id;
-      item.onclick = () => window.openTerzexGroup(row.id);
-
-      const avatar = document.createElement("div");
-      avatar.className = "conversation-avatar";
-
-      if (row.photoURL) {
-        const image = document.createElement("img");
-        image.src = row.photoURL;
-        image.alt = "";
-        image.onerror = () => {
-          avatar.textContent = "♧";
-        };
-        avatar.appendChild(image);
-      } else {
-        avatar.textContent = "♧";
-      }
-
-      const main = document.createElement("div");
-      main.className = "conversation-main";
-
-      const top = document.createElement("div");
-      top.className = "conversation-top";
-
-      const title = document.createElement("strong");
-      title.textContent = row.name;
-
-      const time = document.createElement("span");
-      time.className = "conversation-time";
-
-      time.textContent = row.time
-        ? new Date(row.time).toLocaleDateString([], {
-            month: "short",
-            day: "numeric"
-          })
-        : "";
-
-      top.append(title, time);
-
-      const preview = document.createElement("div");
-      preview.className = "conversation-preview";
-      preview.textContent = "♧ " + row.preview;
-
-      main.append(top, preview);
-      item.append(avatar, main);
-
-      list.appendChild(item);
-    });
-  }
-
+    
   /* =====================================================
      OPEN GROUP
      ===================================================== */
